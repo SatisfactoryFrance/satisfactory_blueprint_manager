@@ -6,7 +6,7 @@ from pathlib import Path
 
 def create_database_connection():
     try:
-        conn = sqlite3.connect('data.db')
+        conn = sqlite3.connect(os.getenv('LOCALAPPDATA') + '/satisfactory_blueprint_manager.db')
         return conn
     except sqlite3.Error as err:
         print(f"Error connecting to the database: {err}")
