@@ -147,18 +147,22 @@ class App(ctk.CTk):
             self.load_blueprints()
 
     def add_blueprint_button_callback(self):
-        q = filedialog.askopenfilenames(
-            title='Choisissez le ou les fichiers sbp',
-            filetypes=[("Fichiers SBP", "*.sbp")],
-        )
-        
-        if q:
-            if not be.check_upload_blueprints(q):
-              messagebox.showerror('Erreur', 'Un blueprint se compose de 2 fichiers : un fichier sbp, et un fichier sbpcfg. Les 2 doivent etre dans le meme dossier.')
-            else:
-                be.upload_blueprints(q)
-                self.load_blueprints()
-                messagebox.showinfo('Ajout réussi', 'Le ou les blueprints sélectionnés ont été ajoutés.')
+        game_folder_data = be.get_config_by_title('game_folder')
+        if game_folder_data is None:
+            messagebox.showerror('Erreur', 'Veuillez tout d\'abord sélectionner le dossier de votre save')
+        else:
+            q = filedialog.askopenfilenames(
+                title='Choisissez le ou les fichiers sbp',
+                filetypes=[("Fichiers SBP", "*.sbp")],
+            )
+            
+            if q:
+                if not be.check_upload_blueprints(q):
+                    messagebox.showerror('Erreur', 'Un blueprint se compose de 2 fichiers : un fichier sbp, et un fichier sbpcfg. Les 2 doivent etre dans le meme dossier.')
+                else:
+                    be.upload_blueprints(q)
+                    self.load_blueprints()
+                    messagebox.showinfo('Ajout réussi', 'Le ou les blueprints sélectionnés ont été ajoutés.')
 
     def load_blueprints(self):
         print('Trying to load bp')
