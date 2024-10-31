@@ -1,6 +1,6 @@
 import backend as be
 import customtkinter as ctk
-from tkinter import filedialog, messagebox, Menu, Toplevel, Text
+from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 
 class Sidebar(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -14,9 +14,10 @@ class Sidebar(ctk.CTkFrame):
         else:
             self.game_folder = False
 
+        txt_label_game_folder = self.winfo_toplevel().lang.txt('label_game_folder')
         self.label_game_folder = ctk.CTkLabel(
             self,
-            text="Le dossier de ma save : %s" % self.game_folder,
+            text="%s : %s" % (txt_label_game_folder, self.game_folder),
             font=self.winfo_toplevel().button_font,
         )
 
@@ -29,7 +30,7 @@ class Sidebar(ctk.CTkFrame):
 
         self.button_game_folder = ctk.CTkButton(
             self, 
-            text="Choisir", 
+            text=self.winfo_toplevel().lang.txt('button_game_folder_already_set_txt'), 
             command=self.winfo_toplevel().game_folder_button_callback
         )
 
@@ -41,9 +42,9 @@ class Sidebar(ctk.CTkFrame):
         )
 
         if game_folder_data:
-            self.button_game_folder.configure(text='Changer')
+            self.button_game_folder.configure(text=self.winfo_toplevel().lang.txt('button_game_folder_already_set_txt'))
         else:
-            self.label_game_folder.configure(text='Le dossier de ma save est : non défini')
+            self.label_game_folder.configure(text="%s : %s" % (txt_label_game_folder, self.winfo_toplevel().lang.txt('label_game_folder_notset_txt')))
 
 class MainWindow(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -55,7 +56,7 @@ class MainWindow(ctk.CTkFrame):
 
         self.button_add_bp = ctk.CTkButton(
             self, 
-            text="Ajouter des blueprints", 
+            text=self.winfo_toplevel().lang.txt('button_add_bp_txt'), 
             width=250,
             fg_color="#307C39",
             hover_color="#245E2B",
@@ -87,28 +88,45 @@ class App(ctk.CTk):
         # Create local db and table if they don't exist
         be.create_config_table()
 
+        stored_lang = be.get_config_by_title('lang')
+        if stored_lang is None:
+            be.create_config('lang', 'fr')
+        else:
+            self.current_lang = stored_lang[2]
+            if self.current_lang == 'fr':
+                self.lang_fr = StringVar(value='1')
+                self.lang_en = StringVar(value='0')
+            else:
+                self.lang_fr = StringVar(value='0')
+                self.lang_en = StringVar(value='1')
 
+        self.lang = Lang(self.current_lang)
         # Menu
         menubar = Menu(self)
         self.config(menu=menubar)
         menufichier = Menu(menubar,tearoff=0)
-        menufichier.add_command(label="Choisir/changer le répertoire du jeu", command=self.game_folder_button_callback)
+        menufichier.add_command(label=self.lang.txt('menu_change_game_folder'), command=self.game_folder_button_callback)
         menufichier.add_separator()
-        menufichier.add_command(label="Quitter", command=self.quit)
-        menubar.add_cascade(label="Fichier", menu=menufichier)
+        menufichier.add_command(label=self.lang.txt('menu_quit'), command=self.quit)
+        menubar.add_cascade(label=self.lang.txt('menu_fichier'), menu=menufichier)
+
+        menulang = Menu(menubar,tearoff=0)
+        menulang.add_checkbutton(label=self.lang.txt('menu_fr'), variable=self.lang_fr, onvalue='1', offvalue='0', command=self.set_lang_to_fr)
+        menulang.add_checkbutton(label=self.lang.txt('menu_en'), variable=self.lang_en, onvalue='1', offvalue='0', command=self.set_lang_to_en)
+        menubar.add_cascade(label=self.lang.txt('menu_langue'), menu=menulang)
 
         # Menu Liens Utiles
         links_menu = Menu(menubar, tearoff=0)
         links_menu.add_command(label="Site Satisfactory FR", command=lambda: self.open_link("https://satisfactoryfr.com"))
         links_menu.add_command(label="Discord", command=lambda: self.open_link("https://discord.gg/satisfactoryfr"))
         links_menu.add_command(label="Site SBM", command=lambda: self.open_link("https://sbm.satisfactoryfr.com"))
-        menubar.add_cascade(label="Liens Utiles", menu=links_menu)
+        menubar.add_cascade(label=self.lang.txt('menu_liens'), menu=links_menu)
 
         # Menu Aide
         help_menu = Menu(menubar, tearoff=0)
-        help_menu.add_command(label="Comment ça fonctionne ?", command=self.show_help)
-        help_menu.add_command(label="À propos", command=self.show_about)
-        menubar.add_cascade(label="Aide", menu=help_menu)
+        help_menu.add_command(label=self.lang.txt('menu_fonctionnement'), command=self.show_help)
+        help_menu.add_command(label=self.lang.txt('menu_about'), command=self.show_about)
+        menubar.add_cascade(label=self.lang.txt('menu_help'), menu=help_menu)
 
         # Appearance
         ctk.set_appearance_mode('dark')
@@ -161,8 +179,9 @@ class App(ctk.CTk):
         q = filedialog.askdirectory()
         
         if q:
-            self.sidebar.label_game_folder.configure(text="Le dossier de mon jeu : %s" % q)
-            self.sidebar.button_game_folder.configure(text='Changer')
+            txt_label_game_folder = self.lang.txt('label_game_folder')
+            self.sidebar.label_game_folder.configure(text="%s : %s" % (txt_label_game_folder, q))
+            self.sidebar.button_game_folder.configure(text=self.lang.txt('button_game_folder_already_set_txt'))
             if self.sidebar.game_folder:
                     be.update_config(title='game_folder', new_value=q)
             else:
@@ -172,20 +191,20 @@ class App(ctk.CTk):
     def add_blueprint_button_callback(self):
         game_folder_data = be.get_config_by_title('game_folder')
         if game_folder_data is None:
-            messagebox.showerror('Erreur', 'Veuillez tout d\'abord sélectionner le dossier de votre save')
+            messagebox.showerror(self.lang.txt('messagebox_erreur'), self.lang.txt('messagebox_erreur_folder_not_set'))
         else:
             q = filedialog.askopenfilenames(
-                title='Choisissez le ou les fichiers sbp',
+                title=self.lang.txt('filedialog_ajout_blueprint'),
                 filetypes=[("Fichiers SBP", "*.sbp")],
             )
             
             if q:
                 if not be.check_upload_blueprints(q):
-                    messagebox.showerror('Erreur', 'Un blueprint se compose de 2 fichiers : un fichier sbp, et un fichier sbpcfg. Les 2 doivent etre dans le meme dossier.')
+                    messagebox.showerror(self.lang.txt('messagebox_erreur'), self.lang.txt('messagebox_erreur_no_sbpcfg'))
                 else:
                     be.upload_blueprints(q)
                     self.load_blueprints()
-                    messagebox.showinfo('Ajout réussi', 'Le ou les blueprints sélectionnés ont été ajoutés.')
+                    messagebox.showinfo(self.lang.txt('messagebox_ajout_reussi'), self.lang.txt('messagebox_txt_ajout_reussi'))
 
     def load_blueprints(self):
         print('Trying to load bp')
@@ -213,7 +232,7 @@ class App(ctk.CTk):
             )
             button = ctk.CTkButton(
                 self.main_window.bp_list,
-                text='Supprimer',
+                text=self.lang.txt('button_supprimer_bp_txt'),
                 width=150,
                 fg_color="red",
                 font=self.button_font,
@@ -228,16 +247,31 @@ class App(ctk.CTk):
             )
 
     def delete_bp(self, bp_file):
-        answer = messagebox.askyesno(title='Confirmation', message='Etes-vous sur de supprimer ce blueprint ? Cette action est irrémédiable')
+        answer = messagebox.askyesno(title=self.lang.txt('messagebox_confirm_delete'), message=self.lang.txt('messagebox_config_delete_txt'))
         if answer:
             be.delete_bp_from_game_folder(bp_file)
             self.load_blueprints()
+
+    def set_lang_to_fr(self):
+        self.lang_en.set(0)
+        self.current_lang = 'fr'
+        self.lang.set_current_lang(self.current_lang)
+        be.update_config(title='lang', new_value='fr')
+        messagebox.showinfo("Information", self.lang.txt('messagebox_switch_lang'))
+
+    def set_lang_to_en(self):
+        self.lang_fr.set(0)
+        self.current_lang ='en'
+        self.lang.set_current_lang(self.current_lang)
+        be.update_config(title='lang', new_value='en')
+        messagebox.showinfo("Information", self.lang.txt('messagebox_switch_lang'))
 
     def show_about(self):
         """Affiche une boîte de dialogue À propos."""
         messagebox.showinfo("À propos", "Satisfactory Blueprint Manager v0.0.1\nCréé par Amorcage & Je0ffrey pour la communauté Satisfactory France")
 
     def show_help(self):
+
         """Affiche une nouvelle fenêtre avec du texte formaté pour expliquer le fonctionnement."""
         help_window = Toplevel(self)
         help_window.title("Comment ça fonctionne ?")
@@ -268,4 +302,66 @@ class App(ctk.CTk):
         text_widget.tag_configure("italic", font=("Arial", 10, "italic"))
 
         # Rendre le texte non modifiable
-        text_widget.config(state="disabled")            
+        text_widget.config(state="disabled")
+
+class Lang():
+    def __init__(self, current_lang):
+        self.current_lang = current_lang
+
+    def set_current_lang(self, current_lang):
+        print('Setting current lang to %s' % current_lang)
+        self.current_lang = current_lang
+
+    def txt(self, txt):
+        match txt:
+            case 'button_game_folder_already_set_txt':
+                ret = 'Changer' if self.current_lang == 'fr' else 'Change'
+            case 'button_add_bp_txt':
+                ret = 'Ajouter des blueprints' if self.current_lang == 'fr' else 'Add blueprints'
+            case 'button_supprimer_bp_txt':
+                ret = 'Supprimer' if self.current_lang == 'fr' else 'Delete'
+            case 'label_game_folder':
+                ret = 'Le dossier des blueprints de ma save' if self.current_lang == 'fr' else 'My blueprint\'s folder is'
+            case 'label_game_folder_notset_txt':
+                ret = 'non défini' if self.current_lang == 'fr' else 'undefined'
+            case 'messagebox_switch_lang':
+                ret = 'Veuillez redémarrer Satisfactory Blueprint Manager pour prendre en compte le changement de langue' if self.current_lang == 'fr' else 'Please restart Satisfactory Blueprint Manager in order to switch language'                
+            case 'messagebox_erreur':
+                ret = 'Erreur' if self.current_lang == 'fr' else 'Error'
+            case 'messagebox_confirm_delete':
+                ret = 'Confirmation de suppression' if self.current_lang == 'fr' else 'Please confirm'
+            case 'messagebox_config_delete_txt':
+                ret = 'Etes-vous sur de supprimer ce blueprint ? Cette action est irrémédiable' if self.current_lang == 'fr' else 'Are you sure to delete this blueprint ? This action cannot be undone'
+            case 'messagebox_erreur_folder_not_set':
+                ret = 'Veuillez tout d\'abord sélectionner le dossier des blueprint de votre save' if self.current_lang == 'fr' else 'Please select first the blueprint\'s folder'
+            case 'messagebox_erreur_no_sbpcfg':
+                ret = 'Un blueprint se compose de 2 fichiers : un fichier sbp, et un fichier sbpcfg. Les 2 doivent etre dans le meme dossier' if self.current_lang == 'fr' else 'A blueprint must be a sbp file and a sbpcfg file. The two files need to be next to each other'
+            case 'messagebox_ajout_reussi':
+                ret = 'Blueprints ajoutés' if self.current_lang == 'fr' else 'Blueprints successfully added'
+            case 'messagebox_txt_ajout_reussi':
+                ret = 'Le ou les blueprints sélectionnés ont été ajoutés' if self.current_lang == 'fr' else 'The selected blueprints were successfully added'                
+            case 'filedialog_ajout_blueprint':
+                ret = 'Choisissez le ou les fichiers sbp' if self.current_lang == 'fr' else 'Choose one of multiple sbp files'
+            case 'menu_change_game_folder':
+                ret = 'Choisir/changer le répertoire des blueprints' if self.current_lang == 'fr' else 'Modify blueprint\'s folder'
+            case 'menu_quit':
+                ret = 'Quitter' if self.current_lang == 'fr' else 'Quit'
+            case 'menu_fichier':
+                ret = 'Fichier' if self.current_lang == 'fr' else 'File'
+            case 'menu_langue':
+                ret = 'Langue' if self.current_lang == 'fr' else 'Language'
+            case 'menu_liens':
+                ret = 'Liens utiles' if self.current_lang == 'fr' else 'Useful links'
+            case 'menu_fonctionnement':
+                ret = 'Comment ça marche ?' if self.current_lang == 'fr' else 'How is it working ?'
+            case 'menu_about':
+                ret = 'A propos' if self.current_lang == 'fr' else 'About'
+            case 'menu_help':
+                ret = 'Aide' if self.current_lang == 'fr' else 'Help'
+            case 'menu_fr':
+                ret = 'FR (Français)' if self.current_lang == 'fr' else 'FR (French)'
+            case 'menu_en':
+                ret = 'EN (Anglais)' if self.current_lang == 'fr' else 'EN (English)'
+            case _:
+                ret = 'no trad'
+        return ret
