@@ -1,6 +1,7 @@
 import backend as be
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
+import webbrowser
 
 
 class Sidebar(ctk.CTkFrame):
@@ -307,6 +308,10 @@ class App(ctk.CTk):
 
         # Rendre le texte non modifiable
         text_widget.config(state="disabled")
+
+    def open_link(self, url):
+            """Ouvre un lien dans le navigateur par défaut."""
+            webbrowser.open(url)
 
 class Lang():
     def __init__(self, current_lang):
