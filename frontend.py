@@ -2,6 +2,7 @@ import backend as be
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 import webbrowser
+import os
 
 
 class Sidebar(ctk.CTkFrame):
@@ -31,15 +32,15 @@ class Sidebar(ctk.CTkFrame):
         )
 
         self.button_game_folder = ctk.CTkButton(
-            self, 
-            text=self.winfo_toplevel().lang.txt('button_game_folder_already_set_txt'), 
+            self,
+            text=self.winfo_toplevel().lang.txt('button_game_folder_already_set_txt'),
             command=self.winfo_toplevel().game_folder_button_callback
         )
 
         self.button_game_folder.grid(
-            row=0, 
-            column=1, 
-            padx=20, 
+            row=0,
+            column=1,
+            padx=20,
             pady=20
         )
 
@@ -58,8 +59,8 @@ class MainWindow(ctk.CTkFrame):
         self.rowconfigure(1, weigh=10)
 
         self.button_add_bp = ctk.CTkButton(
-            self, 
-            text=self.winfo_toplevel().lang.txt('button_add_bp_txt'), 
+            self,
+            text=self.winfo_toplevel().lang.txt('button_add_bp_txt'),
             width=250,
             fg_color="#307C39",
             hover_color="#245E2B",
@@ -67,9 +68,9 @@ class MainWindow(ctk.CTkFrame):
         )
 
         self.button_add_bp.grid(
-            row=0, 
+            row=0,
             column=0,
-            padx=20, 
+            padx=20,
             pady=20,
             sticky="n"
         )
@@ -96,6 +97,8 @@ class App(ctk.CTk):
         if stored_lang is None:
             be.create_config('lang', 'fr')
             self.current_lang = 'fr'
+            self.lang_fr = StringVar(value='1')
+            self.lang_en = StringVar(value='0')
         else:
             self.current_lang = stored_lang[2]
             if self.current_lang == 'fr':
@@ -181,14 +184,15 @@ class App(ctk.CTk):
             self.load_blueprints()
 
     def game_folder_button_callback(self):
-        q = filedialog.askdirectory()
-        
+        chemin_par_defaut = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
+        q = filedialog.askdirectory(initialdir=chemin_par_defaut)
+
         if q:
             txt_label_game_folder = self.lang.txt('label_game_folder')
             self.sidebar.label_game_folder.configure(text="%s : %s" % (txt_label_game_folder, q))
             self.sidebar.button_game_folder.configure(text=self.lang.txt('button_game_folder_already_set_txt'))
             if self.sidebar.game_folder:
-                    be.update_config(title='game_folder', new_value=q)
+                be.update_config(title='game_folder', new_value=q)
             else:
                 be.create_config(title='game_folder', value=q)
             self.load_blueprints()
@@ -202,7 +206,7 @@ class App(ctk.CTk):
                 title=self.lang.txt('filedialog_ajout_blueprint'),
                 filetypes=[("Fichiers SBP", "*.sbp")],
             )
-            
+
             if q:
                 if not be.check_upload_blueprints(q):
                     messagebox.showerror(self.lang.txt('messagebox_erreur'), self.lang.txt('messagebox_erreur_no_sbpcfg'))
@@ -219,7 +223,6 @@ class App(ctk.CTk):
         bps = be.list_bp_from_game_folder()
 
         for i, bp in enumerate(bps):
-            bp_id = bp['id']
             bp_file = bp['blueprint']
             label = ctk.CTkLabel(
                 self.main_window.bp_list,
@@ -229,9 +232,9 @@ class App(ctk.CTk):
                 font=self.button_font,
             )
             label.grid(
-                column=0, 
-                row=i, 
-                padx=10, 
+                column=0,
+                row=i,
+                padx=10,
                 pady=5,
                 sticky="n",
             )
@@ -244,9 +247,9 @@ class App(ctk.CTk):
                 command=lambda bp_file=bp_file: self.delete_bp(bp_file)
             )
             button.grid(
-                column=1, 
-                row=i, 
-                padx=10, 
+                column=1,
+                row=i,
+                padx=10,
                 pady=5,
                 sticky="n",
             )
@@ -266,7 +269,7 @@ class App(ctk.CTk):
 
     def set_lang_to_en(self):
         self.lang_fr.set(0)
-        self.current_lang ='en'
+        self.current_lang = 'en'
         self.lang.set_current_lang(self.current_lang)
         be.update_config(title='lang', new_value='en')
         messagebox.showinfo("Information", self.lang.txt('messagebox_switch_lang'))
@@ -288,7 +291,7 @@ class App(ctk.CTk):
 
         # Ajouter du contenu formaté
         text_widget.insert("1.0", "Ce logiciel permet de gérer et déplacer des blueprints (plans) entre un répertoire source et un répertoire cible.\n\n")
-        
+
         # Instructions en gras
         text_widget.insert("end", "AVANT TOUT :\n", "bold")
         text_widget.insert("end", "Vous devez créer un premier blueprint dans le jeu et l'enregistrer afin de créer le repertoire de votre partie :\n", "bold")
@@ -310,8 +313,8 @@ class App(ctk.CTk):
         text_widget.config(state="disabled")
 
     def open_link(self, url):
-            """Ouvre un lien dans le navigateur par défaut."""
-            webbrowser.open(url)
+        webbrowser.open(url)
+
 
 class Lang():
     def __init__(self, current_lang):
@@ -334,7 +337,7 @@ class Lang():
             case 'label_game_folder_notset_txt':
                 ret = 'non défini' if self.current_lang == 'fr' else 'undefined'
             case 'messagebox_switch_lang':
-                ret = 'Veuillez redémarrer Satisfactory Blueprint Manager pour prendre en compte le changement de langue' if self.current_lang == 'fr' else 'Please restart Satisfactory Blueprint Manager in order to switch language'                
+                ret = 'Veuillez redémarrer Satisfactory Blueprint Manager pour prendre en compte le changement de langue' if self.current_lang == 'fr' else 'Please restart Satisfactory Blueprint Manager in order to switch language'
             case 'messagebox_erreur':
                 ret = 'Erreur' if self.current_lang == 'fr' else 'Error'
             case 'messagebox_confirm_delete':
@@ -348,7 +351,7 @@ class Lang():
             case 'messagebox_ajout_reussi':
                 ret = 'Blueprints ajoutés' if self.current_lang == 'fr' else 'Blueprints successfully added'
             case 'messagebox_txt_ajout_reussi':
-                ret = 'Le ou les blueprints sélectionnés ont été ajoutés' if self.current_lang == 'fr' else 'The selected blueprints were successfully added'                
+                ret = 'Le ou les blueprints sélectionnés ont été ajoutés' if self.current_lang == 'fr' else 'The selected blueprints were successfully added'
             case 'filedialog_ajout_blueprint':
                 ret = 'Choisissez le ou les fichiers sbp' if self.current_lang == 'fr' else 'Choose one of multiple sbp files'
             case 'menu_change_game_folder':
