@@ -2,6 +2,7 @@ import backend as be
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 
+
 class Sidebar(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -46,6 +47,7 @@ class Sidebar(ctk.CTkFrame):
         else:
             self.label_game_folder.configure(text="%s : %s" % (txt_label_game_folder, self.winfo_toplevel().lang.txt('label_game_folder_notset_txt')))
 
+
 class MainWindow(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -81,6 +83,7 @@ class MainWindow(ctk.CTkFrame):
             sticky="nsew"
         )
 
+
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -91,6 +94,7 @@ class App(ctk.CTk):
         stored_lang = be.get_config_by_title('lang')
         if stored_lang is None:
             be.create_config('lang', 'fr')
+            self.current_lang = 'fr'
         else:
             self.current_lang = stored_lang[2]
             if self.current_lang == 'fr':
@@ -104,13 +108,13 @@ class App(ctk.CTk):
         # Menu
         menubar = Menu(self)
         self.config(menu=menubar)
-        menufichier = Menu(menubar,tearoff=0)
+        menufichier = Menu(menubar, tearoff=0)
         menufichier.add_command(label=self.lang.txt('menu_change_game_folder'), command=self.game_folder_button_callback)
         menufichier.add_separator()
         menufichier.add_command(label=self.lang.txt('menu_quit'), command=self.quit)
         menubar.add_cascade(label=self.lang.txt('menu_fichier'), menu=menufichier)
 
-        menulang = Menu(menubar,tearoff=0)
+        menulang = Menu(menubar, tearoff=0)
         menulang.add_checkbutton(label=self.lang.txt('menu_fr'), variable=self.lang_fr, onvalue='1', offvalue='0', command=self.set_lang_to_fr)
         menulang.add_checkbutton(label=self.lang.txt('menu_en'), variable=self.lang_en, onvalue='1', offvalue='0', command=self.set_lang_to_en)
         menubar.add_cascade(label=self.lang.txt('menu_langue'), menu=menulang)
