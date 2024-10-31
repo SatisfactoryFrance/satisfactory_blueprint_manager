@@ -1,6 +1,6 @@
 import backend as be
 import customtkinter as ctk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, Menu, Toplevel, Text
 
 class Sidebar(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -86,6 +86,29 @@ class App(ctk.CTk):
 
         # Create local db and table if they don't exist
         be.create_config_table()
+
+
+        # Menu
+        menubar = Menu(self)
+        self.config(menu=menubar)
+        menufichier = Menu(menubar,tearoff=0)
+        menufichier.add_command(label="Choisir/changer le répertoire du jeu", command=self.game_folder_button_callback)
+        menufichier.add_separator()
+        menufichier.add_command(label="Quitter", command=self.quit)
+        menubar.add_cascade(label="Fichier", menu=menufichier)
+
+        # Menu Liens Utiles
+        links_menu = Menu(menubar, tearoff=0)
+        links_menu.add_command(label="Site Satisfactory FR", command=lambda: self.open_link("https://satisfactoryfr.com"))
+        links_menu.add_command(label="Discord", command=lambda: self.open_link("https://discord.gg/satisfactoryfr"))
+        links_menu.add_command(label="Site SBM", command=lambda: self.open_link("https://sbm.satisfactoryfr.com"))
+        menubar.add_cascade(label="Liens Utiles", menu=links_menu)
+
+        # Menu Aide
+        help_menu = Menu(menubar, tearoff=0)
+        help_menu.add_command(label="Comment ça fonctionne ?", command=self.show_help)
+        help_menu.add_command(label="À propos", command=self.show_about)
+        menubar.add_cascade(label="Aide", menu=help_menu)
 
         # Appearance
         ctk.set_appearance_mode('dark')
@@ -209,3 +232,40 @@ class App(ctk.CTk):
         if answer:
             be.delete_bp_from_game_folder(bp_file)
             self.load_blueprints()
+
+    def show_about(self):
+        """Affiche une boîte de dialogue À propos."""
+        messagebox.showinfo("À propos", "Satisfactory Blueprint Manager v0.0.1\nCréé par Amorcage & Je0ffrey pour la communauté Satisfactory France")
+
+    def show_help(self):
+        """Affiche une nouvelle fenêtre avec du texte formaté pour expliquer le fonctionnement."""
+        help_window = Toplevel(self)
+        help_window.title("Comment ça fonctionne ?")
+        help_window.geometry("500x400")
+
+        # Zone de texte avec scrollbar
+        text_widget = Text(help_window, wrap="word", font=("Arial", 10))
+        text_widget.pack(expand=True, fill="both", padx=10, pady=10)
+
+        # Ajouter du contenu formaté
+        text_widget.insert("1.0", "Ce logiciel permet de gérer et déplacer des blueprints (plans) entre un répertoire source et un répertoire cible.\n\n")
+        
+        # Instructions en gras
+        text_widget.insert("end", "AVANT TOUT :\n", "bold")
+        text_widget.insert("end", "Vous devez créer un premier blueprint dans le jeu et l'enregistrer afin de créer le repertoire de votre partie :\n", "bold")
+        text_widget.insert("end", "1. Ajoutez un répertoire source depuis le menu ou via le bouton approprié.\n")
+        text_widget.insert("end", "2. Ajoutez un ou plusieurs répertoires cibles. L'option est pré-configuré pour aller dans le repertoire racine des blueprint. A vous de choisir votre nom de partie\n")
+        text_widget.insert("end", "3. Sélectionnez les fichiers dans le répertoire source, puis choisissez 'Copier' ou 'Déplacer'.\n")
+        text_widget.insert("end", "4. Cliquez sur 'Exécuter l'action' pour copier ou déplacer les fichiers sélectionnés.\n")
+        text_widget.insert("end", "5. Utilisez 'Déplacer vers Source' pour renvoyer des fichiers du répertoire cible vers la source.\n\n")
+
+        # Section Options additionnelles en italique
+        text_widget.insert("end", "Options additionnelles :\n", "bold")
+        text_widget.insert("end", "- Cela ne marche qu'en local, pas sur serveurs dédiés\n")
+
+        # Configurer les tags de style
+        text_widget.tag_configure("bold", font=("Arial", 12, "bold"))
+        text_widget.tag_configure("italic", font=("Arial", 10, "italic"))
+
+        # Rendre le texte non modifiable
+        text_widget.config(state="disabled")            
