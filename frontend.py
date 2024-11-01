@@ -1,4 +1,4 @@
-import backend as be
+from backend import Backend
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 import webbrowser
@@ -11,9 +11,9 @@ class Sidebar(ctk.CTkFrame):
 
         self.rowconfigure(1, weight=1)
 
-        game_folder_data = be.get_config_by_title('game_folder')
+        game_folder_data = self.winfo_toplevel().backend.config['game_folder']
         if game_folder_data is not None:
-            self.game_folder = game_folder_data[2]
+            self.game_folder = game_folder_data
         else:
             self.game_folder = False
 
@@ -90,23 +90,18 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        # Create local db and table if they don't exist
-        be.create_config_table()
+        self.backend = Backend()
 
-        stored_lang = be.get_config_by_title('lang')
-        if stored_lang is None:
-            be.create_config('lang', 'fr')
-            self.current_lang = 'fr'
+        self.backend.check_config_file()
+        stored_lang = self.backend.config['lang']
+
+        self.current_lang = stored_lang
+        if self.current_lang == 'fr':
             self.lang_fr = StringVar(value='1')
             self.lang_en = StringVar(value='0')
         else:
-            self.current_lang = stored_lang[2]
-            if self.current_lang == 'fr':
-                self.lang_fr = StringVar(value='1')
-                self.lang_en = StringVar(value='0')
-            else:
-                self.lang_fr = StringVar(value='0')
-                self.lang_en = StringVar(value='1')
+            self.lang_fr = StringVar(value='0')
+            self.lang_en = StringVar(value='1')
 
         self.lang = Lang(self.current_lang)
         # Menu
@@ -179,8 +174,8 @@ class App(ctk.CTk):
             sticky="nsew",
         )
 
-        game_folder_data = be.get_config_by_title('game_folder')
-        if game_folder_data is not None:
+        game_folder_data = self.backend.config['game_folder']
+        if game_folder_data != 'undefined':
             self.load_blueprints()
 
     def game_folder_button_callback(self):
@@ -191,14 +186,11 @@ class App(ctk.CTk):
             txt_label_game_folder = self.lang.txt('label_game_folder')
             self.sidebar.label_game_folder.configure(text="%s : %s" % (txt_label_game_folder, q))
             self.sidebar.button_game_folder.configure(text=self.lang.txt('button_game_folder_already_set_txt'))
-            if self.sidebar.game_folder:
-                be.update_config(title='game_folder', new_value=q)
-            else:
-                be.create_config(title='game_folder', value=q)
+            self.backend.set_config(title='game_folder', new_value=q)
             self.load_blueprints()
 
     def add_blueprint_button_callback(self):
-        game_folder_data = be.get_config_by_title('game_folder')
+        game_folder_data = self.backend.config['game_folder']
         if game_folder_data is None:
             messagebox.showerror(self.lang.txt('messagebox_erreur'), self.lang.txt('messagebox_erreur_folder_not_set'))
         else:
@@ -208,10 +200,10 @@ class App(ctk.CTk):
             )
 
             if q:
-                if not be.check_upload_blueprints(q):
+                if not self.backend.check_upload_blueprints(q):
                     messagebox.showerror(self.lang.txt('messagebox_erreur'), self.lang.txt('messagebox_erreur_no_sbpcfg'))
                 else:
-                    be.upload_blueprints(q)
+                    self.backend.upload_blueprints(q)
                     self.load_blueprints()
                     messagebox.showinfo(self.lang.txt('messagebox_ajout_reussi'), self.lang.txt('messagebox_txt_ajout_reussi'))
 
@@ -220,7 +212,7 @@ class App(ctk.CTk):
         for child in self.main_window.bp_list.winfo_children():
             child.destroy()
 
-        bps = be.list_bp_from_game_folder()
+        bps = self.backend.list_bp_from_game_folder()
 
         for i, bp in enumerate(bps):
             bp_file = bp['blueprint']
@@ -257,21 +249,21 @@ class App(ctk.CTk):
     def delete_bp(self, bp_file):
         answer = messagebox.askyesno(title=self.lang.txt('messagebox_confirm_delete'), message=self.lang.txt('messagebox_config_delete_txt'))
         if answer:
-            be.delete_bp_from_game_folder(bp_file)
+            self.backend.delete_bp_from_game_folder(bp_file)
             self.load_blueprints()
 
     def set_lang_to_fr(self):
         self.lang_en.set(0)
         self.current_lang = 'fr'
         self.lang.set_current_lang(self.current_lang)
-        be.update_config(title='lang', new_value='fr')
+        self.backend.set_config(title='lang', new_value='fr')
         messagebox.showinfo("Information", self.lang.txt('messagebox_switch_lang'))
 
     def set_lang_to_en(self):
         self.lang_fr.set(0)
         self.current_lang = 'en'
         self.lang.set_current_lang(self.current_lang)
-        be.update_config(title='lang', new_value='en')
+        self.backend.set_config(title='lang', new_value='en')
         messagebox.showinfo("Information", self.lang.txt('messagebox_switch_lang'))
 
     def show_about(self):
