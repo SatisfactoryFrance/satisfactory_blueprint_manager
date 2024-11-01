@@ -1,3 +1,5 @@
+BUILD_NUMBER = "v0.0.8"
+
 from backend import Backend
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
@@ -121,8 +123,12 @@ class App(ctk.CTk):
         # Menu Liens Utiles
         links_menu = Menu(menubar, tearoff=0)
         links_menu.add_command(label="Site Satisfactory FR", command=lambda: self.open_link("https://satisfactoryfr.com"))
-        links_menu.add_command(label="Discord", command=lambda: self.open_link("https://discord.gg/satisfactoryfr"))
-        links_menu.add_command(label="Site SBM", command=lambda: self.open_link("https://sbm.satisfactoryfr.com"))
+        links_menu.add_command(label="Site Satisfactory EN", command=lambda: self.open_link("https://satisfactorygame.com"))
+        links_menu.add_command(label="Discord FR", command=lambda: self.open_link("https://discord.gg/satisfactoryfr"))
+        links_menu.add_command(label="Discord EN", command=lambda: self.open_link("https://discord.gg/satisfactory"))
+        links_menu.add_command(label="Site S.B.M.", command=lambda: self.open_link("https://sbm.satisfactoryfr.com"))
+        links_menu.add_command(label="Blueprints SCIM", command=lambda: self.open_link("https://satisfactory-calculator.com/fr/blueprints"))
+
         menubar.add_cascade(label=self.lang.txt('menu_liens'), menu=links_menu)
 
         # Menu Aide
@@ -133,7 +139,7 @@ class App(ctk.CTk):
 
         # Appearance
         ctk.set_appearance_mode('dark')
-        self.title('Satisfactory Blueprint Manager')
+        self.title(f'Satisfactory Blueprint Manager - {BUILD_NUMBER}')
         self.geometry('1000x600')
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
