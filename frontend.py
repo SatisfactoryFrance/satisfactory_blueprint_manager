@@ -285,17 +285,17 @@ class App(ctk.CTk):
         text_widget.insert("1.0", self.lang.txt('description_software_functionality') + "\n\n")
 
         # Instructions en gras
-        text_widget.insert("end", "AVANT TOUT :\n", "bold")
-        text_widget.insert("end", "Vous devez créer un premier blueprint dans le jeu et l'enregistrer afin de créer le repertoire de votre partie :\n", "bold")
-        text_widget.insert("end", "1. Ajoutez un répertoire source depuis le menu ou via le bouton approprié.\n")
-        text_widget.insert("end", "2. Ajoutez un ou plusieurs répertoires cibles. L'option est pré-configuré pour aller dans le repertoire racine des blueprint. A vous de choisir votre nom de partie\n")
-        text_widget.insert("end", "3. Sélectionnez les fichiers dans le répertoire source, puis choisissez 'Copier' ou 'Déplacer'.\n")
-        text_widget.insert("end", "4. Cliquez sur 'Exécuter l'action' pour copier ou déplacer les fichiers sélectionnés.\n")
-        text_widget.insert("end", "5. Utilisez 'Déplacer vers Source' pour renvoyer des fichiers du répertoire cible vers la source.\n\n")
+        text_widget.insert("end", self.lang.txt('instructions_bold') + "\n", "bold")
+        text_widget.insert("end", self.lang.txt('create_first_blueprint') + "\n\n", "bold")
+        text_widget.insert("end", self.lang.txt('step_1') + "\n")
+        text_widget.insert("end", self.lang.txt('step_2') + "\n")
+        text_widget.insert("end", self.lang.txt('step_3') + "\n")
+        text_widget.insert("end", self.lang.txt('step_4') + "\n")
+        text_widget.insert("end", self.lang.txt('step_5') + "\n\n")
 
         # Section Options additionnelles en italique
-        text_widget.insert("end", "Options additionnelles :\n", "bold")
-        text_widget.insert("end", "- Cela ne marche qu'en local, pas sur serveurs dédiés\n")
+        text_widget.insert("end", self.lang.txt('additional_options') + "\n", "bold")
+        text_widget.insert("end", self.lang.txt('local_only_note') + "\n")
 
         # Configurer les tags de style
         text_widget.tag_configure("bold", font=("Arial", 12, "bold"))
@@ -370,6 +370,26 @@ class Lang():
                 ret = 'Ce logiciel permet de gérer et déplacer des blueprints (plans) entre un répertoire source et un répertoire cible.' if self.current_lang == 'fr' else 'This software allows you to manage and move blueprints between a source directory and a target directory.'
             case 'software_aboutsbm':
                 ret = 'Satisfactory Blueprint Manager\nCréé par Je0ffrey & Amorcage pour la communauté Satisfactory France.' if self.current_lang == 'fr' else 'Satisfactory Blueprint Manager\nCreated by Je0ffrey & Amorcage from Satisfactory France and Satisfactory community around the world.'
+            case 'description_software_functionality':
+                ret = 'Ce logiciel permet de gérer et déplacer des blueprints (plans) entre un répertoire source et un répertoire cible.' if self.current_lang == 'fr' else 'This software allows you to manage and move blueprints (plans) between a source directory and a target directory.'
+            case 'instructions_bold':
+                ret = 'AVANT TOUT :' if self.current_lang == 'fr' else 'BEFORE ANYTHING:'
+            case 'create_first_blueprint':
+                ret = 'Vous devez créer un premier blueprint dans le jeu et l\'enregistrer afin de créer le repertoire de votre partie :' if self.current_lang == 'fr' else 'You must create a first blueprint in the game and save it to create your game directory:'
+            case 'step_1':
+                ret = '1. Ajoutez le repertoire de Blueprint de votre partie depuis le menu ou via le bouton approprié. L\'option est pré-configuré pour aller dans le repertoire racine des blueprint. A vous de choisir votre nom de partie' if self.current_lang == 'fr' else '1. Add your game\'s Blueprint directory from the menu or via the appropriate button. The option is pre-configured to go to the root directory of the blueprints. It\'s up to you to choose your game name'
+            case 'step_2':
+                ret = '2. La fenêtre se met à jour automatiquement avec les BP déjà présents' if self.current_lang == 'fr' else '2. The window automatically updates with the BPs already present'
+            case 'step_3':
+                ret = '3. Sélectionnez les fichiers depuis le bouton AJOUTER DES BLUEPRINTS dans vos repertoires de téléchargements. la recherche n\'affiche que les fichiers .sbp et prend automatiquement le fichier .sbpcfg en même temps' if self.current_lang == 'fr' else '3. Select the files from the ADD BLUEPRINTS button in your downloads directories. The search only displays .sbp files and automatically takes the .sbpcfg file at the same time.'
+            case 'step_4':
+                ret = '4. Une fenetre d\'information vous indique sur le transfert s\'est bien passé ou non.' if self.current_lang == 'fr' else '4. An information window will tell you whether the transfer went well or not.'
+            case 'step_5':
+                ret = '5. Vous pouvez utiliser le bouton SUPPRIMER pour supprimer les BP de votre partie.' if self.current_lang == 'fr' else '5. You can use the DELETE button to remove BP from your game.'
+            case 'additional_options':
+                ret = 'Informations additionnelles :' if self.current_lang == 'fr' else 'Additional informations :'
+            case 'local_only_note':
+                ret = '- Cela ne marche qu\'en local, pas sur serveurs dédiés' if self.current_lang == 'fr' else '- This only works locally, not on dedicated servers'
             case _:
                 ret = 'no trad'
         return ret
