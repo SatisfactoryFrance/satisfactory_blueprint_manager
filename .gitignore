@@ -161,3 +161,4 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 data.db
+/.vs/satisfactory_blueprint_manager/FileContentIndex/3303b3ff-46fb-4bc5-af2b-ac16a72ce24d.vsidx
