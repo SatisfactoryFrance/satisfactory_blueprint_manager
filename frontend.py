@@ -268,7 +268,7 @@ class App(ctk.CTk):
 
     def show_about(self):
         """Affiche une boîte de dialogue À propos."""
-        messagebox.showinfo("À propos", "Satisfactory Blueprint Manager v0.0.1\nCréé par Amorcage & Je0ffrey pour la communauté Satisfactory France")
+        messagebox.showinfo("À propos", self.lang.txt('software_aboutsbm'))
 
     def show_help(self):
 
@@ -282,7 +282,7 @@ class App(ctk.CTk):
         text_widget.pack(expand=True, fill="both", padx=10, pady=10)
 
         # Ajouter du contenu formaté
-        text_widget.insert("1.0", "Ce logiciel permet de gérer et déplacer des blueprints (plans) entre un répertoire source et un répertoire cible.\n\n")
+        text_widget.insert("1.0", self.lang.txt('description_software_functionality') + "\n\n")
 
         # Instructions en gras
         text_widget.insert("end", "AVANT TOUT :\n", "bold")
@@ -366,6 +366,10 @@ class Lang():
                 ret = 'FR (Français)' if self.current_lang == 'fr' else 'FR (French)'
             case 'menu_en':
                 ret = 'EN (Anglais)' if self.current_lang == 'fr' else 'EN (English)'
+            case 'description_software_functionality':
+                ret = 'Ce logiciel permet de gérer et déplacer des blueprints (plans) entre un répertoire source et un répertoire cible.' if self.current_lang == 'fr' else 'This software allows you to manage and move blueprints between a source directory and a target directory.'
+            case 'software_aboutsbm':
+                ret = 'Satisfactory Blueprint Manager\nCréé par Je0ffrey & Amorcage pour la communauté Satisfactory France.' if self.current_lang == 'fr' else 'Satisfactory Blueprint Manager\nCreated by Je0ffrey & Amorcage from Satisfactory France and Satisfactory community around the world.'
             case _:
                 ret = 'no trad'
         return ret
