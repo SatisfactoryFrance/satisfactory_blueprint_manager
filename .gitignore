@@ -161,10 +161,5 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 data.db
-/.vs/satisfactory_blueprint_manager/FileContentIndex/3303b3ff-46fb-4bc5-af2b-ac16a72ce24d.vsidx
-/.vs/satisfactory_blueprint_manager/FileContentIndex/43678e4b-9ed1-45d4-9a9a-05bbc8e74dbd.vsidx
-/.vs/satisfactory_blueprint_manager/v17/.wsuo
-/.vs/satisfactory_blueprint_manager/v17/DocumentLayout.backup.json
-/.vs/satisfactory_blueprint_manager/v17/DocumentLayout.json
-/.vs/satisfactory_blueprint_manager/FileContentIndex/514935f0-efa9-4854-9e19-f000364158c9.vsidx
+/.vs/*
 *.vsidx
