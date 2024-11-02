@@ -3,6 +3,10 @@ import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 import webbrowser
 import os
+import io
+from bs4 import BeautifulSoup
+import requests
+from PIL import Image, ImageTk
 
 BUILD_NUMBER = "v0.0.8"
 
@@ -63,6 +67,7 @@ class MainWindow(ctk.CTkFrame):
         super().__init__(master, **kwargs)
 
         self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=2)
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weigh=10)
 
@@ -83,12 +88,27 @@ class MainWindow(ctk.CTkFrame):
             sticky="n"
         )
 
+        self.button_open_scim = ctk.CTkButton(
+            self,
+            text=self.winfo_toplevel().lang.txt('button_open_scim_txt'),
+            width=250,
+            command=self.winfo_toplevel().open_scim_button_callback
+        )
+
+        self.button_open_scim.grid(
+            row=0,
+            column=1,
+            padx=20,
+            pady=20,
+            sticky="n"
+        )
+
         self.bp_list = ctk.CTkScrollableFrame(
             self,
             fg_color="transparent"
         )
         self.bp_list.grid(
-            column=0,
+            columnspan=2,
             row=1,
             sticky="nsew"
         )
@@ -112,6 +132,8 @@ class App(ctk.CTk):
             self.lang_en = StringVar(value='1')
 
         self.lang = Lang(self.current_lang)
+
+        self.current_site_page = 1
         # Menu
         menubar = Menu(self)
         self.config(menu=menubar)
@@ -146,7 +168,7 @@ class App(ctk.CTk):
         # Appearance
         ctk.set_appearance_mode('dark')
         self.title(f'Satisfactory Blueprint Manager - {BUILD_NUMBER}')
-        self.geometry('1000x600')
+        self.geometry('1200x600')
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=10)
@@ -201,11 +223,10 @@ class App(ctk.CTk):
             txt_label_game_folder = self.lang.txt('label_game_folder')
             self.sidebar.label_game_folder.configure(text="%s : %s" % (txt_label_game_folder, chemin_tronque))
             self.sidebar.button_game_folder.configure(text=self.lang.txt('button_game_folder_already_set_txt'))
-        
+
             # Mise à jour dans la configuration
             self.backend.set_config(title='game_folder', new_value=q)
             self.load_blueprints()
-
 
     def add_blueprint_button_callback(self):
         game_folder_data = self.backend.config['game_folder']
@@ -226,6 +247,197 @@ class App(ctk.CTk):
                     self.backend.upload_blueprints(q)
                     self.load_blueprints()
                     messagebox.showinfo(self.lang.txt('messagebox_ajout_reussi'), self.lang.txt('messagebox_txt_ajout_reussi'))
+
+    def open_scim_button_callback(self):
+        blueprint_window = ctk.CTkToplevel(self)
+        blueprint_window.title("Liste des Blueprints de Satisfactory Calculator")
+        blueprint_window.geometry("1000x600")
+
+        # Cadre pour afficher la liste des blueprints
+        self.canvas = ctk.CTkCanvas(blueprint_window)
+        scrollbar = ctk.CTkScrollbar(blueprint_window, orientation="vertical", command=self.canvas.yview)
+        self.scrollable_frame = ctk.CTkFrame(self.canvas)
+
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        )
+
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.canvas.configure(yscrollcommand=scrollbar.set)
+
+        self.canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        # Lier la molette de la souris pour le défilement
+        self.canvas.bind_all("<MouseWheel>", lambda event: self.on_mouse_wheel(event, self.canvas))
+
+        # Cadre de navigation pour la pagination
+        nav_frame = ctk.CTkFrame(blueprint_window)
+        nav_frame.pack(side="bottom", fill="x")
+
+        prev_button = ctk.CTkButton(nav_frame, text="Précédent", command=self.prev_site_page)
+        prev_button.pack(side="left", padx=10, pady=10)
+
+        # Label pour afficher le numéro de page
+        self.page_label = ctk.CTkLabel(nav_frame, text=f"Page {self.current_site_page}")
+        self.page_label.pack(side="left", padx=10, pady=10)
+
+        next_button = ctk.CTkButton(nav_frame, text="Suivant", command=self.next_site_page)
+        next_button.pack(side="right", padx=10, pady=10)
+
+        # Charger les données de la première page
+        self.load_scim_blueprints(self.current_site_page)
+
+    def load_scim_blueprints(self, site_page):
+        """Charge les blueprints depuis la page spécifiée du site"""
+        # Efface les éléments précédents dans le cadre
+        for widget in self.scrollable_frame.winfo_children():
+            widget.destroy()
+
+        # Mettre à jour le label de numéro de page
+        self.page_label.configure(text=f"Page {site_page}")
+
+        # Construire l'URL pour la page actuelle
+        url = f"https://satisfactory-calculator.com/fr/blueprints/index/index/p/{site_page}"
+
+        # Récupération des données des blueprints
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+        blueprint_items = soup.find_all("div", class_="card-body")
+
+        # Afficher les blueprints pour la page actuelle du site
+        for item in blueprint_items:
+            # Récupération du lien, de l'image, du titre et de l'ID du blueprint
+            link = item.find("a", href=True)
+            if link is None:
+                continue
+
+            # Récupération du titre dans <h6><strong>
+            h6_tag = item.find("h6")
+            title_tag = h6_tag.find("strong") if h6_tag else None
+            title = title_tag.get_text(strip=True) if title_tag else "Sans Titre"
+
+            # Récupération de l'ID dans le href
+            href = link.get("href", "")
+            blueprint_id = href.split("/id/")[1].split("/")[0] if "/id/" in href else None
+            if not blueprint_id:
+                continue
+
+            # Récupération de l'URL de l'image dans <img>
+            image_tag = link.find("img")
+            image_url = image_tag["src"] if image_tag and "src" in image_tag.attrs else None
+            if not image_url:
+                continue
+
+            # Récupérer la description courte du blueprint
+            description = self.get_blueprint_description(blueprint_id)
+
+            # Téléchargement de l'image
+            try:
+                img_data = requests.get(image_url).content
+                img = Image.open(io.BytesIO(img_data)).resize((100, 100))
+                img_tk = ImageTk.PhotoImage(img)
+            except Exception as e:
+                print(f"Erreur lors du téléchargement de l'image : {e}")
+                continue
+
+            # Affichage de l'image et du titre dans le cadre
+            frame = ctk.CTkFrame(self.scrollable_frame)
+            frame.pack(fill="x", pady=5)
+
+            img_label = ctk.CTkLabel(frame, image=img_tk, text=None)
+            img_label.image = img_tk
+            img_label.pack(side="left")
+
+            title_label = ctk.CTkLabel(frame, text=title, font=("Arial", 12), cursor="hand2")
+            title_label.pack(side="left", padx=10)
+            title_label.bind("<Button-1>", lambda e, bid=blueprint_id, t=title: self.download_blueprint(bid, t))
+
+            # Ajouter la description sous le titre
+            desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), wraplength=900, justify="left")
+            desc_label.pack(side="left", padx=10, pady=5)
+
+    def download_blueprint(self, blueprint_id, title):
+        """Télécharge les fichiers .sbp et .sbpcfg pour un blueprint sélectionné"""
+        base_url = "https://satisfactory-calculator.com/fr/blueprints/index/download"
+        sbp_url = f"{base_url}/id/{blueprint_id}"
+        sbpcfg_url = f"{base_url}-cfg/id/{blueprint_id}"
+
+        try:
+            # Téléchargement du fichier .sbp
+            sbp_response = requests.get(sbp_url)
+            sbpcfg_response = requests.get(sbpcfg_url)
+
+            if sbp_response.status_code == 200 and sbpcfg_response.status_code == 200:
+                # Sauvegarder les fichiers téléchargés dans le repertoire windows
+                download_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+
+                with open(os.path.join(download_dir, f"{title}.sbp"), "wb") as f:
+                    f.write(sbp_response.content)
+                with open(os.path.join(download_dir, f"{title}.sbpcfg"), "wb") as f:
+                    f.write(sbpcfg_response.content)
+
+                messagebox.showinfo("Téléchargement Réussi", f"{title} a été téléchargé avec succès dans le dossier Téléchargements!")
+            else:
+                messagebox.showerror("Erreur", "Impossible de télécharger les fichiers du blueprint.")
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Une erreur est survenue lors du téléchargement : {e}")
+
+        # # Rafraîchir la liste des fichiers dans la source
+        # self.load_files()
+
+    def next_site_page(self):
+        """Affiche la page suivante de blueprints sur le site"""
+        self.current_site_page += 1
+        self.load_scim_blueprints(self.current_site_page)
+        self.canvas.yview_moveto(0)  # Remonter en haut de la page
+
+    def prev_site_page(self):
+        """Affiche la page précédente de blueprints sur le site"""
+        if self.current_site_page > 1:
+            self.current_site_page -= 1
+            self.load_scim_blueprints(self.current_site_page)
+            self.canvas.yview_moveto(0)  # Remonter en haut de la page
+
+    def get_blueprint_description(self, blueprint_id):
+        """Récupère et retourne une courte description (150 mots) du blueprint"""
+        url = f"https://satisfactory-calculator.com/fr/blueprints/index/details/id/{blueprint_id}"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # Essayer plusieurs approches pour trouver la description
+        description_tag = None
+
+        # 1. Rechercher dans des blockquotes indépendants
+        blockquote_tags = soup.find_all("blockquote")
+        for blockquote in blockquote_tags:
+            if blockquote.get_text(strip=True):  # S'assurer qu'il y a du texte
+                description_tag = blockquote
+                break
+
+        # 2. Rechercher dans une balise alternative si aucun blockquote ne contient la description
+        if not description_tag:
+            possible_tags = ["p", "div"]
+            for tag in possible_tags:
+                description_tag = soup.find(tag, {"class": "description"})  # Ajuster la classe si besoin
+                if description_tag and description_tag.get_text(strip=True):
+                    break
+
+        # Extraire et limiter la description si trouvée
+        if description_tag:
+            description = description_tag.get_text(strip=True)
+            short_description = " ".join(description.split()[:150]) + "..."
+        else:
+            # Si rien n'est trouvé, message pour aider à l'inspection
+            print("Aucune description trouvée")  # Limite d'affichage à 1000 caractères
+            short_description = "Description non disponible"
+
+        return short_description
+
+    def on_mouse_wheel(self, event, canvas):
+        """Gère le défilement avec la molette de la souris dans le canvas"""
+        canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
     def load_blueprints(self):
         print('Trying to load bp')
@@ -412,6 +624,8 @@ class Lang():
                 ret = 'Informations additionnelles :' if self.current_lang == 'fr' else 'Additional informations :'
             case 'local_only_note':
                 ret = '- Cela ne marche qu\'en local, pas sur serveurs dédiés' if self.current_lang == 'fr' else '- This only works locally, not on dedicated servers'
+            case 'button_open_scim_txt':
+                ret = 'Ouvrir Satisfactory Calculator (SCIM)' if self.current_lang == 'fr' else 'Open Satisfactory Calculator (SCIM)'
             case _:
                 ret = 'no trad'
         return ret
