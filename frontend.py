@@ -19,10 +19,16 @@ class Sidebar(ctk.CTkFrame):
         else:
             self.game_folder = False
 
+        # Tronquer le chemin pour n'afficher que ce qu'il y a après /SaveGames/
+        if self.game_folder:
+            chemin_tronque = self.game_folder.split('/SaveGames/', 1)[-1]
+        else:
+            chemin_tronque = self.winfo_toplevel().lang.txt('label_game_folder_notset_txt')
+
         txt_label_game_folder = self.winfo_toplevel().lang.txt('label_game_folder')
         self.label_game_folder = ctk.CTkLabel(
             self,
-            text="%s : %s" % (txt_label_game_folder, self.game_folder),
+            text="%s : %s" % (txt_label_game_folder, chemin_tronque),
             font=self.winfo_toplevel().button_font,
         )
 
@@ -189,11 +195,17 @@ class App(ctk.CTk):
         q = filedialog.askdirectory(initialdir=chemin_par_defaut)
 
         if q:
+            # Tronquer le chemin pour n'afficher que la partie après /SaveGames/
+            chemin_tronque = q.split('/SaveGames/', 1)[-1]
+
             txt_label_game_folder = self.lang.txt('label_game_folder')
-            self.sidebar.label_game_folder.configure(text="%s : %s" % (txt_label_game_folder, q))
+            self.sidebar.label_game_folder.configure(text="%s : %s" % (txt_label_game_folder, chemin_tronque))
             self.sidebar.button_game_folder.configure(text=self.lang.txt('button_game_folder_already_set_txt'))
+        
+            # Mise à jour dans la configuration
             self.backend.set_config(title='game_folder', new_value=q)
             self.load_blueprints()
+
 
     def add_blueprint_button_callback(self):
         game_folder_data = self.backend.config['game_folder']
