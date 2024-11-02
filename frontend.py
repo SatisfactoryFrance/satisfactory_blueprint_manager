@@ -1,6 +1,7 @@
 from backend import Backend
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
+from customtkinter import CTkImage
 import webbrowser
 import os
 import io
@@ -342,8 +343,8 @@ class App(ctk.CTk):
             # Téléchargement de l'image
             try:
                 img_data = requests.get(image_url).content
-                img = Image.open(io.BytesIO(img_data)).resize((100, 100))
-                img_tk = ImageTk.PhotoImage(img)
+                img = Image.open(io.BytesIO(img_data))
+                ctk_img = CTkImage(img, size=(100, 100))
             except Exception as e:
                 print(f"Erreur lors du téléchargement de l'image : {e}")
                 continue
@@ -352,8 +353,7 @@ class App(ctk.CTk):
             frame = ctk.CTkFrame(self.scrollable_frame)
             frame.pack(fill="x", pady=5)
 
-            img_label = ctk.CTkLabel(frame, image=img_tk, text=None)
-            img_label.image = img_tk
+            img_label = ctk.CTkLabel(frame, image=ctk_img, text=None)
             img_label.pack(side="left")
 
             title_label = ctk.CTkLabel(frame, text=title, font=("Arial", 12), cursor="hand2")
