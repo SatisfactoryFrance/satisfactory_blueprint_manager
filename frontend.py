@@ -1,10 +1,10 @@
-BUILD_NUMBER = "v0.0.8"
-
 from backend import Backend
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 import webbrowser
 import os
+
+BUILD_NUMBER = "v0.0.8"
 
 
 class Sidebar(ctk.CTkFrame):
