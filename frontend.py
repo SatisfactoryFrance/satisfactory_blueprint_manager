@@ -206,8 +206,10 @@ class App(ctk.CTk):
             )
 
             if q:
-                if not self.backend.check_upload_blueprints(q):
+                if not self.backend.check_blueprints_cbpcfg(q):
                     messagebox.showerror(self.lang.txt('messagebox_erreur'), self.lang.txt('messagebox_erreur_no_sbpcfg'))
+                elif not self.backend.check_if_same_blueprints(q):
+                    messagebox.showerror(self.lang.txt('messagebox_erreur'), self.lang.txt('messagebox_erreur_already_same_blueprint'))
                 else:
                     self.backend.upload_blueprints(q)
                     self.load_blueprints()
@@ -338,6 +340,8 @@ class Lang():
                 ret = 'Veuillez redémarrer Satisfactory Blueprint Manager pour prendre en compte le changement de langue' if self.current_lang == 'fr' else 'Please restart Satisfactory Blueprint Manager in order to switch language'
             case 'messagebox_erreur':
                 ret = 'Erreur' if self.current_lang == 'fr' else 'Error'
+            case 'messagebox_erreur_already_same_blueprint':
+                ret = 'Erreur : ce blueprint existe déjà dans votre sauvegarde' if self.current_lang == 'fr' else 'Error : this blueprint already exists in your save'
             case 'messagebox_confirm_delete':
                 ret = 'Confirmation de suppression' if self.current_lang == 'fr' else 'Please confirm'
             case 'messagebox_config_delete_txt':

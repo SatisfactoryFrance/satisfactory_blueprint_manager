@@ -46,12 +46,23 @@ class Backend():
                 os.remove(sbpcfg_file)
                 print('Removing %s' % sbpcfg_file)
 
-    def check_upload_blueprints(self, blueprints):
+    def check_blueprints_cbpcfg(self, blueprints):
         for bp in blueprints:
             full_file_without_extension = str(Path(bp).parent) + '/' + str(Path(bp).stem)
             sbpcfg_file_source = full_file_without_extension + '.sbpcfg'
             print('Checking if %s exists' % sbpcfg_file_source)
             if not os.path.isfile(sbpcfg_file_source):
+                return False
+                break
+        return True
+
+    def check_if_same_blueprints(self, blueprints):
+        game_folder = self.config['game_folder']
+        for bp in blueprints:
+            file = str(Path(bp).stem) + '.sbp'
+            full_file = game_folder + '/' + file
+            print('Checking if %s already exists' % full_file)
+            if os.path.isfile(full_file):
                 return False
                 break
         return True
