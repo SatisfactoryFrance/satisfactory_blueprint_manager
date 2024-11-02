@@ -253,6 +253,12 @@ class App(ctk.CTk):
         blueprint_window.title("Liste des Blueprints de Satisfactory Calculator")
         blueprint_window.geometry("1000x600")
 
+        blueprint_window.transient(self)  # Transitoire
+        blueprint_window.lift()  # fenêtre au premier plan
+        blueprint_window.focus_force()  # Force le focus
+
+        blueprint_window.after(10, lambda: blueprint_window.focus_force())
+
         # Cadre pour afficher la liste des blueprints
         self.canvas = ctk.CTkCanvas(blueprint_window)
         scrollbar = ctk.CTkScrollbar(blueprint_window, orientation="vertical", command=self.canvas.yview)
