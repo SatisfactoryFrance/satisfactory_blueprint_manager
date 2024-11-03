@@ -34,7 +34,7 @@ class Sidebar(ctk.CTkFrame):
         self.label_game_folder = ctk.CTkLabel(
             self,
             text="%s : %s" % (txt_label_game_folder, chemin_tronque),
-            font=self.winfo_toplevel().button_font,
+            font=ctk.CTkFont(family="Helvetica", size=13, weight="bold"),
         )
 
         self.label_game_folder.grid(
@@ -563,7 +563,7 @@ class Lang():
             case 'button_supprimer_bp_txt':
                 ret = 'Supprimer' if self.current_lang == 'fr' else 'Delete'
             case 'label_game_folder':
-                ret = 'Le dossier des blueprints de ma save' if self.current_lang == 'fr' else 'My blueprint\'s folder is'
+                ret = 'Dossier actif' if self.current_lang == 'fr' else 'Active folder'
             case 'label_game_folder_notset_txt':
                 ret = 'non défini' if self.current_lang == 'fr' else 'undefined'
             case 'messagebox_switch_lang':
