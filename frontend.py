@@ -273,25 +273,35 @@ class App(ctk.CTk):
         self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
         self.canvas.configure(yscrollcommand=scrollbar.set)
 
-        self.canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
+        self.canvas.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
 
         # Lier la molette de la souris pour le défilement
         self.canvas.bind_all("<MouseWheel>", lambda event: self.on_mouse_wheel(event, self.canvas))
 
         # Cadre de navigation pour la pagination
         nav_frame = ctk.CTkFrame(blueprint_window)
-        nav_frame.pack(side="bottom", fill="x")
+        nav_frame.grid(row=1, column=0, sticky="ew")
+
+        # Configurer la grille pour le cadre de navigation
+        nav_frame.columnconfigure(0, weight=1)  # Colonne pour le bouton "Précédent"
+        nav_frame.columnconfigure(1, weight=0)  # Colonne pour le label de page (pas besoin d'étendre)
+        nav_frame.columnconfigure(2, weight=1)  # Colonne pour le bouton "Suivant"
+        nav_frame.rowconfigure(0, weight=1)  # Ligne pour la liste des blueprints
 
         prev_button = ctk.CTkButton(nav_frame, text="Précédent", command=self.prev_site_page)
-        prev_button.pack(side="left", padx=10, pady=10)
+        prev_button.grid(row=0, column=0, padx=10, pady=10, sticky="ew")  # Bouton "Précédent"
 
         # Label pour afficher le numéro de page
         self.page_label = ctk.CTkLabel(nav_frame, text=f"Page {self.current_site_page}")
-        self.page_label.pack(side="left", padx=10, pady=10)
+        self.page_label.grid(row=0, column=1, padx=10, pady=10)  # Label de page (sans sticky)
 
         next_button = ctk.CTkButton(nav_frame, text="Suivant", command=self.next_site_page)
-        next_button.pack(side="right", padx=10, pady=10)
+        next_button.grid(row=0, column=2, padx=10, pady=10, sticky="ew")
+
+         # Configurer la grille principale pour remplir la fenêtre
+        blueprint_window.grid_rowconfigure(0, weight=1)
+        blueprint_window.grid_columnconfigure(0, weight=1)
 
         # Charger les données de la première page
         self.load_scim_blueprints(self.current_site_page)
