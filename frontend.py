@@ -213,6 +213,19 @@ class App(ctk.CTk):
         if game_folder_data != 'undefined':
             self.load_blueprints()
 
+        self.main_window.bp_list.bind("<MouseWheel>", self.scroll_main_window)
+
+    # Définir la méthode avant l'utilisation
+    def scroll_scim_window(self, event):
+        """Gère le défilement dans la fenêtre SCIM."""
+        try:
+            if event.delta < 0:
+                self.canvas.yview_scroll(1, "units")  # Scroll down
+            else:
+                self.canvas.yview_scroll(-1, "units")  # Scroll up
+        except Exception as e:
+            print(f"Erreur lors du défilement dans la fenêtre SCIM : {e}")
+
     def game_folder_button_callback(self):
         chemin_par_defaut = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
         q = filedialog.askdirectory(initialdir=chemin_par_defaut)
@@ -249,16 +262,16 @@ class App(ctk.CTk):
                     self.load_blueprints()
                     messagebox.showinfo(self.lang.txt('messagebox_ajout_reussi'), self.lang.txt('messagebox_txt_ajout_reussi'))
 
+##################################### ON PASSE SUR L'OUVERTURE DE LA FENETRE BP DE SCIM ###########################
+
     def open_scim_button_callback(self):
         blueprint_window = ctk.CTkToplevel(self)
         blueprint_window.title("Liste des Blueprints de Satisfactory Calculator")
         blueprint_window.geometry("1000x600")
 
-        blueprint_window.transient(self)  # Transitoire
-        blueprint_window.lift()  # fenêtre au premier plan
-        blueprint_window.focus_force()  # Force le focus
-
-        blueprint_window.after(10, lambda: blueprint_window.focus_force())
+        blueprint_window.transient(self)
+        blueprint_window.lift()
+        blueprint_window.focus_force()
 
         # Cadre pour afficher la liste des blueprints
         self.canvas = ctk.CTkCanvas(blueprint_window)
@@ -276,41 +289,58 @@ class App(ctk.CTk):
         self.canvas.grid(row=0, column=0, sticky="nsew")
         scrollbar.grid(row=0, column=1, sticky="ns")
 
-        # Lier la molette de la souris pour le défilement
-        self.canvas.bind("<MouseWheel>", lambda event: self.on_mouse_wheel(event, self.canvas)) # Cette ligne enleve l'erreur mais ne permet pas de scroll dans la liste BP
+        # Lier la molette de la souris au canvas dans la fenêtre SCIM
+        blueprint_window.bind("<MouseWheel>", self.scroll_scim_window)
 
-        # self.canvas.bind_all("<MouseWheel>", lambda event: self.on_mouse_wheel(event, self.canvas)) # Cette ligne permet de scroll dans chaque fenetre mais fait une exception lorsqu'on revient sur la fenetre principal après avoir ouvert la fenetre de liste BP
-
-        # Cadre de navigation pour la pagination
+        # Cadre de navigation pour la pagination (inchangé)
         nav_frame = ctk.CTkFrame(blueprint_window)
         nav_frame.grid(row=1, column=0, sticky="ew")
 
-        # Configurer la grille pour le cadre de navigation
-        nav_frame.columnconfigure(0, weight=1)  # Colonne pour le bouton "Précédent"
-        nav_frame.columnconfigure(1, weight=0)  # Colonne pour le label de page (pas besoin d'étendre)
-        nav_frame.columnconfigure(2, weight=1)  # Colonne pour le bouton "Suivant"
-        nav_frame.rowconfigure(0, weight=1)  # Ligne pour la liste des blueprints
+        nav_frame.columnconfigure(0, weight=1)
+        nav_frame.columnconfigure(1, weight=0)
+        nav_frame.columnconfigure(2, weight=1)
+        nav_frame.rowconfigure(0, weight=1)
 
         prev_button = ctk.CTkButton(nav_frame, text="Précédent", command=self.prev_site_page)
-        prev_button.grid(row=0, column=0, padx=10, pady=10, sticky="ew")  # Bouton "Précédent"
+        prev_button.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 
-        # Label pour afficher le numéro de page
         self.page_label = ctk.CTkLabel(nav_frame, text=f"Page {self.current_site_page}")
-        self.page_label.grid(row=0, column=1, padx=10, pady=10)  # Label de page (sans sticky)
+        self.page_label.grid(row=0, column=1, padx=10, pady=10)
 
         next_button = ctk.CTkButton(nav_frame, text="Suivant", command=self.next_site_page)
         next_button.grid(row=0, column=2, padx=10, pady=10, sticky="ew")
 
-         # Configurer la grille principale pour remplir la fenêtre
         blueprint_window.grid_rowconfigure(0, weight=1)
         blueprint_window.grid_columnconfigure(0, weight=1)
 
-        # Charger les données de la première page
         self.load_scim_blueprints(self.current_site_page)
 
-    def on_mouse_wheel(self, event, canvas):
-        """Gère le défilement avec la molette de la souris dans le canvas"""
-        canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+    def bind_scim_mousewheel(self, blueprint_window):
+        """Lier la molette de la souris au défilement dans la fenêtre SCIM."""
+        blueprint_window.bind_all("<MouseWheel>", self.scroll_scim_window)
+
+    def scroll_scim_window(self, event):
+        """Gère le défilement dans la fenêtre SCIM."""
+        try:
+            if event.delta < 0:
+                self.canvas.yview_scroll(1, "units")  # Scroll down
+            else:
+                self.canvas.yview_scroll(-1, "units")  # Scroll up
+        except Exception as e:
+            print(f"Erreur lors du défilement dans la fenêtre SCIM : {e}")
+
+    def scroll_main_window(self, event):
+        """Gère le défilement dans la fenêtre principale."""
+        try:
+            # Simulez le scroll en utilisant un déplacement de la scrollbar (on ajoute ou soustrait pour simuler le mouvement)
+            if event.delta < 0:
+                self.main_window.bp_list._parent_canvas.yview_scroll(1, "units")  # Scroll down
+            else:
+                self.main_window.bp_list._parent_canvas.yview_scroll(-1, "units")  # Scroll up
+        except Exception as e:
+            print(f"Erreur lors du défilement de la fenêtre principale : {e}")
+
+    ##################################### ON PASSE SUR LE LOAD BP DE SCIM ###########################
 
     def load_scim_blueprints(self, site_page):
         """Charge les blueprints depuis la page spécifiée du site"""
