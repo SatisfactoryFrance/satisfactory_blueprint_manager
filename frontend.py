@@ -3,6 +3,7 @@ import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 from customtkinter import CTkImage
 import webbrowser
+import threading
 import os
 import io
 from bs4 import BeautifulSoup
@@ -313,7 +314,14 @@ class App(ctk.CTk):
         blueprint_window.grid_rowconfigure(0, weight=1)
         blueprint_window.grid_columnconfigure(0, weight=1)
 
-        self.load_scim_blueprints(self.current_site_page)
+        # Afficher un message "Téléchargement en cours"
+        self.loading_label = ctk.CTkLabel(self.scrollable_frame, text="Téléchargement en cours...")
+        self.loading_label.pack(pady=20)
+
+        # Utiliser un thread pour charger les blueprints
+        threading.Thread(target=self.load_scim_blueprints, args=(self.current_site_page,), daemon=True).start()
+
+
 
     def bind_scim_mousewheel(self, blueprint_window):
         """Lier la molette de la souris au défilement dans la fenêtre SCIM."""
@@ -442,15 +450,24 @@ class App(ctk.CTk):
     def next_site_page(self):
         """Affiche la page suivante de blueprints sur le site"""
         self.current_site_page += 1
-        self.load_scim_blueprints(self.current_site_page)
-        self.canvas.yview_moveto(0)  # Remonter en haut de la page
+        self.update_page()
 
     def prev_site_page(self):
         """Affiche la page précédente de blueprints sur le site"""
         if self.current_site_page > 1:
             self.current_site_page -= 1
-            self.load_scim_blueprints(self.current_site_page)
-            self.canvas.yview_moveto(0)  # Remonter en haut de la page
+            self.update_page()
+
+    def update_page(self):
+        """Met à jour la page des blueprints en utilisant un thread"""
+        # Effacer le cadre et afficher un message "Téléchargement en cours"
+        for widget in self.scrollable_frame.winfo_children():
+            widget.destroy()
+        self.loading_label = ctk.CTkLabel(self.scrollable_frame, text="Téléchargement en cours...")
+        self.loading_label.pack(pady=20)
+
+        # Utiliser un thread pour charger les blueprints
+        threading.Thread(target=self.load_scim_blueprints, args=(self.current_site_page,), daemon=True).start()
 
     def get_blueprint_description(self, blueprint_id):
         """Récupère et retourne une courte description (150 mots) du blueprint"""
