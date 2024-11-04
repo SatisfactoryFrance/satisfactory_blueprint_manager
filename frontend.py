@@ -277,7 +277,9 @@ class App(ctk.CTk):
         scrollbar.grid(row=0, column=1, sticky="ns")
 
         # Lier la molette de la souris pour le défilement
-        self.canvas.bind_all("<MouseWheel>", lambda event: self.on_mouse_wheel(event, self.canvas))
+        self.canvas.bind("<MouseWheel>", lambda event: self.on_mouse_wheel(event, self.canvas)) # Cette ligne enleve l'erreur mais ne permet pas de scroll dans la liste BP
+
+        # self.canvas.bind_all("<MouseWheel>", lambda event: self.on_mouse_wheel(event, self.canvas)) # Cette ligne permet de scroll dans chaque fenetre mais fait une exception lorsqu'on revient sur la fenetre principal après avoir ouvert la fenetre de liste BP
 
         # Cadre de navigation pour la pagination
         nav_frame = ctk.CTkFrame(blueprint_window)
