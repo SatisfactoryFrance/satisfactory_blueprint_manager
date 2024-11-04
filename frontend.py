@@ -308,6 +308,10 @@ class App(ctk.CTk):
         # Charger les données de la première page
         self.load_scim_blueprints(self.current_site_page)
 
+    def on_mouse_wheel(self, event, canvas):
+        """Gère le défilement avec la molette de la souris dans le canvas"""
+        canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
     def load_scim_blueprints(self, site_page):
         """Charge les blueprints depuis la page spécifiée du site"""
         # Efface les éléments précédents dans le cadre
@@ -452,10 +456,6 @@ class App(ctk.CTk):
             short_description = "Description non disponible"
 
         return short_description
-
-    def on_mouse_wheel(self, event, canvas):
-        """Gère le défilement avec la molette de la souris dans le canvas"""
-        canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
     def load_blueprints(self):
         print('Trying to load bp')
