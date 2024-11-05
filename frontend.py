@@ -3,12 +3,12 @@ import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 from customtkinter import CTkImage
 import webbrowser
-import threading
 import os
+import threading
 import io
 from bs4 import BeautifulSoup
 import requests
-from PIL import Image, ImageTk
+from PIL import Image
 
 BUILD_NUMBER = "v0.8.0"
 
@@ -263,19 +263,20 @@ class App(ctk.CTk):
                     self.load_blueprints()
                     messagebox.showinfo(self.lang.txt('messagebox_ajout_reussi'), self.lang.txt('messagebox_txt_ajout_reussi'))
 
-##################################### ON PASSE SUR L'OUVERTURE DE LA FENETRE BP DE SCIM ###########################
+# ON PASSE SUR L'OUVERTURE DE LA FENETRE BP DE SCIM
 
     def open_scim_button_callback(self):
         blueprint_window = ctk.CTkToplevel(self)
         blueprint_window.title("Liste des Blueprints de Satisfactory Calculator")
-        blueprint_window.geometry("1240x700")
-
+        blueprint_window.geometry("1500x700")
+        blueprint_window.resizable(True, True)
         blueprint_window.transient(self)
         blueprint_window.lift()
-        blueprint_window.focus_force()
+
+        # blueprint_window.focus_force()
 
         # Cadre pour afficher la liste des blueprints
-        self.canvas = ctk.CTkCanvas(blueprint_window)
+        self.canvas = ctk.CTkCanvas(blueprint_window, bg="#2f2f2f", highlightthickness=0)
         scrollbar = ctk.CTkScrollbar(blueprint_window, orientation="vertical", command=self.canvas.yview)
         self.scrollable_frame = ctk.CTkFrame(self.canvas)
 
@@ -285,8 +286,7 @@ class App(ctk.CTk):
         )
 
         self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-        self.canvas.configure(yscrollcommand=scrollbar.set)
-
+        self.canvas.configure(yscrollcommand=scrollbar.set, background='#323232', highlightthickness=0)
         self.canvas.grid(row=0, column=0, sticky="nsew")
         scrollbar.grid(row=0, column=1, sticky="ns")
 
@@ -321,21 +321,9 @@ class App(ctk.CTk):
         # Utiliser un thread pour charger les blueprints
         threading.Thread(target=self.load_scim_blueprints, args=(self.current_site_page,), daemon=True).start()
 
-
-
     def bind_scim_mousewheel(self, blueprint_window):
         """Lier la molette de la souris au défilement dans la fenêtre SCIM."""
         blueprint_window.bind_all("<MouseWheel>", self.scroll_scim_window)
-
-    def scroll_scim_window(self, event):
-        """Gère le défilement dans la fenêtre SCIM."""
-        try:
-            if event.delta < 0:
-                self.canvas.yview_scroll(1, "units")  # Scroll down
-            else:
-                self.canvas.yview_scroll(-1, "units")  # Scroll up
-        except Exception as e:
-            print(f"Erreur lors du défilement dans la fenêtre SCIM : {e}")
 
     def scroll_main_window(self, event):
         """Gère le défilement dans la fenêtre principale."""
@@ -348,7 +336,7 @@ class App(ctk.CTk):
         except Exception as e:
             print(f"Erreur lors du défilement de la fenêtre principale : {e}")
 
-    ##################################### ON PASSE SUR LE LOAD BP DE SCIM ###########################
+    # ON PASSE SUR LE LOAD BP DE SCIM
 
     def load_scim_blueprints(self, site_page):
         """Charge les blueprints depuis la page spécifiée du site"""
@@ -398,7 +386,7 @@ class App(ctk.CTk):
             try:
                 img_data = requests.get(image_url).content
                 img = Image.open(io.BytesIO(img_data))
-                ctk_img = CTkImage(img, size=(100, 100))
+                ctk_img = CTkImage(img, size=(200, 83.3))
             except Exception as e:
                 print(f"Erreur lors du téléchargement de l'image : {e}")
                 continue
@@ -410,12 +398,12 @@ class App(ctk.CTk):
             img_label = ctk.CTkLabel(frame, image=ctk_img, text=None)
             img_label.pack(side="left")
 
-            title_label = ctk.CTkLabel(frame, text=title, font=("Arial", 12), cursor="hand2")
+            title_label = ctk.CTkLabel(frame, width=300, text=title, font=("Arial", 12), cursor="hand2")
             title_label.pack(side="left", padx=10)
             title_label.bind("<Button-1>", lambda e, bid=blueprint_id, t=title: self.download_blueprint(bid, t))
 
             # Ajouter la description sous le titre
-            desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), wraplength=900, justify="left")
+            desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), width=950, wraplength=950, justify="left")
             desc_label.pack(side="left", padx=10, pady=5)
 
     def download_blueprint(self, blueprint_id, title):
