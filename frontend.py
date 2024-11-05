@@ -268,7 +268,7 @@ class App(ctk.CTk):
     def open_scim_button_callback(self):
         blueprint_window = ctk.CTkToplevel(self)
         blueprint_window.title("Liste des Blueprints de Satisfactory Calculator")
-        blueprint_window.geometry("1000x600")
+        blueprint_window.geometry("1240x700")
 
         blueprint_window.transient(self)
         blueprint_window.lift()
