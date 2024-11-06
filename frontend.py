@@ -553,7 +553,7 @@ class App(ctk.CTk):
 
     def show_about(self):
         """Affiche une boîte de dialogue À propos."""
-        messagebox.showinfo("À propos", self.lang.txt('software_aboutsbm'))
+        messagebox.showinfo(self.lang.txt('menu_about'), self.lang.txt('software_aboutsbm'))
 
     def show_help(self):
 
