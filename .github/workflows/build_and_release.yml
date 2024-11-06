@@ -36,6 +36,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}  # Utilise le tag pour créer la Release
-          release_name: Release ${{ github.ref_name }}
-          files: dist/SBM.exe   # Chemin de votre fichier .exe généré
+          name: Release ${{ github.ref_name }}
+          artifacts: dist/SBM.exe   # Chemin de votre fichier .exe généré
           draft: true 
