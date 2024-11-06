@@ -398,7 +398,7 @@ class App(ctk.CTk):
             img_label = ctk.CTkLabel(frame, image=ctk_img, text=None)
             img_label.pack(side="left")
 
-            title_label = ctk.CTkLabel(frame, width=300, text=title, font=("Arial", 12), cursor="hand2")
+            title_label = ctk.CTkLabel(frame, width=300, text=title, font=("Arial", 12, "bold"), cursor="hand2")
             title_label.pack(side="left", padx=10)
             title_label.bind("<Button-1>", lambda e, bid=blueprint_id, t=title: self.download_blueprint(bid, t))
 
