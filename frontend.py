@@ -267,7 +267,7 @@ class App(ctk.CTk):
 
     def open_scim_button_callback(self):
         blueprint_window = ctk.CTkToplevel(self)
-        blueprint_window.title("Liste des Blueprints de Satisfactory Calculator")
+        blueprint_window.title(self.lang.txt('title_scim_windows'))
         blueprint_window.geometry("1500x700")
         blueprint_window.resizable(True, True)
         blueprint_window.transient(self)
@@ -302,13 +302,13 @@ class App(ctk.CTk):
         nav_frame.columnconfigure(2, weight=1)
         nav_frame.rowconfigure(0, weight=1)
 
-        prev_button = ctk.CTkButton(nav_frame, text="Précédent", command=self.prev_site_page)
+        prev_button = ctk.CTkButton(nav_frame, text=self.lang.txt('previous_txt'), command=self.prev_site_page)
         prev_button.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 
         self.page_label = ctk.CTkLabel(nav_frame, text=f"Page {self.current_site_page}")
         self.page_label.grid(row=0, column=1, padx=10, pady=10)
 
-        next_button = ctk.CTkButton(nav_frame, text="Suivant", command=self.next_site_page)
+        next_button = ctk.CTkButton(nav_frame, text=self.lang.txt('next_txt'), command=self.next_site_page)
         next_button.grid(row=0, column=2, padx=10, pady=10, sticky="ew")
 
         blueprint_window.grid_rowconfigure(0, weight=1)
@@ -679,6 +679,12 @@ class Lang():
                 ret = '- Cela ne marche qu\'en local, pas sur serveurs dédiés' if self.current_lang == 'fr' else '- This only works locally, not on dedicated servers'
             case 'button_open_scim_txt':
                 ret = 'Ouvrir Satisfactory Calculator (SCIM)' if self.current_lang == 'fr' else 'Open Satisfactory Calculator (SCIM)'
+            case 'title_scim_windows':
+                ret = 'Liste des blueprints de Satisfactory Calculator' if self.current_lang == 'fr' else 'List of Satisfactory Calculator blueprints'
+            case 'previous_txt':
+                ret = 'Précédent' if self.current_lang == 'fr' else 'Previous'            
+            case 'next_txt':
+                ret = 'Suivant' if self.current_lang == 'fr' else 'Next'
             case _:
                 ret = 'no trad'
         return ret
