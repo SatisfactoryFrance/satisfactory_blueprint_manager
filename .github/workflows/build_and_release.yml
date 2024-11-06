@@ -2,8 +2,8 @@ name: Build and Release .exe
 
 on:
   push:
-    tags:
-      - 'v*'   # si le push commence par v*, ca crée la release
+    branches:
+      - 'main'
 
 jobs:
   build:
