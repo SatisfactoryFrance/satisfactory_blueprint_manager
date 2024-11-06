@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import requests
 from PIL import Image
 
-BUILD_NUMBER = "v0.15.1"
+BUILD_NUMBER = "v0.9.0"
 
 
 class Sidebar(ctk.CTkFrame):
