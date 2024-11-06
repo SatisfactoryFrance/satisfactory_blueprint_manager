@@ -229,7 +229,8 @@ class App(ctk.CTk):
 
     def game_folder_button_callback(self):
         chemin_par_defaut = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
-        q = filedialog.askdirectory(initialdir=chemin_par_defaut)
+        q = filedialog.askdirectory(initialdir=chemin_par_defaut,
+            title=self.lang.txt('filedialog_ajout_dossier'))
 
         if q:
             # Tronquer le chemin pour n'afficher que la partie après /SaveGames/
@@ -685,6 +686,8 @@ class Lang():
                 ret = 'Précédent' if self.current_lang == 'fr' else 'Previous'            
             case 'next_txt':
                 ret = 'Suivant' if self.current_lang == 'fr' else 'Next'
+            case 'filedialog_ajout_dossier':
+                ret = 'Choisir un dossier' if self.current_lang == 'fr' else 'Choose a folder'
             case _:
                 ret = 'no trad'
         return ret
