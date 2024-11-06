@@ -559,7 +559,7 @@ class App(ctk.CTk):
 
         """Affiche une nouvelle fenêtre avec du texte formaté pour expliquer le fonctionnement."""
         help_window = Toplevel(self)
-        help_window.title("Comment ça fonctionne ?")
+        help_window.title(self.lang.txt('menu_fonctionnement'))
         help_window.geometry("500x400")
 
         # Zone de texte avec scrollbar
