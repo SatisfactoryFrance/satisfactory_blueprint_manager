@@ -632,7 +632,7 @@ class Lang():
             case 'messagebox_txt_ajout_reussi':
                 ret = 'Le ou les blueprints sélectionnés ont été ajoutés' if self.current_lang == 'fr' else 'The selected blueprints were successfully added'
             case 'filedialog_ajout_blueprint':
-                ret = 'Choisissez le ou les fichiers sbp' if self.current_lang == 'fr' else 'Choose one of multiple sbp files'
+                ret = 'Choisissez un ou plusieurs fichiers .sbp' if self.current_lang == 'fr' else 'Choose one or many sbp files'
             case 'menu_change_game_folder':
                 ret = 'Choisir/changer le répertoire des blueprints' if self.current_lang == 'fr' else 'Modify blueprint\'s folder'
             case 'menu_quit':
