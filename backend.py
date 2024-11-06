@@ -2,6 +2,7 @@ import os
 import shutil
 from pathlib import Path
 import json
+from tkinter import filedialog
 
 
 class Backend():
@@ -20,13 +21,34 @@ class Backend():
                 json.dump(startup_config, f, indent=4, ensure_ascii=False)
 
     def list_bp_from_game_folder(self):
+        chemin_par_defaut = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
         fichiers_sbp = []
+        game_folder = self.config['game_folder']
+
+        # Vérification de l'existence du dossier
+        if not os.path.isdir(game_folder):
+        
+            # Ouvrir l'explorateur pour sélectionner un nouveau dossier
+            new_folder = filedialog.askdirectory(
+                initialdir=chemin_par_defaut,  # ou une autre valeur par défaut
+                title="bp"
+            )
+
+            # Si l'utilisateur sélectionne un dossier, on met à jour la config
+            if new_folder:
+                self.config['game_folder'] = new_folder
+                game_folder = new_folder
+            else:
+                return fichiers_sbp  # Retourne une liste vide si aucun dossier sélectionné
+
+        # Si le dossier existe (soit initialement, soit après sélection), continuer à lister les fichiers
         i = 0
-        for f in os.listdir(self.config['game_folder']):
+        for f in os.listdir(game_folder):
             if f.endswith('.sbp'):
                 fichiers_sbp.append({'id': i, 'blueprint': f})
                 i += 1
-        return fichiers_sbp
+    
+        return fichiers_sbp  # Toujours retourner une liste, même vide
 
     def set_config(self, title, new_value):
         self.config[title] = new_value
