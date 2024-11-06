@@ -644,7 +644,7 @@ class Lang():
             case 'menu_liens':
                 ret = 'Liens utiles' if self.current_lang == 'fr' else 'Useful links'
             case 'menu_fonctionnement':
-                ret = 'Comment ça marche ?' if self.current_lang == 'fr' else 'How is it working ?'
+                ret = 'Comment ça fonctionne ?' if self.current_lang == 'fr' else 'How is it working ?'
             case 'menu_about':
                 ret = 'A propos' if self.current_lang == 'fr' else 'About'
             case 'menu_help':
