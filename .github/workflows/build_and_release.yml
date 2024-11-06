@@ -28,7 +28,7 @@ jobs:
 
       - name: Build .exe file
         run: |
-          PyInstaller --name SBM --onefile --windowed --icon=icone.ico --collect-all customtkinter run.py
+          PyInstaller --name SBM --onefile --windowed --icon=icone.ico --collect-all --hidden-import=frontend customtkinter run.py
         shell: bash
 
       - name: Upload .exe to Release
