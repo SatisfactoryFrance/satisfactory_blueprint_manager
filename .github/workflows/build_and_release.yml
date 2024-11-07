@@ -28,7 +28,7 @@ jobs:
 
       - name: Build .exe file
         run: |
-          PyInstaller --name SBM --onefile --windowed --icon=icone.ico --collect-all customtkinter run.py
+          PyInstaller --name SBM --hidden-import=frontend --onefile --windowed --icon=icone.ico --collect-all customtkinter run.py
         shell: bash
 
       - name: Upload .exe to Release
@@ -36,6 +36,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}  # Utilise le tag pour créer la Release
-          release_name: Release ${{ github.ref_name }}
-          files: dist/SBM.exe   # Chemin de votre fichier .exe généré
+          name: Release ${{ github.ref_name }}
+          artifacts: dist/SBM.exe   # Chemin de votre fichier .exe généré
           draft: true 
