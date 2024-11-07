@@ -428,11 +428,14 @@ class App(ctk.CTk):
                 with open(os.path.join(download_dir, f"{title}.sbpcfg"), "wb") as f:
                     f.write(sbpcfg_response.content)
 
-                messagebox.showinfo("Téléchargement Réussi", f"{title} a été téléchargé avec succès dans le dossier Téléchargements!")
+                messagebox.showinfo(self.lang.txt('messagebox_download_success'), self.lang.txt('messagebox_download_success_message').format(title=title)
+    )
             else:
-                messagebox.showerror("Erreur", "Impossible de télécharger les fichiers du blueprint.")
+                messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_error_message')
+    )
         except Exception as e:
-            messagebox.showerror("Erreur", f"Une erreur est survenue lors du téléchargement : {e}")
+            messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_exception').format(e=e)
+    )
 
         # # Rafraîchir la liste des fichiers dans la source
         # self.load_files()
@@ -689,6 +692,16 @@ class Lang():
                 ret = 'Suivant' if self.current_lang == 'fr' else 'Next'
             case 'filedialog_ajout_dossier':
                 ret = 'Choisir un dossier' if self.current_lang == 'fr' else 'Choose a folder'
+            case 'messagebox_download_success':
+                ret = 'Téléchargement Réussi' if self.current_lang == 'fr' else 'Download Successful'
+            case 'messagebox_download_success_message':
+                ret = '{title} a été téléchargé avec succès dans le dossier Blueprints !' if self.current_lang == 'fr' else '{title} has been successfully downloaded in the Blueprints folder!'
+            case 'messagebox_download_error':
+                ret = 'Erreur' if self.current_lang == 'fr' else 'Error'
+            case 'messagebox_download_error_message':
+                ret = 'Impossible de télécharger les fichiers du blueprint.' if self.current_lang == 'fr' else 'Unable to download the blueprint files.'
+            case 'messagebox_download_exception':
+                ret = 'Une erreur est survenue lors du téléchargement : {e}' if self.current_lang == 'fr' else 'An error occurred during download: {e}'
             case _:
                 ret = 'no trad'
         return ret
