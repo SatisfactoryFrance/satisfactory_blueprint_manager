@@ -33,11 +33,7 @@ class Sidebar(ctk.CTkFrame):
         self.dropdown_game_folder.grid(column=0, row=0, padx=10, pady=5)
 
         # Bouton de mise à jour de la liste des blueprints
-        self.button_update_bp_list = ctk.CTkButton(
-            self,
-            text="Mettre à jour la liste des Blueprints",
-            command=self.update_blueprints
-        )
+        self.button_update_bp_list = ctk.CTkButton(self,text=self.winfo_toplevel().lang.txt('button_update_list_bp_txt'),command=self.update_blueprints)
         self.button_update_bp_list.grid(row=0, column=1, padx=20, pady=20)
 
     def get_blueprint_folders(self):
@@ -784,6 +780,9 @@ class Lang():
                 ret = 'Impossible de télécharger les fichiers du blueprint.' if self.current_lang == 'fr' else 'Unable to download the blueprint files.'
             case 'messagebox_download_exception':
                 ret = 'Une erreur est survenue lors du téléchargement : {e}' if self.current_lang == 'fr' else 'An error occurred during download: {e}'
+
+            case 'button_update_list_bp_txt' :
+                ret = 'Mettre à jour la liste des blueprints' if self.current_lang == 'fr' else 'Update Blueprints\'s list.'
             case _:
                 ret = 'no trad'
         return ret
