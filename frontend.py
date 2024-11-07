@@ -417,10 +417,11 @@ class App(ctk.CTk):
             # Téléchargement du fichier .sbp
             sbp_response = requests.get(sbp_url)
             sbpcfg_response = requests.get(sbpcfg_url)
+            game_folder_data = self.winfo_toplevel().backend.config['game_folder']
 
             if sbp_response.status_code == 200 and sbpcfg_response.status_code == 200:
                 # Sauvegarder les fichiers téléchargés dans le repertoire windows
-                download_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+                download_dir = game_folder_data
 
                 with open(os.path.join(download_dir, f"{title}.sbp"), "wb") as f:
                     f.write(sbp_response.content)
