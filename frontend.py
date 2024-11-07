@@ -1,7 +1,7 @@
 from backend import Backend
 import customtkinter as ctk
-from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
-from customtkinter import CTkImage
+from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar, ttk
+from customtkinter import CTk, CTkImage
 import webbrowser
 import os
 import threading
@@ -19,49 +19,131 @@ class Sidebar(ctk.CTkFrame):
 
         self.rowconfigure(1, weight=1)
 
-        game_folder_data = self.winfo_toplevel().backend.config['game_folder']
-        if game_folder_data is not None:
-            self.game_folder = game_folder_data
-        else:
-            self.game_folder = False
+        # Charger les dossiers blueprints disponibles
+        self.blueprint_folders = self.get_blueprint_folders()
+        self.selected_blueprint_folder = StringVar(value=self.blueprint_folders[0] if self.blueprint_folders else "")
 
-        # Tronquer le chemin pour n'afficher que ce qu'il y a après /SaveGames/
-        if self.game_folder:
-            chemin_tronque = self.game_folder.split('/SaveGames/', 1)[-1]
-        else:
-            chemin_tronque = self.winfo_toplevel().lang.txt('label_game_folder_notset_txt')
-
-        txt_label_game_folder = self.winfo_toplevel().lang.txt('label_game_folder')
-        self.label_game_folder = ctk.CTkLabel(
+        # Ajouter un menu déroulant pour sélectionner un dossier de blueprints
+        self.dropdown_game_folder = ctk.CTkOptionMenu(
             self,
-            text="%s : %s" % (txt_label_game_folder, chemin_tronque),
-            font=ctk.CTkFont(family="Helvetica", size=13, weight="bold"),
+            values=self.blueprint_folders,
+            variable=self.selected_blueprint_folder,
+            command=self.update_game_folder
         )
+        self.dropdown_game_folder.grid(column=0, row=0, padx=10, pady=5)
 
-        self.label_game_folder.grid(
+        # Bouton de mise à jour de la liste des blueprints
+        self.button_update_bp_list = ctk.CTkButton(
+            self,
+            text="Mettre à jour la liste des Blueprints",
+            command=self.update_blueprints
+        )
+        self.button_update_bp_list.grid(row=0, column=1, padx=20, pady=20)
+
+    def get_blueprint_folders(self):
+        """Récupère tous les dossiers dans le répertoire blueprints."""
+        chemin_base = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
+        if not os.path.exists(chemin_base):
+            return []
+        return [d for d in os.listdir(chemin_base) if os.path.isdir(os.path.join(chemin_base, d))]
+
+    def update_game_folder(self, selected_folder):
+        """Met à jour le dossier de blueprints sélectionné."""
+        chemin_base = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
+        game_folder_path = os.path.join(chemin_base, selected_folder)
+        self.winfo_toplevel().backend.set_config(title='game_folder', new_value=game_folder_path)
+        
+    def update_blueprints(self):
+        """Met à jour la liste des blueprints dans la fenêtre principale."""
+        self.winfo_toplevel().load_blueprints()
+
+class App(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+
+        self.backend = Backend()
+        self.backend.check_config_file()
+        self.current_lang = self.backend.config['lang']
+        self.lang = Lang(self.current_lang)
+
+        # Appearance
+        ctk.set_appearance_mode('dark')
+        self.title(f'Satisfactory Blueprint Manager - {BUILD_NUMBER}')
+        self.geometry('1200x600')
+        self.columnconfigure(1, weight=1)
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=10)
+
+        # Sidebar
+        self.sidebar = Sidebar(self, fg_color="transparent")
+        self.sidebar.grid(
             column=0,
+            columnspan=2,
             row=0,
-            padx=10,
-            pady=5
+            padx=0,
+            pady=0,
+            sticky="nsew",
         )
 
-        self.button_game_folder = ctk.CTkButton(
-            self,
-            text=self.winfo_toplevel().lang.txt('button_game_folder_already_set_txt'),
-            command=self.winfo_toplevel().game_folder_button_callback
-        )
-
-        self.button_game_folder.grid(
-            row=0,
+        # Fenêtre principale
+        self.main_window = MainWindow(self, fg_color="transparent")
+        self.main_window.grid(
             column=1,
-            padx=20,
-            pady=20
+            row=1,
+            padx=0,
+            pady=0,
+            sticky="nsew",
         )
 
-        if game_folder_data:
-            self.button_game_folder.configure(text=self.winfo_toplevel().lang.txt('button_game_folder_already_set_txt'))
-        else:
-            self.label_game_folder.configure(text="%s : %s" % (txt_label_game_folder, self.winfo_toplevel().lang.txt('label_game_folder_notset_txt')))
+        # Charger les blueprints si un dossier est configuré
+        game_folder_data = self.backend.config['game_folder']
+        if game_folder_data and game_folder_data != 'undefined':
+            self.load_blueprints()
+
+    def load_blueprints(self):
+        """Charge les blueprints depuis le dossier configuré."""
+        for child in self.main_window.bp_list.winfo_children():
+            child.destroy()
+
+        bps = self.backend.list_bp_from_game_folder()
+
+        for i, bp in enumerate(bps):
+            bp_file = bp['blueprint']
+            label = ctk.CTkLabel(
+                self.main_window.bp_list,
+                text=bp_file,
+                width=250,
+                fg_color="transparent",
+                font=self.sidebar.button_update_bp_list.cget("font"),
+            )
+            label.grid(
+                column=0,
+                row=i,
+                padx=10,
+                pady=5,
+                sticky="n",
+            )
+            button = ctk.CTkButton(
+                self.main_window.bp_list,
+                text=self.lang.txt('button_supprimer_bp_txt'),
+                width=150,
+                fg_color="red",
+                font=self.sidebar.button_update_bp_list.cget("font"),
+                command=lambda bp_file=bp_file: self.delete_bp(bp_file)
+            )
+            button.grid(
+                column=1,
+                row=i,
+                padx=10,
+                pady=5,
+                sticky="n",
+            )
+
+    def delete_bp(self, bp_file):
+        answer = messagebox.askyesno(title=self.lang.txt('messagebox_confirm_delete'), message=self.lang.txt('messagebox_config_delete_txt'))
+        if answer:
+            self.backend.delete_bp_from_game_folder(bp_file)
+            self.load_blueprints()
 
 
 class MainWindow(ctk.CTkFrame):
