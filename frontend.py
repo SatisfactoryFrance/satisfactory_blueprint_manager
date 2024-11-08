@@ -493,7 +493,7 @@ class App(ctk.CTk):
         else:
             # Si rien n'est trouvé, message pour aider à l'inspection
             print("Aucune description trouvée")  # Limite d'affichage à 1000 caractères
-            short_description = "Description non disponible"
+            short_description = self.lang.txt('scim_description_non_dispo')
 
         return short_description
 
@@ -702,6 +702,8 @@ class Lang():
                 ret = 'Impossible de télécharger les fichiers du blueprint.' if self.current_lang == 'fr' else 'Unable to download the blueprint files.'
             case 'messagebox_download_exception':
                 ret = 'Une erreur est survenue lors du téléchargement : {e}' if self.current_lang == 'fr' else 'An error occurred during download: {e}'
+            case 'scim_description_non_dispo':
+                ret = 'Aucune description' if self.current_lang == 'fr' else 'No description'        
             case _:
                 ret = 'no trad'
         return ret

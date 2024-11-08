@@ -17,7 +17,6 @@
 ## 🧑🏻‍💻 Usage
 <!-- MANPAGE: BEGIN EXCLUDED SECTION -->
 [![Windows](https://img.shields.io/badge/-Windows_x64-blue.svg?style=for-the-badge&logo=windows)](https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/releases/latest/)
-[![All versions](https://img.shields.io/badge/-All_Versions-lightgrey.svg?style=for-the-badge)](https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/releases)
 <!-- MANPAGE: END EXCLUDED SECTION -->
 
 ## 🛠️ Compilation    
