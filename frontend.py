@@ -404,8 +404,11 @@ class App(ctk.CTk):
             title_label.bind("<Button-1>", lambda e, bid=blueprint_id, t=title: self.download_blueprint(bid, t))
 
             # Ajouter la description sous le titre
-            desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), width=950, wraplength=950, justify="left")
+            desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), width=750, wraplength=950, justify="left")
             desc_label.pack(side="left", padx=10, pady=5)
+
+            download_button = ctk.CTkButton(frame, text=self.lang.txt('download_scim_txt'), command=lambda bid=blueprint_id, t=title: self.download_blueprint(bid, t))
+            download_button.pack(side="left", padx=20, pady=5)
 
     def download_blueprint(self, blueprint_id, title):
         """Télécharge les fichiers .sbp et .sbpcfg pour un blueprint sélectionné"""
@@ -702,6 +705,8 @@ class Lang():
                 ret = 'Impossible de télécharger les fichiers du blueprint.' if self.current_lang == 'fr' else 'Unable to download the blueprint files.'
             case 'messagebox_download_exception':
                 ret = 'Une erreur est survenue lors du téléchargement : {e}' if self.current_lang == 'fr' else 'An error occurred during download: {e}'
+            case 'download_scim_txt' :
+                ret = 'TELECHARGER' if self.current_lang == 'fr' else 'DOWNLOAD'
             case _:
                 ret = 'no trad'
         return ret
