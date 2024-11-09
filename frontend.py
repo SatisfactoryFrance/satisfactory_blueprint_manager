@@ -269,7 +269,7 @@ class App(ctk.CTk):
     def open_scim_button_callback(self):
         blueprint_window = ctk.CTkToplevel(self)
         blueprint_window.title(self.lang.txt('title_scim_windows'))
-        blueprint_window.geometry("1500x700")
+        blueprint_window.geometry("1680x700")
         blueprint_window.resizable(True, True)
         blueprint_window.transient(self)
         blueprint_window.lift()
@@ -408,7 +408,7 @@ class App(ctk.CTk):
             desc_label.pack(side="left", padx=10, pady=5)
 
             download_button = ctk.CTkButton(frame, text=self.lang.txt('download_scim_txt'), command=lambda bid=blueprint_id, t=title: self.download_blueprint(bid, t))
-            download_button.pack(side="left", padx=20, pady=5)
+            download_button.pack(side="right", padx=20, pady=5)
 
     def download_blueprint(self, blueprint_id, title):
         """Télécharge les fichiers .sbp et .sbpcfg pour un blueprint sélectionné"""
@@ -706,7 +706,7 @@ class Lang():
             case 'messagebox_download_exception':
                 ret = 'Une erreur est survenue lors du téléchargement : {e}' if self.current_lang == 'fr' else 'An error occurred during download: {e}'
             case 'download_scim_txt' :
-                ret = 'TELECHARGER' if self.current_lang == 'fr' else 'DOWNLOAD'
+                ret = 'Télécharger' if self.current_lang == 'fr' else 'Download'
             case _:
                 ret = 'no trad'
         return ret
