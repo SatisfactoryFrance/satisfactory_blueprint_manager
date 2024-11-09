@@ -269,8 +269,8 @@ class App(ctk.CTk):
     def open_scim_button_callback(self):
         blueprint_window = ctk.CTkToplevel(self)
         blueprint_window.title(self.lang.txt('title_scim_windows'))
-        blueprint_window.geometry("1500x700")
-        blueprint_window.resizable(False, True)
+        blueprint_window.geometry("1680x700")
+        blueprint_window.resizable(True, True)
         blueprint_window.transient(self)
         blueprint_window.lift()
 
@@ -404,8 +404,11 @@ class App(ctk.CTk):
             title_label.bind("<Button-1>", lambda e, bid=blueprint_id, t=title: self.download_blueprint(bid, t))
 
             # Ajouter la description sous le titre
-            desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), width=950, wraplength=950, justify="left")
+            desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), width=750, wraplength=950, justify="left")
             desc_label.pack(side="left", padx=10, pady=5)
+
+            download_button = ctk.CTkButton(frame, text=self.lang.txt('download_scim_txt'), command=lambda bid=blueprint_id, t=title: self.download_blueprint(bid, t))
+            download_button.pack(side="right", padx=20, pady=5)
 
     def download_blueprint(self, blueprint_id, title):
         """Télécharge les fichiers .sbp et .sbpcfg pour un blueprint sélectionné"""
@@ -702,6 +705,8 @@ class Lang():
                 ret = 'Impossible de télécharger les fichiers du blueprint.' if self.current_lang == 'fr' else 'Unable to download the blueprint files.'
             case 'messagebox_download_exception':
                 ret = 'Une erreur est survenue lors du téléchargement : {e}' if self.current_lang == 'fr' else 'An error occurred during download: {e}'
+            case 'download_scim_txt' :
+                ret = 'Télécharger' if self.current_lang == 'fr' else 'Download'
             case 'scim_description_non_dispo':
                 ret = 'Aucune description' if self.current_lang == 'fr' else 'No description'        
             case _:
