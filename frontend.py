@@ -509,6 +509,8 @@ class App(ctk.CTk):
 
         for i, bp in enumerate(bps):
             bp_file = bp['blueprint']
+            if len(bp_file) > 75:
+                bp_file = bp_file[:75] + " [...] "
             label = ctk.CTkLabel(
                 self.main_window.bp_list,
                 text=bp_file,
