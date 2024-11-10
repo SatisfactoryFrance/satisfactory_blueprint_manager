@@ -255,7 +255,7 @@ class App(ctk.CTk):
     def open_scim_button_callback(self):
         blueprint_window = ctk.CTkToplevel(self)
         blueprint_window.title(self.lang.txt('title_scim_windows'))
-        blueprint_window.geometry("1500x700")
+        blueprint_window.geometry("1680x700")
         blueprint_window.resizable(True, True)
         blueprint_window.transient(self)
         blueprint_window.lift()
@@ -390,8 +390,11 @@ class App(ctk.CTk):
             title_label.bind("<Button-1>", lambda e, bid=blueprint_id, t=title: self.download_blueprint(bid, t))
 
             # Ajouter la description sous le titre
-            desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), width=950, wraplength=950, justify="left")
+            desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), width=750, wraplength=950, justify="left")
             desc_label.pack(side="left", padx=10, pady=5)
+
+            download_button = ctk.CTkButton(frame, text=self.lang.txt('download_scim_txt'), command=lambda bid=blueprint_id, t=title: self.download_blueprint(bid, t))
+            download_button.pack(side="right", padx=20, pady=5)
 
     def download_blueprint(self, blueprint_id, title):
         """Télécharge les fichiers .sbp et .sbpcfg pour un blueprint sélectionné"""
@@ -479,7 +482,7 @@ class App(ctk.CTk):
         else:
             # Si rien n'est trouvé, message pour aider à l'inspection
             print("Aucune description trouvée")  # Limite d'affichage à 1000 caractères
-            short_description = "Description non disponible"
+            short_description = self.lang.txt('scim_description_non_dispo')
 
         return short_description
 
@@ -492,8 +495,10 @@ class App(ctk.CTk):
 
         for i, bp in enumerate(bps):
             bp_file = bp['blueprint']
+
             if len(bp_file) > 70:
                 bp_file = bp_file[:70] + " [...]"
+
             label = ctk.CTkLabel(
                 self.main_window.bp_list,
                 text=bp_file,
@@ -693,6 +698,12 @@ class Lang():
 
             case 'button_update_list_bp_txt' :
                 ret = 'Mettre à jour la liste des blueprints' if self.current_lang == 'fr' else 'Update Blueprints\'s list.'
+
+            case 'download_scim_txt' :
+                ret = 'Télécharger' if self.current_lang == 'fr' else 'Download'
+            case 'scim_description_non_dispo':
+                ret = 'Aucune description' if self.current_lang == 'fr' else 'No description'        
+
             case _:
                 ret = 'no trad'
         return ret
