@@ -18,9 +18,10 @@ class Sidebar(ctk.CTkFrame):
         super().__init__(master, **kwargs)
 
         self.rowconfigure(1, weight=1)
+        self.backend = Backend()
 
         # Charger les dossiers blueprints disponibles
-        self.blueprint_folders = self.get_blueprint_folders()
+        self.blueprint_folders = self.backend.get_blueprint_folders()
         self.selected_blueprint_folder = StringVar(value=self.blueprint_folders[0] if self.blueprint_folders else "")
 
         # Ajouter un menu déroulant pour sélectionner un dossier de blueprints
@@ -35,13 +36,6 @@ class Sidebar(ctk.CTkFrame):
         # Bouton de mise à jour de la liste des blueprints
         self.button_update_bp_list = ctk.CTkButton(self,text=self.winfo_toplevel().lang.txt('button_update_list_bp_txt'),command=self.update_blueprints)
         self.button_update_bp_list.grid(row=0, column=1, padx=20, pady=20)
-
-    def get_blueprint_folders(self):
-        """Récupère tous les dossiers dans le répertoire blueprints."""
-        chemin_base = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
-        if not os.path.exists(chemin_base):
-            return []
-        return [d for d in os.listdir(chemin_base) if os.path.isdir(os.path.join(chemin_base, d))]
 
     def update_game_folder(self, selected_folder):
         """Met à jour le dossier de blueprints sélectionné."""
