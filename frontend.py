@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import requests
 from PIL import Image
 
-BUILD_NUMBER = "v0.15.0"
+BUILD_NUMBER = "v0.17.0"
 
 
 class Sidebar(ctk.CTkFrame):
@@ -34,14 +34,17 @@ class Sidebar(ctk.CTkFrame):
         self.dropdown_game_folder.grid(column=0, row=0, padx=10, pady=5)
 
         # Bouton de mise à jour de la liste des blueprints
-        self.button_update_bp_list = ctk.CTkButton(self,text=self.winfo_toplevel().lang.txt('button_update_list_bp_txt'),command=self.update_blueprints)
-        self.button_update_bp_list.grid(row=0, column=1, padx=20, pady=20)
+        # self.button_update_bp_list = ctk.CTkButton(self,text=self.winfo_toplevel().lang.txt('button_update_list_bp_txt'),command=self.update_blueprints)
+        # self.button_update_bp_list.grid(row=0, column=1, padx=20, pady=20)
 
     def update_game_folder(self, selected_folder):
         """Met à jour le dossier de blueprints sélectionné."""
         chemin_base = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
         game_folder_path = os.path.join(chemin_base, selected_folder)
         self.winfo_toplevel().backend.set_config(title='game_folder', new_value=game_folder_path)
+
+        # on refresh la liste : 
+        self.update_blueprints()
         
     def update_blueprints(self):
         """Met à jour la liste des blueprints dans la fenêtre principale."""
@@ -489,6 +492,8 @@ class App(ctk.CTk):
 
         for i, bp in enumerate(bps):
             bp_file = bp['blueprint']
+            if len(bp_file) > 70:
+                bp_file = bp_file[:70] + " [...]"
             label = ctk.CTkLabel(
                 self.main_window.bp_list,
                 text=bp_file,
