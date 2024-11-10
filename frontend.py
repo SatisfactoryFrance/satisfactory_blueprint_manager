@@ -697,10 +697,6 @@ class Lang():
                 ret = 'Impossible de télécharger les fichiers du blueprint.' if self.current_lang == 'fr' else 'Unable to download the blueprint files.'
             case 'messagebox_download_exception':
                 ret = 'Une erreur est survenue lors du téléchargement : {e}' if self.current_lang == 'fr' else 'An error occurred during download: {e}'
-
-            case 'button_update_list_bp_txt' :
-                ret = 'Mettre à jour la liste des blueprints' if self.current_lang == 'fr' else 'Update Blueprints\'s list.'
-
             case 'download_scim_txt' :
                 ret = 'Télécharger' if self.current_lang == 'fr' else 'Download'
             case 'scim_description_non_dispo':
