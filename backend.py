@@ -25,30 +25,30 @@ class Backend():
         fichiers_sbp = []
         game_folder = self.config['game_folder']
 
-        # V�rification de l'existence du dossier
+        # Vérification de l'existence du dossier
         if not os.path.isdir(game_folder):
         
-            # Ouvrir l'explorateur pour s�lectionner un nouveau dossier
+            # Ouvrir l'explorateur pour sélectionner un nouveau dossier
             new_folder = filedialog.askdirectory(
-                initialdir=chemin_par_defaut,  # ou une autre valeur par d�faut
+                initialdir=chemin_par_defaut,  # ou une autre valeur par défaut
                 title="bp"
             )
 
-            # Si l'utilisateur s�lectionne un dossier, on met � jour la config
+            # Si l'utilisateur sélectionne un dossier, on met  jour la config
             if new_folder:
                 self.config['game_folder'] = new_folder
                 game_folder = new_folder
             else:
-                return fichiers_sbp  # Retourne une liste vide si aucun dossier s�lectionn�
+                return fichiers_sbp  # Retourne une liste vide si aucun dossier sélectionné
 
-        # Si le dossier existe (soit initialement, soit apr�s s�lection), continuer � lister les fichiers
+        # Si le dossier existe (soit initialement, soit aprés sélection), continuer à lister les fichiers
         i = 0
         for f in os.listdir(game_folder):
             if f.endswith('.sbp'):
                 fichiers_sbp.append({'id': i, 'blueprint': f})
                 i += 1
     
-        return fichiers_sbp  # Toujours retourner une liste, m�me vide
+        return fichiers_sbp  # Toujours retourner une liste, méme vide
 
     def set_config(self, title, new_value):
         self.config[title] = new_value
@@ -102,7 +102,7 @@ class Backend():
                 shutil.copy(sbpcfg_file_source, sbpcfg_file_destination)
 
     def get_blueprint_folders(self):
-        """Récupère tous les dossiers dans le répertoire blueprints."""
+        """Recupere tous les dossiers dans le repertoire blueprints."""
         chemin_base = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
         if not os.path.exists(chemin_base):
             return []
