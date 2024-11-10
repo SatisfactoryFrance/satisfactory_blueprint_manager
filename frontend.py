@@ -270,7 +270,7 @@ class App(ctk.CTk):
         blueprint_window = ctk.CTkToplevel(self)
         blueprint_window.title(self.lang.txt('title_scim_windows'))
         blueprint_window.geometry("1680x700")
-        blueprint_window.resizable(True, True)
+        blueprint_window.resizable(False, True)
         blueprint_window.transient(self)
         blueprint_window.lift()
 
