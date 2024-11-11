@@ -1,11 +1,12 @@
 from backend import Backend
 import customtkinter as ctk
-from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar, ttk
+from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 from customtkinter import CTk, CTkImage
 import webbrowser
 import os
 import threading
 import io
+import textwrap
 from bs4 import BeautifulSoup
 import requests
 from PIL import Image
@@ -43,12 +44,13 @@ class Sidebar(ctk.CTkFrame):
         game_folder_path = os.path.join(chemin_base, selected_folder)
         self.winfo_toplevel().backend.set_config(title='game_folder', new_value=game_folder_path)
 
-        # on refresh la liste : 
+        # on refresh la liste :
         self.update_blueprints()
-        
+
     def update_blueprints(self):
         """Met à jour la liste des blueprints dans la fenêtre principale."""
         self.winfo_toplevel().load_blueprints()
+
 
 class MainWindow(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -417,14 +419,11 @@ class App(ctk.CTk):
                 with open(os.path.join(download_dir, f"{title}.sbpcfg"), "wb") as f:
                     f.write(sbpcfg_response.content)
 
-                messagebox.showinfo(self.lang.txt('messagebox_download_success'), self.lang.txt('messagebox_download_success_message').format(title=title)
-    )
+                messagebox.showinfo(self.lang.txt('messagebox_download_success'), self.lang.txt('messagebox_download_success_message').format(title=title))
             else:
-                messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_error_message')
-    )
+                messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_error_message'))
         except Exception as e:
-            messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_exception').format(e=e)
-    )
+            messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_exception').format(e=e))
 
         # # Rafraîchir la liste des fichiers dans la source
         # self.load_files()
@@ -495,15 +494,11 @@ class App(ctk.CTk):
 
         for i, bp in enumerate(bps):
             bp_file = bp['blueprint']
-
-            max_length = 70  # nbre de caractères max du bp
-
-            if len(bp_file) > max_length:
-                bp_file = bp_file[:max_length] + " [...]"
+            bp_file_short = textwrap.shorten(bp_file, width=70, placeholder=" [...]")
 
             label = ctk.CTkLabel(
                 self.main_window.bp_list,
-                text=bp_file,
+                text=bp_file_short,
                 width=250,
                 fg_color="transparent",
                 font=self.button_font,
@@ -682,7 +677,7 @@ class Lang():
             case 'title_scim_windows':
                 ret = 'Liste des blueprints de Satisfactory Calculator' if self.current_lang == 'fr' else 'List of Satisfactory Calculator blueprints'
             case 'previous_txt':
-                ret = 'Précédent' if self.current_lang == 'fr' else 'Previous'            
+                ret = 'Précédent' if self.current_lang == 'fr' else 'Previous'
             case 'next_txt':
                 ret = 'Suivant' if self.current_lang == 'fr' else 'Next'
             case 'filedialog_ajout_dossier':
@@ -701,7 +696,6 @@ class Lang():
                 ret = 'Télécharger' if self.current_lang == 'fr' else 'Download'
             case 'scim_description_non_dispo':
                 ret = 'Aucune description' if self.current_lang == 'fr' else 'No description'        
-
             case _:
                 ret = 'no trad'
         return ret

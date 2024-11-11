@@ -27,7 +27,7 @@ class Backend():
 
         # Vérification de l'existence du dossier
         if not os.path.isdir(game_folder):
-        
+
             # Ouvrir l'explorateur pour sélectionner un nouveau dossier
             new_folder = filedialog.askdirectory(
                 initialdir=chemin_par_defaut,  # ou une autre valeur par défaut
@@ -47,7 +47,7 @@ class Backend():
             if f.endswith('.sbp'):
                 fichiers_sbp.append({'id': i, 'blueprint': f})
                 i += 1
-    
+
         return fichiers_sbp  # Toujours retourner une liste, méme vide
 
     def set_config(self, title, new_value):
