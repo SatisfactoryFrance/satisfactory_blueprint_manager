@@ -218,7 +218,7 @@ class App(ctk.CTk):
     def game_folder_button_callback(self):
         chemin_par_defaut = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
         q = filedialog.askdirectory(initialdir=chemin_par_defaut,
-            title=self.lang.txt('filedialog_ajout_dossier'))
+                                    title=self.lang.txt('filedialog_ajout_dossier'))
 
         if q:
             # Tronquer le chemin pour n'afficher que la partie après /SaveGames/
@@ -692,10 +692,10 @@ class Lang():
                 ret = 'Impossible de télécharger les fichiers du blueprint.' if self.current_lang == 'fr' else 'Unable to download the blueprint files.'
             case 'messagebox_download_exception':
                 ret = 'Une erreur est survenue lors du téléchargement : {e}' if self.current_lang == 'fr' else 'An error occurred during download: {e}'
-            case 'download_scim_txt' :
+            case 'download_scim_txt':
                 ret = 'Télécharger' if self.current_lang == 'fr' else 'Download'
             case 'scim_description_non_dispo':
-                ret = 'Aucune description' if self.current_lang == 'fr' else 'No description'        
+                ret = 'Aucune description' if self.current_lang == 'fr' else 'No description'
             case _:
                 ret = 'no trad'
         return ret
