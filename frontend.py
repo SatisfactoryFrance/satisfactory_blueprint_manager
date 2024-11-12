@@ -135,8 +135,6 @@ class App(ctk.CTk):
         menubar = Menu(self)
         self.config(menu=menubar)
         menufichier = Menu(menubar, tearoff=0)
-        menufichier.add_command(label=self.i18n.t('menu_change_game_folder'), command=self.game_folder_button_callback)
-        menufichier.add_separator()
         menufichier.add_command(label=self.i18n.t('quit'), command=self.quit)
         menubar.add_cascade(label=self.i18n.t('menu_file'), menu=menufichier)
 
