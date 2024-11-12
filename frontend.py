@@ -128,7 +128,6 @@ class App(ctk.CTk):
         menubar = Menu(self)
         self.config(menu=menubar)
         menufichier = Menu(menubar, tearoff=0)
-        menufichier.add_command(label=self.lang.txt('menu_change_game_folder'), command=self.game_folder_button_callback)
         menufichier.add_separator()
         menufichier.add_command(label=self.lang.txt('menu_quit'), command=self.quit)
         menubar.add_cascade(label=self.lang.txt('menu_fichier'), menu=menufichier)
@@ -651,7 +650,7 @@ class Lang():
             case 'description_software_functionality':
                 ret = 'Ce logiciel permet de gérer et déplacer des blueprints (plans) entre un répertoire source et un répertoire cible.' if self.current_lang == 'fr' else 'This software allows you to manage and move blueprints between a source directory and a target directory.'
             case 'software_aboutsbm':
-                ret = 'Satisfactory Blueprint Manager\nCréé par Je0ffrey & Amorcage pour la communauté Satisfactory France.' if self.current_lang == 'fr' else 'Satisfactory Blueprint Manager\nCreated by Je0ffrey & Amorcage from Satisfactory France and Satisfactory community around the world.'
+                ret = 'Satisfactory Blueprint Manager\nCréé par Je0ffrey & Amorcage pour la communauté Satisfactory France.' if self.current_lang == 'fr' else 'Satisfactory Blueprint Manager\nCreated by Je0ffrey & Amorcage for Satisfactory France and Satisfactory community around the world.'
             case 'description_software_functionality':
                 ret = 'Ce logiciel permet de gérer et déplacer des blueprints (plans) entre un répertoire source et un répertoire cible.' if self.current_lang == 'fr' else 'This software allows you to manage and move blueprints (plans) between a source directory and a target directory.'
             case 'instructions_bold':
