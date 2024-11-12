@@ -1,4 +1,4 @@
-import os
+ï»¿import os
 import shutil
 from pathlib import Path
 import json
@@ -25,30 +25,30 @@ class Backend():
         fichiers_sbp = []
         game_folder = self.config['game_folder']
 
-        # Vérification de l'existence du dossier
+        # VÃ©rification de l'existence du dossier
         if not os.path.isdir(game_folder):
-        
-            # Ouvrir l'explorateur pour sélectionner un nouveau dossier
+
+            # Ouvrir l'explorateur pour sÃ©lectionner un nouveau dossier
             new_folder = filedialog.askdirectory(
-                initialdir=chemin_par_defaut,  # ou une autre valeur par défaut
+                initialdir=chemin_par_defaut,  # ou une autre valeur par dÃ©faut
                 title="bp"
             )
 
-            # Si l'utilisateur sélectionne un dossier, on met à jour la config
+            # Si l'utilisateur sÃ©lectionne un dossier, on met  jour la config
             if new_folder:
                 self.config['game_folder'] = new_folder
                 game_folder = new_folder
             else:
-                return fichiers_sbp  # Retourne une liste vide si aucun dossier sélectionné
+                return fichiers_sbp  # Retourne une liste vide si aucun dossier sÃ©lectionnÃ©
 
-        # Si le dossier existe (soit initialement, soit après sélection), continuer à lister les fichiers
+        # Si le dossier existe (soit initialement, soit aprÃ©s sÃ©lection), continuer Ã  lister les fichiers
         i = 0
         for f in os.listdir(game_folder):
             if f.endswith('.sbp'):
                 fichiers_sbp.append({'id': i, 'blueprint': f})
                 i += 1
-    
-        return fichiers_sbp  # Toujours retourner une liste, même vide
+
+        return fichiers_sbp  # Toujours retourner une liste, mÃ©me vide
 
     def set_config(self, title, new_value):
         self.config[title] = new_value
@@ -100,3 +100,10 @@ class Backend():
                 sbpcfg_file_source = full_file_without_extension + '.sbpcfg'
                 shutil.copy(bp, sbp_file_destination)
                 shutil.copy(sbpcfg_file_source, sbpcfg_file_destination)
+
+    def get_blueprint_folders(self):
+        """Recupere tous les dossiers dans le repertoire blueprints."""
+        chemin_base = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
+        if not os.path.exists(chemin_base):
+            return []
+        return [d for d in os.listdir(chemin_base) if os.path.isdir(os.path.join(chemin_base, d))]

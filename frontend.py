@@ -1,16 +1,17 @@
 from backend import Backend
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
-from customtkinter import CTkImage
+from customtkinter import CTk, CTkImage
 import webbrowser
 import os
 import threading
 import io
+import textwrap
 from bs4 import BeautifulSoup
 import requests
 from PIL import Image
 
-BUILD_NUMBER = "v0.10.0"
+BUILD_NUMBER = "v0.17.0"
 
 
 class Sidebar(ctk.CTkFrame):
@@ -18,50 +19,37 @@ class Sidebar(ctk.CTkFrame):
         super().__init__(master, **kwargs)
 
         self.rowconfigure(1, weight=1)
+        self.backend = Backend()
 
-        game_folder_data = self.winfo_toplevel().backend.config['game_folder']
-        if game_folder_data is not None:
-            self.game_folder = game_folder_data
-        else:
-            self.game_folder = False
+        # Charger les dossiers blueprints disponibles
+        self.blueprint_folders = self.backend.get_blueprint_folders()
+        self.selected_blueprint_folder = StringVar(value=self.blueprint_folders[0] if self.blueprint_folders else "")
 
-        # Tronquer le chemin pour n'afficher que ce qu'il y a après /SaveGames/
-        if self.game_folder:
-            chemin_tronque = self.game_folder.split('/SaveGames/', 1)[-1]
-        else:
-            chemin_tronque = self.winfo_toplevel().lang.txt('label_game_folder_notset_txt')
-
-        txt_label_game_folder = self.winfo_toplevel().lang.txt('label_game_folder')
-        self.label_game_folder = ctk.CTkLabel(
+        # Ajouter un menu déroulant pour sélectionner un dossier de blueprints
+        self.dropdown_game_folder = ctk.CTkOptionMenu(
             self,
-            text="%s : %s" % (txt_label_game_folder, chemin_tronque),
-            font=ctk.CTkFont(family="Helvetica", size=13, weight="bold"),
+            values=self.blueprint_folders,
+            variable=self.selected_blueprint_folder,
+            command=self.update_game_folder
         )
+        self.dropdown_game_folder.grid(column=0, row=0, padx=10, pady=5)
 
-        self.label_game_folder.grid(
-            column=0,
-            row=0,
-            padx=10,
-            pady=5
-        )
+        # Bouton de mise à jour de la liste des blueprints
+        # self.button_update_bp_list = ctk.CTkButton(self,text=self.winfo_toplevel().lang.txt('button_update_list_bp_txt'),command=self.update_blueprints)
+        # self.button_update_bp_list.grid(row=0, column=1, padx=20, pady=20)
 
-        self.button_game_folder = ctk.CTkButton(
-            self,
-            text=self.winfo_toplevel().lang.txt('button_game_folder_already_set_txt'),
-            command=self.winfo_toplevel().game_folder_button_callback
-        )
+    def update_game_folder(self, selected_folder):
+        """Met à jour le dossier de blueprints sélectionné."""
+        chemin_base = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
+        game_folder_path = os.path.join(chemin_base, selected_folder)
+        self.winfo_toplevel().backend.set_config(title='game_folder', new_value=game_folder_path)
 
-        self.button_game_folder.grid(
-            row=0,
-            column=1,
-            padx=20,
-            pady=20
-        )
+        # on refresh la liste :
+        self.update_blueprints()
 
-        if game_folder_data:
-            self.button_game_folder.configure(text=self.winfo_toplevel().lang.txt('button_game_folder_already_set_txt'))
-        else:
-            self.label_game_folder.configure(text="%s : %s" % (txt_label_game_folder, self.winfo_toplevel().lang.txt('label_game_folder_notset_txt')))
+    def update_blueprints(self):
+        """Met à jour la liste des blueprints dans la fenêtre principale."""
+        self.winfo_toplevel().load_blueprints()
 
 
 class MainWindow(ctk.CTkFrame):
@@ -230,7 +218,7 @@ class App(ctk.CTk):
     def game_folder_button_callback(self):
         chemin_par_defaut = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
         q = filedialog.askdirectory(initialdir=chemin_par_defaut,
-            title=self.lang.txt('filedialog_ajout_dossier'))
+                                    title=self.lang.txt('filedialog_ajout_dossier'))
 
         if q:
             # Tronquer le chemin pour n'afficher que la partie après /SaveGames/
@@ -431,14 +419,11 @@ class App(ctk.CTk):
                 with open(os.path.join(download_dir, f"{title}.sbpcfg"), "wb") as f:
                     f.write(sbpcfg_response.content)
 
-                messagebox.showinfo(self.lang.txt('messagebox_download_success'), self.lang.txt('messagebox_download_success_message').format(title=title)
-    )
+                messagebox.showinfo(self.lang.txt('messagebox_download_success'), self.lang.txt('messagebox_download_success_message').format(title=title))
             else:
-                messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_error_message')
-    )
+                messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_error_message'))
         except Exception as e:
-            messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_exception').format(e=e)
-    )
+            messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_exception').format(e=e))
 
         # # Rafraîchir la liste des fichiers dans la source
         # self.load_files()
@@ -509,11 +494,11 @@ class App(ctk.CTk):
 
         for i, bp in enumerate(bps):
             bp_file = bp['blueprint']
-            if len(bp_file) > 75:
-                bp_file = bp_file[:75] + " [...] "
+            bp_file_short = textwrap.shorten(bp_file, width=70, placeholder=" [...]")
+
             label = ctk.CTkLabel(
                 self.main_window.bp_list,
-                text=bp_file,
+                text=bp_file_short,
                 width=250,
                 fg_color="transparent",
                 font=self.button_font,
@@ -692,7 +677,7 @@ class Lang():
             case 'title_scim_windows':
                 ret = 'Liste des blueprints de Satisfactory Calculator' if self.current_lang == 'fr' else 'List of Satisfactory Calculator blueprints'
             case 'previous_txt':
-                ret = 'Précédent' if self.current_lang == 'fr' else 'Previous'            
+                ret = 'Précédent' if self.current_lang == 'fr' else 'Previous'
             case 'next_txt':
                 ret = 'Suivant' if self.current_lang == 'fr' else 'Next'
             case 'filedialog_ajout_dossier':
@@ -707,10 +692,10 @@ class Lang():
                 ret = 'Impossible de télécharger les fichiers du blueprint.' if self.current_lang == 'fr' else 'Unable to download the blueprint files.'
             case 'messagebox_download_exception':
                 ret = 'Une erreur est survenue lors du téléchargement : {e}' if self.current_lang == 'fr' else 'An error occurred during download: {e}'
-            case 'download_scim_txt' :
+            case 'download_scim_txt':
                 ret = 'Télécharger' if self.current_lang == 'fr' else 'Download'
             case 'scim_description_non_dispo':
-                ret = 'Aucune description' if self.current_lang == 'fr' else 'No description'        
+                ret = 'Aucune description' if self.current_lang == 'fr' else 'No description'
             case _:
                 ret = 'no trad'
         return ret
