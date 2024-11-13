@@ -389,7 +389,10 @@ class App(ctk.CTk):
 
             title_label = ctk.CTkLabel(frame, width=300, text=title, font=("Arial", 12, "bold"), cursor="hand2")
             title_label.pack(side="left", padx=10)
-            title_label.bind("<Button-1>", lambda e, bid=blueprint_id, t=title: self.download_blueprint(bid, t))
+
+            # on chope l'url de la page du BP
+            blueprint_url = f"https://satisfactory-calculator.com/fr/blueprints/index/details/id/{blueprint_id}"
+            title_label.bind("<Button-1>", lambda e, url=blueprint_url: webbrowser.open(url))
 
             # Ajouter la description sous le titre
             desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), width=750, wraplength=950, justify="left")
