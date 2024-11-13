@@ -110,6 +110,9 @@ class App(ctk.CTk):
 
         self.backend = Backend()
 
+        # Chemin attendu pour le dossier blueprints
+        chemin_blueprints = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
+
         self.backend.check_config_file()
         stored_lang = self.backend.config['lang']
 
@@ -122,6 +125,13 @@ class App(ctk.CTk):
             self.lang_en = StringVar(value='1')
 
         self.lang = Lang(self.current_lang)
+
+        # Vérification de l'existence du dossier blueprints
+        if not os.path.exists(chemin_blueprints):
+            messagebox.showerror(self.lang.txt('messagebox_erreur'), self.lang.txt('messagebox_error_folder_bp_not_found'))
+            self.destroy()  # Ferme l'application si le dossier n'existe pas
+            return  # Arrête l'initialisation
+
 
         self.current_site_page = 1
         # Menu
@@ -706,6 +716,8 @@ class Lang():
                 ret = 'Télécharger' if self.current_lang == 'fr' else 'Download'
             case 'scim_description_non_dispo':
                 ret = 'Aucune description' if self.current_lang == 'fr' else 'No description'
+            case 'messagebox_error_folder_bp_not_found':
+                ret = 'Le dossier /blueprints/ n\'existe pas. Pour utiliser le logiciel, il faut débloquer le modeleur en jeu et créer un 1er blueprint manuellement' if self.current_lang == 'fr' else 'The /blueprints/ folder does not exist. To use the software, you must unlock the in-game modeler and create a first blueprint manually'
             case _:
                 ret = 'no trad'
         return ret
