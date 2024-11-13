@@ -7,6 +7,7 @@ import os
 import threading
 import io
 import textwrap
+import re
 from bs4 import BeautifulSoup
 import requests
 from PIL import Image
@@ -398,11 +399,19 @@ class App(ctk.CTk):
             download_button = ctk.CTkButton(frame, text=self.lang.txt('download_scim_txt'), command=lambda bid=blueprint_id, t=title: self.download_blueprint(bid, t))
             download_button.pack(side="right", padx=20, pady=5)
 
+    def sanitize_filename(self, filename):
+        """ Python aime pas les caractéres spéciaux"""
+        return re.sub(r'[<>:"/\\|?*]', '_', filename)  # Donc on remplace par un underscore
+    
+
     def download_blueprint(self, blueprint_id, title):
         """Télécharge les fichiers .sbp et .sbpcfg pour un blueprint sélectionné"""
         base_url = "https://satisfactory-calculator.com/fr/blueprints/index/download"
         sbp_url = f"{base_url}/id/{blueprint_id}"
         sbpcfg_url = f"{base_url}-cfg/id/{blueprint_id}"
+
+        # On nettoi le titre proprement
+        sanitized_title = self.sanitize_filename(title)
 
         try:
             # Téléchargement du fichier .sbp
@@ -414,12 +423,12 @@ class App(ctk.CTk):
                 # Sauvegarder les fichiers téléchargés dans le repertoire windows
                 download_dir = game_folder_data
 
-                with open(os.path.join(download_dir, f"{title}.sbp"), "wb") as f:
+                with open(os.path.join(download_dir, f"{sanitized_title}.sbp"), "wb") as f:
                     f.write(sbp_response.content)
-                with open(os.path.join(download_dir, f"{title}.sbpcfg"), "wb") as f:
+                with open(os.path.join(download_dir, f"{sanitized_title}.sbpcfg"), "wb") as f:
                     f.write(sbpcfg_response.content)
 
-                messagebox.showinfo(self.lang.txt('messagebox_download_success'), self.lang.txt('messagebox_download_success_message').format(title=title))
+                messagebox.showinfo(self.lang.txt('messagebox_download_success'), self.lang.txt('messagebox_download_success_message').format(title=sanitized_title))
             else:
                 messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_error_message'))
         except Exception as e:
