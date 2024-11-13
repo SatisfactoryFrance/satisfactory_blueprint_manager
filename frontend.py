@@ -128,8 +128,6 @@ class App(ctk.CTk):
         menubar = Menu(self)
         self.config(menu=menubar)
         menufichier = Menu(menubar, tearoff=0)
-        menufichier.add_command(label=self.lang.txt('menu_change_game_folder'), command=self.game_folder_button_callback)
-        menufichier.add_separator()
         menufichier.add_command(label=self.lang.txt('menu_quit'), command=self.quit)
         menubar.add_cascade(label=self.lang.txt('menu_fichier'), menu=menufichier)
 
@@ -214,23 +212,6 @@ class App(ctk.CTk):
                 self.canvas.yview_scroll(-1, "units")  # Scroll up
         except Exception as e:
             print(f"Erreur lors du défilement dans la fenêtre SCIM : {e}")
-
-    def game_folder_button_callback(self):
-        chemin_par_defaut = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
-        q = filedialog.askdirectory(initialdir=chemin_par_defaut,
-                                    title=self.lang.txt('filedialog_ajout_dossier'))
-
-        if q:
-            # Tronquer le chemin pour n'afficher que la partie après /SaveGames/
-            chemin_tronque = q.split('/SaveGames/', 1)[-1]
-
-            txt_label_game_folder = self.lang.txt('label_game_folder')
-            self.sidebar.label_game_folder.configure(text="%s : %s" % (txt_label_game_folder, chemin_tronque))
-            self.sidebar.button_game_folder.configure(text=self.lang.txt('button_game_folder_already_set_txt'))
-
-            # Mise à jour dans la configuration
-            self.backend.set_config(title='game_folder', new_value=q)
-            self.load_blueprints()
 
     def add_blueprint_button_callback(self):
         game_folder_data = self.backend.config['game_folder']
