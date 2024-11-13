@@ -50,6 +50,7 @@ class Sidebar(ctk.CTkFrame):
     def update_blueprints(self):
         """Met à jour la liste des blueprints dans la fenêtre principale."""
         self.winfo_toplevel().load_blueprints()
+        self.winfo_toplevel().main_window.bp_list._parent_canvas.yview_moveto(0) # On remonte en haut de la liste au changement de dossier
 
 
 class MainWindow(ctk.CTkFrame):
