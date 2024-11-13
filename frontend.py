@@ -336,6 +336,9 @@ class App(ctk.CTk):
         # Mettre à jour le label de numéro de page
         self.page_label.configure(text=f"Page {site_page}")
 
+        # On remonte en haut de la fenetre pour afficher les BP après un changement de page
+        self.canvas.after(100, lambda: self.canvas.yview_moveto(0))
+
         # Construire l'URL pour la page actuelle
         url = f"https://satisfactory-calculator.com/fr/blueprints/index/index/p/{site_page}"
 
