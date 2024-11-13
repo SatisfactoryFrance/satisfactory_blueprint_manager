@@ -405,28 +405,35 @@ class App(ctk.CTk):
         sbpcfg_url = f"{base_url}-cfg/id/{blueprint_id}"
 
         try:
-            # Téléchargement du fichier .sbp
+            # Vérification de l'existence des fichiers
+            game_folder_data = self.winfo_toplevel().backend.config['game_folder']
+            sbp_file_path = os.path.join(game_folder_data, f"{title}.sbp")
+            sbpcfg_file_path = os.path.join(game_folder_data, f"{title}.sbpcfg")
+
+            if os.path.exists(sbp_file_path) and os.path.exists(sbpcfg_file_path):
+                messagebox.showwarning(
+                    self.lang.txt('messagebox_download_error'),
+                    self.lang.txt('messagebox_erreur_already_same_blueprint').format(title=title)
+                )
+                return  # Ne pas procéder au téléchargement si le BP existe déjà
+
+            # Téléchargement des fichiers si non existants
             sbp_response = requests.get(sbp_url)
             sbpcfg_response = requests.get(sbpcfg_url)
-            game_folder_data = self.winfo_toplevel().backend.config['game_folder']
 
             if sbp_response.status_code == 200 and sbpcfg_response.status_code == 200:
-                # Sauvegarder les fichiers téléchargés dans le repertoire windows
-                download_dir = game_folder_data
-
-                with open(os.path.join(download_dir, f"{title}.sbp"), "wb") as f:
+                # Sauvegarder les fichiers téléchargés dans le répertoire Windows
+                with open(sbp_file_path, "wb") as f:
                     f.write(sbp_response.content)
-                with open(os.path.join(download_dir, f"{title}.sbpcfg"), "wb") as f:
+                with open(sbpcfg_file_path, "wb") as f:
                     f.write(sbpcfg_response.content)
 
                 messagebox.showinfo(self.lang.txt('messagebox_download_success'), self.lang.txt('messagebox_download_success_message').format(title=title))
             else:
                 messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_error_message'))
+
         except Exception as e:
             messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_exception').format(e=e))
-
-        # # Rafraîchir la liste des fichiers dans la source
-        # self.load_files()
 
     def next_site_page(self):
         """Affiche la page suivante de blueprints sur le site"""
