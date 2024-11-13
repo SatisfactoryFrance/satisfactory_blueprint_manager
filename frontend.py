@@ -387,7 +387,7 @@ class App(ctk.CTk):
             img_label = ctk.CTkLabel(frame, image=ctk_img, text=None)
             img_label.pack(side="left")
 
-            title_label = ctk.CTkLabel(frame, width=300, text=title, font=("Arial", 12, "bold"), cursor="hand2")
+            title_label = ctk.CTkLabel(frame, width=300, text=title, font=("Arial", 12, "bold"), cursor="hand2", wraplength=280)
             title_label.pack(side="left", padx=10)
 
             # on chope l'url de la page du BP
