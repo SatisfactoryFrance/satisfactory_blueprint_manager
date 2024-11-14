@@ -4,6 +4,7 @@ from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 from customtkinter import CTkImage
 import webbrowser
 import os
+import sys
 import threading
 import io
 import textwrap
@@ -138,7 +139,12 @@ class App(ctk.CTk):
 
         self.i18n = i18n
 
-        self.i18n.load_path.append('locale')
+        # fix i18n
+        extDataDir = os.getcwd()
+        if getattr(sys, 'frozen', False):
+            extDataDir = sys._MEIPASS
+
+        self.i18n.load_path.append(os.path.join(extDataDir, 'locale'))
         self.i18n.set('file_format', 'json')
         self.i18n.set('locale', str(self.current_lang))
         self.i18n.set('fallback', 'en')
