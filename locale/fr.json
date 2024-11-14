@@ -45,7 +45,6 @@
     "software_additional_options": "Informations additionnelles :",
     "software_local_only": "- Cela ne marche qu'en local, pas sur les serveurs dédiés",
     "add_blueprints": "Ajouter des blueprints",
-    "open_scim": "Ouvrir Satisfactory Calculator (SCIM)"
-
-
+    "open_scim": "Ouvrir Satisfactory Calculator (SCIM)",
+    "no_bp_folder": "Le dossier /blueprints/ n'existe pas. Pour utiliser le logiciel, il faut débloquer le modeleur en jeu et créer un 1er blueprint manuellement"
 }
