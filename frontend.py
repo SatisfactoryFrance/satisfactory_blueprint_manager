@@ -410,15 +410,14 @@ class App(ctk.CTk):
         sanitized_title = self.winfo_toplevel().backend.sanitize_filename(title)
 
         try:
-            # Vérification de l'existence des fichiers
             game_folder_data = self.winfo_toplevel().backend.config['game_folder']
-            sbp_file_path = os.path.join(game_folder_data, f"{title}.sbp")
-            sbpcfg_file_path = os.path.join(game_folder_data, f"{title}.sbpcfg")
+            sbp_file_path = os.path.join(game_folder_data, f"{sanitized_title}.sbp")
+            sbpcfg_file_path = os.path.join(game_folder_data, f"{sanitized_title}.sbpcfg")
 
             if os.path.exists(sbp_file_path) and os.path.exists(sbpcfg_file_path):
                 messagebox.showwarning(
                     self.i18n.t('error'),
-                    self.i18n.t('download_failure_long').format(title=title)
+                    self.i18n.t('error_already_same_bp')
                 )
                 return  # Ne pas procéder au téléchargement si le BP existe déjà
 
