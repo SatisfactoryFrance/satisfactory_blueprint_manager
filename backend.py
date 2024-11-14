@@ -12,6 +12,7 @@ class Backend():
         self.config_file = os.getenv('LOCALAPPDATA') + '\\satisfactory_blueprint_manager.json'
 
     def check_config_file(self):
+        print('Checking config file %s' % self.config_file)
         if os.path.isfile(self.config_file):
             with open(self.config_file, "r", encoding="utf-8") as f:
                 self.config = json.load(f)
