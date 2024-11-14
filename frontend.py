@@ -111,6 +111,9 @@ class App(ctk.CTk):
 
         self.backend = Backend()
 
+        # Chemin attendu pour le dossier blueprints
+        chemin_blueprints = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
+
         self.backend.check_config_file()
         stored_lang = self.backend.config['lang']
 
@@ -123,6 +126,13 @@ class App(ctk.CTk):
             self.lang_en = StringVar(value='1')
 
         self.lang = Lang(self.current_lang)
+
+        # Vérification de l'existence du dossier blueprints
+        if not os.path.exists(chemin_blueprints):
+            messagebox.showerror(self.lang.txt('messagebox_erreur'), self.lang.txt('messagebox_error_folder_bp_not_found'))
+            self.destroy()  # Ferme l'application si le dossier n'existe pas
+            return  # Arrête l'initialisation
+
 
         self.current_site_page = 1
         # Menu
@@ -388,9 +398,12 @@ class App(ctk.CTk):
             img_label = ctk.CTkLabel(frame, image=ctk_img, text=None)
             img_label.pack(side="left")
 
-            title_label = ctk.CTkLabel(frame, width=300, text=title, font=("Arial", 12, "bold"), cursor="hand2")
+            title_label = ctk.CTkLabel(frame, width=300, text=title, font=("Arial", 12, "bold"), cursor="hand2", wraplength=280)
             title_label.pack(side="left", padx=10)
-            title_label.bind("<Button-1>", lambda e, bid=blueprint_id, t=title: self.download_blueprint(bid, t))
+
+            # on chope l'url de la page du BP
+            blueprint_url = f"https://satisfactory-calculator.com/fr/blueprints/index/details/id/{blueprint_id}"
+            title_label.bind("<Button-1>", lambda e, url=blueprint_url: webbrowser.open(url))
 
             # Ajouter la description sous le titre
             desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), width=750, wraplength=950, justify="left")
@@ -414,10 +427,21 @@ class App(ctk.CTk):
         sanitized_title = self.sanitize_filename(title)
 
         try:
-            # Téléchargement du fichier .sbp
+            # Vérification de l'existence des fichiers
+            game_folder_data = self.winfo_toplevel().backend.config['game_folder']
+            sbp_file_path = os.path.join(game_folder_data, f"{title}.sbp")
+            sbpcfg_file_path = os.path.join(game_folder_data, f"{title}.sbpcfg")
+
+            if os.path.exists(sbp_file_path) and os.path.exists(sbpcfg_file_path):
+                messagebox.showwarning(
+                    self.lang.txt('messagebox_download_error'),
+                    self.lang.txt('messagebox_erreur_already_same_blueprint').format(title=title)
+                )
+                return  # Ne pas procéder au téléchargement si le BP existe déjà
+
+            # Téléchargement des fichiers si non existants
             sbp_response = requests.get(sbp_url)
             sbpcfg_response = requests.get(sbpcfg_url)
-            game_folder_data = self.winfo_toplevel().backend.config['game_folder']
 
             if sbp_response.status_code == 200 and sbpcfg_response.status_code == 200:
                 # Sauvegarder les fichiers téléchargés dans le repertoire windows
@@ -426,16 +450,18 @@ class App(ctk.CTk):
                 with open(os.path.join(download_dir, f"{sanitized_title}.sbp"), "wb") as f:
                     f.write(sbp_response.content)
                 with open(os.path.join(download_dir, f"{sanitized_title}.sbpcfg"), "wb") as f:
+                # Sauvegarder les fichiers téléchargés dans le répertoire Windows
+                with open(sbp_file_path, "wb") as f:
+                    f.write(sbp_response.content)
+                with open(sbpcfg_file_path, "wb") as f:
                     f.write(sbpcfg_response.content)
 
                 messagebox.showinfo(self.lang.txt('messagebox_download_success'), self.lang.txt('messagebox_download_success_message').format(title=sanitized_title))
             else:
                 messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_error_message'))
+
         except Exception as e:
             messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_exception').format(e=e))
-
-        # # Rafraîchir la liste des fichiers dans la source
-        # self.load_files()
 
     def next_site_page(self):
         """Affiche la page suivante de blueprints sur le site"""
@@ -705,6 +731,8 @@ class Lang():
                 ret = 'Télécharger' if self.current_lang == 'fr' else 'Download'
             case 'scim_description_non_dispo':
                 ret = 'Aucune description' if self.current_lang == 'fr' else 'No description'
+            case 'messagebox_error_folder_bp_not_found':
+                ret = 'Le dossier /blueprints/ n\'existe pas. Pour utiliser le logiciel, il faut débloquer le modeleur en jeu et créer un 1er blueprint manuellement' if self.current_lang == 'fr' else 'The /blueprints/ folder does not exist. To use the software, you must unlock the in-game modeler and create a first blueprint manually'
             case _:
                 ret = 'no trad'
         return ret
