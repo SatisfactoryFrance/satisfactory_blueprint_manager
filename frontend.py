@@ -51,7 +51,9 @@ class Sidebar(ctk.CTkFrame):
     def update_blueprints(self):
         """Met à jour la liste des blueprints dans la fenêtre principale."""
         self.winfo_toplevel().load_blueprints()
-        self.winfo_toplevel().main_window.bp_list._parent_canvas.yview_moveto(0) # On remonte en haut de la liste au changement de dossier
+
+        # On remonte en haut de la liste au changement de dossier
+        self.winfo_toplevel().main_window.bp_list._parent_canvas.yview_moveto(0)
 
 
 class MainWindow(ctk.CTkFrame):
@@ -133,7 +135,6 @@ class App(ctk.CTk):
             messagebox.showerror(self.lang.txt('messagebox_erreur'), self.lang.txt('messagebox_error_folder_bp_not_found'))
             self.destroy()  # Ferme l'application si le dossier n'existe pas
             return  # Arrête l'initialisation
-
 
         self.current_site_page = 1
         # Menu
@@ -434,7 +435,7 @@ class App(ctk.CTk):
                 with open(os.path.join(download_dir, f"{sanitized_title}.sbp"), "wb") as f:
                     f.write(sbp_response.content)
                 with open(os.path.join(download_dir, f"{sanitized_title}.sbpcfg"), "wb") as f:
-                
+
                     with open(sbp_file_path, "wb") as f:
                         f.write(sbp_response.content)
                     with open(sbpcfg_file_path, "wb") as f:
