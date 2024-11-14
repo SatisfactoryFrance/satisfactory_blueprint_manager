@@ -12,7 +12,7 @@ import requests
 from PIL import Image
 import i18n
 
-BUILD_NUMBER = "v1.1.0"
+BUILD_NUMBER = "v1.1.2"
 
 
 class Sidebar(ctk.CTkFrame):
