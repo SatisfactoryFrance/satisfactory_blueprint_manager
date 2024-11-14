@@ -35,6 +35,9 @@ class Sidebar(ctk.CTkFrame):
         )
         self.dropdown_game_folder.grid(column=0, row=0, padx=10, pady=5)
 
+        selected_folder = os.path.basename(os.path.normpath(self.winfo_toplevel().backend.config['game_folder']))
+        self.dropdown_game_folder.set(selected_folder)
+
     def update_game_folder(self, selected_folder):
         """Met à jour le dossier de blueprints sélectionné."""
         chemin_base = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
