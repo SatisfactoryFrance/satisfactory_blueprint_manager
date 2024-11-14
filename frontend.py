@@ -1,13 +1,12 @@
 from backend import Backend
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
-from customtkinter import CTk, CTkImage
+from customtkinter import CTkImage
 import webbrowser
 import os
 import threading
 import io
 import textwrap
-import re
 from bs4 import BeautifulSoup
 import requests
 from PIL import Image
@@ -398,10 +397,6 @@ class App(ctk.CTk):
             download_button = ctk.CTkButton(frame, text=self.lang.txt('download_scim_txt'), command=lambda bid=blueprint_id, t=title: self.download_blueprint(bid, t))
             download_button.pack(side="right", padx=20, pady=5)
 
-    def sanitize_filename(self, filename):
-        """ Python aime pas les caractéres spéciaux"""
-        return re.sub(r'[<>:"/\\|?*]', '_', filename)  # Donc on remplace par un underscore
-
     def download_blueprint(self, blueprint_id, title):
         """Télécharge les fichiers .sbp et .sbpcfg pour un blueprint sélectionné"""
         base_url = "https://satisfactory-calculator.com/fr/blueprints/index/download"
@@ -409,7 +404,7 @@ class App(ctk.CTk):
         sbpcfg_url = f"{base_url}-cfg/id/{blueprint_id}"
 
         # On nettoie l'url SCIM si caractères bizarre
-        sanitized_title = self.sanitize_filename(title)
+        sanitized_title = self.winfo_toplevel().backend.sanitize_filename(title)
 
         try:
             # Vérification de l'existence des fichiers

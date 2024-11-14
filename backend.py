@@ -3,6 +3,7 @@ import shutil
 from pathlib import Path
 import json
 from tkinter import filedialog
+import re
 
 
 class Backend():
@@ -107,3 +108,7 @@ class Backend():
         if not os.path.exists(chemin_base):
             return []
         return [d for d in os.listdir(chemin_base) if os.path.isdir(os.path.join(chemin_base, d))]
+
+    def sanitize_filename(self, filename):
+        """ Python aime pas les caractéres spéciaux"""
+        return re.sub(r'[<>:"/\\|?*]', '_', filename)
