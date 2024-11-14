@@ -451,6 +451,8 @@ class App(ctk.CTk):
         except Exception as e:
             messagebox.showerror(self.lang.txt('messagebox_download_error'), self.lang.txt('messagebox_download_exception').format(e=e))
 
+        self.winfo_toplevel().load_blueprints()
+
     def next_site_page(self):
         """Affiche la page suivante de blueprints sur le site"""
         self.current_site_page += 1
