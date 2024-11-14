@@ -33,7 +33,7 @@
     "confirm_delete": "Please confirm",
     "confirm_delete_long": "Are you sure to delete this blueprint ? This action cannot be undone",
     "switch_lang": "Please restart Satisfactory Blueprint Manager in order to switch language",
-    "software_aboutsbm": "Satisfactory Blueprint Manager\nCreated by Je0ffrey & Amorcage from Satisfactory France and Satisfactory community around the world.",
+    "software_aboutsbm": "Satisfactory Blueprint Manager\nCreated by Je0ffrey & Amorcage for Satisfactory France and Satisfactory community around the world.",
     "software_specs": "This software allows you to manage and move blueprints between a source directory and a target directory.",
     "software_before_anything": "BEFORE ANYTHING:",
     "software_create_first_blueprint": "You must create a first blueprint in the game and save it to create your game directory:",
