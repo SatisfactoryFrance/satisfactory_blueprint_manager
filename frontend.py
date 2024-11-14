@@ -250,7 +250,7 @@ class App(ctk.CTk):
     def open_scim_button_callback(self):
         blueprint_window = ctk.CTkToplevel(self)
         blueprint_window.title(self.lang.txt('title_scim_windows'))
-        blueprint_window.geometry("1680x700")
+        blueprint_window.geometry("1600x700")
         blueprint_window.resizable(False, True)
         blueprint_window.transient(self)
         blueprint_window.lift()
@@ -391,7 +391,7 @@ class App(ctk.CTk):
             title_label.bind("<Button-1>", lambda e, url=blueprint_url: webbrowser.open(url))
 
             # Ajouter la description sous le titre
-            desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), width=750, wraplength=950, justify="left")
+            desc_label = ctk.CTkLabel(frame, text=description, font=("Arial", 10), width=750, wraplength=870, justify="left")
             desc_label.pack(side="left", padx=10, pady=5)
 
             download_button = ctk.CTkButton(frame, text=self.lang.txt('download_scim_txt'), command=lambda bid=blueprint_id, t=title: self.download_blueprint(bid, t))
