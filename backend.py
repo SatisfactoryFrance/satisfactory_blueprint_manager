@@ -32,7 +32,7 @@ class Backend():
             # Ouvrir l'explorateur pour sélectionner un nouveau dossier
             new_folder = filedialog.askdirectory(
                 initialdir=chemin_par_defaut,  # ou une autre valeur par défaut
-                title="bp"
+                title="Choisir un dossier Blueprints - Vous devez avoir débloqué le modeleur !"
             )
 
             # Si l'utilisateur sélectionne un dossier, on met  jour la config
