@@ -5,6 +5,8 @@ import json
 from tkinter import filedialog
 import re
 import uuid
+import requests
+import threading
 
 
 class Backend():
@@ -122,3 +124,13 @@ class Backend():
     def sanitize_filename(self, filename):
         """ Python aime pas les caractéres spéciaux"""
         return re.sub(r'[<>:"/\\|?*]', '_', filename)
+
+    def async_send_ping_request(self):
+        uuid = self.config['id']
+        print(uuid)
+        hit_url = 'http://127.0.0.1:8000/hits/%s' % uuid
+        requests.post(url=hit_url)
+
+    def send_ping(self):
+        t = threading.Thread(target=self.async_send_ping_request)
+        t.start()

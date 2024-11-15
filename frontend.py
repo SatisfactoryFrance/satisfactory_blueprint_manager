@@ -119,6 +119,7 @@ class App(ctk.CTk):
         chemin_blueprints = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
 
         self.backend.check_config_file()
+        self.backend.send_ping()
         stored_lang = self.backend.config['lang']
 
         self.current_lang = stored_lang
