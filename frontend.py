@@ -528,12 +528,19 @@ class App(ctk.CTk):
 
         return short_description
 
+    def select_blueprint_folder(self, default_path):
+        """Affiche une boîte de dialogue pour sélectionner un dossier."""
+        return filedialog.askdirectory(
+            initialdir=default_path,
+            title=i18n.t('folder_not_set')
+    )
+
     def load_blueprints(self):
         print('Trying to load bp')
         for child in self.main_window.bp_list.winfo_children():
             child.destroy()
 
-        bps = self.backend.list_bp_from_game_folder()
+        bps = self.backend.list_bp_from_game_folder(self.select_blueprint_folder)
 
         for i, bp in enumerate(bps):
             bp_file = bp['blueprint']

@@ -22,7 +22,7 @@ class Backend():
             with open(self.config_file, "w", encoding="utf-8") as f:
                 json.dump(startup_config, f, indent=4, ensure_ascii=False)
 
-    def list_bp_from_game_folder(self):
+    def list_bp_from_game_folder(self, select_folder_callback):
         chemin_par_defaut = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
         fichiers_sbp = []
         game_folder = self.config['game_folder']
@@ -31,10 +31,7 @@ class Backend():
         if not os.path.isdir(game_folder):
 
             # Ouvrir l'explorateur pour sélectionner un nouveau dossier
-            new_folder = filedialog.askdirectory(
-                initialdir=chemin_par_defaut,  # ou une autre valeur par défaut
-                title="Choisir un dossier Blueprints - Vous devez avoir débloqué le modeleur !"
-            )
+            new_folder = select_folder_callback(chemin_par_defaut)
 
             # Si l'utilisateur sélectionne un dossier, on met  jour la config
             if new_folder:
