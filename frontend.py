@@ -229,6 +229,35 @@ class App(ctk.CTk):
 
         self.main_window.bp_list.bind("<MouseWheel>", self.scroll_main_window)
 
+    def list_bp_from_game_folder(self):
+        chemin_par_defaut = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
+        fichiers_sbp = []
+        game_folder = self.backend.config['game_folder']
+
+        # Vérification de l'existence du dossier
+        if not os.path.isdir(game_folder):
+
+            # Ouvrir l'explorateur pour sélectionner un nouveau dossier
+            new_folder = filedialog.askdirectory(
+                initialdir=chemin_par_defaut, title=(self.i18n.t('folder_not_set'))
+            )
+
+            # Si l'utilisateur sélectionne un dossier, on met  jour la config
+            if new_folder:
+                self.backend.config['game_folder'] = new_folder
+                game_folder = new_folder
+            else:
+                return fichiers_sbp  # Retourne une liste vide si aucun dossier sélectionné
+
+        # Si le dossier existe (soit initialement, soit aprés sélection), continuer à lister les fichiers
+        i = 0
+        for f in os.listdir(game_folder):
+            if f.endswith('.sbp'):
+                fichiers_sbp.append({'id': i, 'blueprint': f})
+                i += 1
+
+        return fichiers_sbp  # Toujours retourner une liste, méme vide
+
     # Définir la méthode avant l'utilisation
     def scroll_scim_window(self, event):
         """Gère le défilement dans la fenêtre SCIM."""
@@ -520,7 +549,7 @@ class App(ctk.CTk):
         for child in self.main_window.bp_list.winfo_children():
             child.destroy()
 
-        bps = self.backend.list_bp_from_game_folder()
+        bps = self.list_bp_from_game_folder()
 
         for i, bp in enumerate(bps):
             bp_file = bp['blueprint']
