@@ -4,6 +4,7 @@ from pathlib import Path
 import json
 from tkinter import filedialog
 import re
+import uuid
 
 
 class Backend():
@@ -16,8 +17,16 @@ class Backend():
         if os.path.isfile(self.config_file):
             with open(self.config_file, "r", encoding="utf-8") as f:
                 self.config = json.load(f)
+
+            # On gere la migration de ceux qui auraient une config mais pas d'id
+            if 'id' not in self.config:
+                print('Config exists, but no id set : creating one')
+                my_uuid = str(uuid.uuid4())
+                self.set_config('id', my_uuid)
         else:
-            startup_config = {'lang': 'fr', 'game_folder': 'undefined'}
+            print('Creating the config file')
+            my_uuid = str(uuid.uuid4())
+            startup_config = {'lang': 'fr', 'game_folder': 'undefined', 'id': my_uuid}
             self.config = startup_config
             with open(self.config_file, "w", encoding="utf-8") as f:
                 json.dump(startup_config, f, indent=4, ensure_ascii=False)
