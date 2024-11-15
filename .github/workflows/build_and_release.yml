@@ -28,7 +28,7 @@ jobs:
 
       - name: Build .exe file
         run: |
-          PyInstaller --name SBM --onefile --windowed --icon=icone.ico --add-data "locale/;./locale/" --collect-all customtkinter run.py
+          PyInstaller --name SBM --onefile --windowed --icon=icone.ico --add-data "locale/;./locale/" --collect-all customtkinter run.py --clean
         shell: bash
 
       - name: Upload .exe to Release
