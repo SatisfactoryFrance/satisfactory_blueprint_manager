@@ -3,7 +3,7 @@ name: Build and Release .exe
 on:
   push:
     branches:
-      - 'main'
+      - 'actions-github'
 
 jobs:
   build:
