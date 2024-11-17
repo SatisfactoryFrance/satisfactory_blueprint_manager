@@ -129,7 +129,7 @@ class Backend():
         uuid = self.config['id']
         print(uuid)
         hit_url = 'https://sbmping.satisfactoryfr.com:5001/hits/%s' % uuid
-        requests.post(url=hit_url)
+        requests.post(url=hit_url, verify=False)
 
     def send_ping(self):
         t = threading.Thread(target=self.async_send_ping_request)
