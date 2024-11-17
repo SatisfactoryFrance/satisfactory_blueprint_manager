@@ -1,5 +1,10 @@
 name: Lint and release .exe on Github
-on: [push]
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'main'
 
 jobs:
   lint:
