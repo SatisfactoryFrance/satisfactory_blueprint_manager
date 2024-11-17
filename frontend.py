@@ -142,6 +142,15 @@ class App(ctk.CTk):
             self.lang_fr = StringVar(value='0')
             self.lang_en = StringVar(value='1')
 
+        self.i18n = i18n
+
+        self.i18n.load_path.append('locale')
+        self.i18n.set('file_format', 'json')
+        self.i18n.set('locale', str(self.current_lang))
+        self.i18n.set('fallback', 'en')
+        self.i18n.set('filename_format', '{locale}.{format}')
+        self.i18n.set('skip_locale_root_data', True)
+
         # Vérification de l'existence du dossier blueprints
         if not os.path.exists(chemin_blueprints):
             messagebox.showerror(self.i18n.t('error'), self.i18n.t('no_bp_folder'))
