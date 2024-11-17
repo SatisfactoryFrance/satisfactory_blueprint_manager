@@ -8,12 +8,13 @@ import sys
 import threading
 import io
 import textwrap
+import ctypes
 from bs4 import BeautifulSoup
 import requests
 from PIL import Image
 import i18n
 
-BUILD_NUMBER = "v1.1.2"
+BUILD_NUMBER = "v1.1.3"
 
 
 class Sidebar(ctk.CTkFrame):
@@ -115,6 +116,18 @@ class App(ctk.CTk):
         super().__init__()
         self.backend = Backend()
 
+        icon_path = os.path.join(os.getcwd(), "icone.ico")  # Chemin vers .ico
+        if os.path.exists(icon_path):
+            self.iconbitmap(icon_path)
+        else:
+            print("Icône introuvable")
+
+        # Forcer l'icône dans la barre des tâches (uniquement sous Windows)
+        if os.name == "nt":  # Vérifie que le système est Windows
+            app_id = "Satisfactory blueprint Manager"  # Identifiant unique pour votre application
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
+            self.iconbitmap(icon_path)  # Appliquer l'icône
+
         # Chemin attendu pour le dossier blueprints
         chemin_blueprints = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
 
@@ -128,6 +141,15 @@ class App(ctk.CTk):
         else:
             self.lang_fr = StringVar(value='0')
             self.lang_en = StringVar(value='1')
+
+        self.i18n = i18n
+
+        self.i18n.load_path.append('locale')
+        self.i18n.set('file_format', 'json')
+        self.i18n.set('locale', str(self.current_lang))
+        self.i18n.set('fallback', 'en')
+        self.i18n.set('filename_format', '{locale}.{format}')
+        self.i18n.set('skip_locale_root_data', True)
 
         # Vérification de l'existence du dossier blueprints
         if not os.path.exists(chemin_blueprints):
@@ -515,12 +537,19 @@ class App(ctk.CTk):
 
         return short_description
 
+    def select_blueprint_folder(self, default_path):
+        """Affiche une boîte de dialogue pour sélectionner un dossier."""
+        return filedialog.askdirectory(
+            initialdir=default_path,
+            title=i18n.t('folder_not_set')
+    )
+
     def load_blueprints(self):
         print('Trying to load bp')
         for child in self.main_window.bp_list.winfo_children():
             child.destroy()
 
-        bps = self.backend.list_bp_from_game_folder()
+        bps = self.backend.list_bp_from_game_folder(self.select_blueprint_folder)
 
         for i, bp in enumerate(bps):
             bp_file = bp['blueprint']
@@ -595,7 +624,7 @@ class App(ctk.CTk):
         text_widget.insert("1.0", self.i18n.t('software_specs') + "\n\n")
 
         text_widget.insert("end", self.i18n.t('software_before_anything') + "\n", "bold")
-        text_widget.insert("end",  self.i18n.t('software_create_first_blueprint') + "\n\n", "bold")
+        text_widget.insert("end", self.i18n.t('software_create_first_blueprint') + "\n\n", "bold")
         text_widget.insert("end", self.i18n.t('software_step_1') + "\n")
         text_widget.insert("end", self.i18n.t('software_step_2') + "\n")
         text_widget.insert("end", self.i18n.t('software_step_3') + "\n")
