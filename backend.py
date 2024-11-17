@@ -128,7 +128,7 @@ class Backend():
     def async_send_ping_request(self):
         uuid = self.config['id']
         print(uuid)
-        hit_url = 'http://127.0.0.1:8000/hits/%s' % uuid
+        hit_url = 'https://sbmping.satisfactoryfr.com:5001/hits/%s' % uuid
         requests.post(url=hit_url)
 
     def send_ping(self):
