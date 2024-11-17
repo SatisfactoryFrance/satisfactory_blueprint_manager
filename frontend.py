@@ -624,7 +624,7 @@ class App(ctk.CTk):
         text_widget.insert("1.0", self.i18n.t('software_specs') + "\n\n")
 
         text_widget.insert("end", self.i18n.t('software_before_anything') + "\n", "bold")
-        text_widget.insert("end",  self.i18n.t('software_create_first_blueprint') + "\n\n", "bold")
+        text_widget.insert("end", self.i18n.t('software_create_first_blueprint') + "\n\n", "bold")
         text_widget.insert("end", self.i18n.t('software_step_1') + "\n")
         text_widget.insert("end", self.i18n.t('software_step_2') + "\n")
         text_widget.insert("end", self.i18n.t('software_step_3') + "\n")
