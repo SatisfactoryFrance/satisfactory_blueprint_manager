@@ -2,7 +2,7 @@
 <div align="center">
 
 [![Release version](https://img.shields.io/github/v/release/satisfactoryfrance/satisfactory_blueprint_manager?color=brightgreen&label=Download&style=for-the-badge)]()
-[![Discord](https://img.shields.io/discord/803459565064552519?color=blue&labelColor=555555&label=&logo=discord&style=for-the-badge)](https://discord.gg/H5MNcFW63r "Discord")
+[![Discord](https://img.shields.io/discord/803459565064552519?color=blue&labelColor=555555&label=&logo=discord&style=for-the-badge)](https://discord.gg/satisfactoryfr "Discord")
 
 ![](https://sbm.satisfactoryfr.com/images/homepage-1204-background-lapto.png)
 # SATISFACTORY BLUEPRINT MANAGER
