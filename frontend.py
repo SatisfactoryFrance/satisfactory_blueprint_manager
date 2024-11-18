@@ -540,10 +540,7 @@ class App(ctk.CTk):
 
     def select_blueprint_folder(self, default_path):
         """Affiche une boîte de dialogue pour sélectionner un dossier."""
-        return filedialog.askdirectory(
-            initialdir=default_path,
-            title=i18n.t('folder_not_set')
-            )
+        return filedialog.askdirectory(initialdir=default_path, title=i18n.t('folder_not_set'))
 
     def load_blueprints(self):
         print('Trying to load bp')
