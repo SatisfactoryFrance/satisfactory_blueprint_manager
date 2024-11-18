@@ -50,5 +50,6 @@
   "select_save": "Sélectionnez votre partie",
   "update_available": "Mise à jour disponible",
   "new_version_available": "Nouvelle version",
-  "download_here": "Téléchargement"
+  "download_here": "Téléchargement",
+  "menu_update" :  "Mise-à-jour"
 }

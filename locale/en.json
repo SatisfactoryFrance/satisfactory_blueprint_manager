@@ -50,5 +50,6 @@
   "select_save": "Select your save",
   "update_available": "Update available",
   "new_version_available": "New version",
-  "download_here": "Download"
+  "download_here": "Download",
+  "menu_update": "Update"
 }

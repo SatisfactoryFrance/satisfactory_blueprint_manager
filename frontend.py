@@ -194,6 +194,7 @@ class App(ctk.CTk):
         help_menu = Menu(menubar, tearoff=0)
         help_menu.add_command(label=self.i18n.t('menu_howitisworking'), command=self.show_help)
         help_menu.add_command(label=self.i18n.t('menu_about'), command=self.show_about)
+        help_menu.add_command(label=self.i18n.t('menu_update'), command=lambda: self.open_link("https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/releases/latest/"))
         menubar.add_cascade(label=self.i18n.t('menu_help'), menu=help_menu)
 
         # Appearance
