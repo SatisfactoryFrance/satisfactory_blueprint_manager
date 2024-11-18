@@ -543,7 +543,7 @@ class App(ctk.CTk):
         return filedialog.askdirectory(
             initialdir=default_path,
             title=i18n.t('folder_not_set')
-    )
+            )
 
     def load_blueprints(self):
         print('Trying to load bp')

@@ -2,7 +2,6 @@
 import shutil
 from pathlib import Path
 import json
-from tkinter import filedialog
 import re
 import uuid
 import requests
