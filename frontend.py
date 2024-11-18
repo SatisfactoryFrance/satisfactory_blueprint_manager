@@ -14,7 +14,7 @@ import requests
 from PIL import Image
 import i18n
 
-BUILD_NUMBER = "v1.1.3"
+BUILD_NUMBER = "v1.2.0"
 
 
 class Sidebar(ctk.CTkFrame):
@@ -163,6 +163,8 @@ class App(ctk.CTk):
             self.destroy()
             return  # Arrête l'initialisation
 
+        self.display_update_status()
+
         self.current_site_page = 1
 
         # Menu
@@ -192,6 +194,7 @@ class App(ctk.CTk):
         help_menu = Menu(menubar, tearoff=0)
         help_menu.add_command(label=self.i18n.t('menu_howitisworking'), command=self.show_help)
         help_menu.add_command(label=self.i18n.t('menu_about'), command=self.show_about)
+        help_menu.add_command(label=self.i18n.t('menu_update'), command=lambda: self.open_link("https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/releases/latest/"))
         menubar.add_cascade(label=self.i18n.t('menu_help'), menu=help_menu)
 
         # Appearance
@@ -629,3 +632,22 @@ class App(ctk.CTk):
 
     def open_link(self, url):
         webbrowser.open(url)
+
+    def display_update_status(self):
+
+        """Vérifie les mises à jour disponibles et affiche des messages en conséquence."""
+        is_up_to_date, remote_version, download_url, error_message = self.backend.check_for_update(BUILD_NUMBER)
+
+        if error_message:
+            # En cas d'erreur réseau ou autre, afficher un message d'erreur
+            messagebox.showerror(self.i18n.t("error"), error_message)
+        elif not is_up_to_date:
+            # Mise à jour disponible, afficher l'information
+            messagebox.showinfo(
+                self.i18n.t("update_available"),
+                f"{self.i18n.t('new_version_available')} : {remote_version}\n"
+                f"{self.i18n.t('download_here')} : {download_url}"
+            )
+        else:
+            # Si aucune mise à jour n'est nécessaire, continuer normalement
+            return True

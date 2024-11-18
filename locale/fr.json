@@ -47,5 +47,9 @@
   "add_blueprints": "Ajouter des blueprints",
   "open_scim": "Ouvrir Satisfactory Calculator (SCIM)",
   "no_bp_folder": "Le dossier /blueprints/ n'existe pas. Pour utiliser le logiciel, il faut débloquer le modeleur en jeu et créer un 1er blueprint manuellement",
-  "select_save": "Sélectionnez votre partie"
+  "select_save": "Sélectionnez votre partie",
+  "update_available": "Mise à jour disponible",
+  "new_version_available": "Nouvelle version",
+  "download_here": "Téléchargement",
+  "menu_update" :  "Mise-à-jour"
 }
