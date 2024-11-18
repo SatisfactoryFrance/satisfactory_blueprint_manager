@@ -5,6 +5,9 @@ on:
       - closed
     branches:
       - 'main'
+  push:
+    branches:
+      - main
 
 jobs:
   lint:

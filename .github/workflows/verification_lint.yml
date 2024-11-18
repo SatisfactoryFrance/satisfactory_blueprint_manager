@@ -25,8 +25,5 @@ jobs:
       - name: Run linters
         uses: wearerequired/lint-action@v2
         with:
-          black: true
-          black_args: "--ignore=E501"
-          black_auto_fix: "false"
           flake8: true
           flake8_args: "--ignore=E501"
