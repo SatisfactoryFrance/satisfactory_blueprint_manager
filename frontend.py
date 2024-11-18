@@ -1,4 +1,4 @@
-from backend import Backend, check_for_update
+from backend import Backend
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 from customtkinter import CTkImage
@@ -633,8 +633,9 @@ class App(ctk.CTk):
         webbrowser.open(url)
 
     def display_update_status(self):
+
         """Vérifie les mises à jour disponibles et affiche des messages en conséquence."""
-        is_up_to_date, remote_version, download_url, error_message = check_for_update(BUILD_NUMBER)
+        is_up_to_date, remote_version, download_url, error_message = self.backend.check_for_update(BUILD_NUMBER)
 
         if error_message:
             # En cas d'erreur réseau ou autre, afficher un message d'erreur
