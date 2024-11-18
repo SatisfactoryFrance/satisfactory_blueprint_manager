@@ -13,8 +13,33 @@ from bs4 import BeautifulSoup
 import requests
 from PIL import Image
 import i18n
+import json
 
 BUILD_NUMBER = "v1.1.3"
+VERSION_URL = "https://sbm.satisfactoryfr.com/version.json"
+
+
+def check_for_update():
+    try:
+        response = requests.get(VERSION_URL)
+        response.raise_for_status()
+        remote_data = response.json()
+
+        remote_version = remote_data.get("version")
+        download_url = remote_data.get("download_url")
+
+        if remote_version and remote_version > BUILD_NUMBER:
+            messagebox.showinfo(
+                "Mise à jour disponible",
+                f"Nouvelle version disponible : {remote_version}\n"
+                f"Téléchargez-la ici : {download_url}"
+            )
+        else:
+            return True  # Pas de mise à jour nécessaire
+    except requests.exceptions.RequestException as e:
+        messagebox.showerror("Erreur", f"Erreur lors de la vérification des mises à jour : {e}")
+    except json.JSONDecodeError:
+        messagebox.showerror("Erreur", "Impossible de lire les informations de version distantes.")
 
 
 class Sidebar(ctk.CTkFrame):
