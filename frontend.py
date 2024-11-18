@@ -17,24 +17,6 @@ import i18n
 BUILD_NUMBER = "v1.1.3"
 
 
-def display_update_status():
-    is_up_to_date, remote_version, download_url, error_message = check_for_update(BUILD_NUMBER)
-
-    if error_message:
-        # Y'a une erreur ?
-        messagebox.showerror("WARNING", error_message)
-    elif not is_up_to_date:
-        # update disponible
-        messagebox.showinfo(
-            "Mise à jour disponible",
-            f"Nouvelle version disponible : {remote_version}\n"
-            f"Téléchargez-la ici : {download_url}"
-        )
-    else:
-        # On continue le lancement si pas d'update
-        return True
-
-
 class Sidebar(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -180,6 +162,8 @@ class App(ctk.CTk):
             messagebox.showerror(self.i18n.t('error'), self.i18n.t('no_bp_folder'))
             self.destroy()
             return  # Arrête l'initialisation
+
+        self.display_update_status()
 
         self.current_site_page = 1
 
@@ -647,3 +631,21 @@ class App(ctk.CTk):
 
     def open_link(self, url):
         webbrowser.open(url)
+
+    def display_update_status(self):
+        """Vérifie les mises à jour disponibles et affiche des messages en conséquence."""
+        is_up_to_date, remote_version, download_url, error_message = check_for_update(BUILD_NUMBER)
+
+        if error_message:
+            # En cas d'erreur réseau ou autre, afficher un message d'erreur
+            messagebox.showerror(self.i18n.t("error"), error_message)
+        elif not is_up_to_date:
+            # Mise à jour disponible, afficher l'information
+            messagebox.showinfo(
+                self.i18n.t("update_available"),
+                f"{self.i18n.t('new_version_available')} : {remote_version}\n"
+                f"{self.i18n.t('download_here')} : {download_url}"
+            )
+        else:
+            # Si aucune mise à jour n'est nécessaire, continuer normalement
+            return True
