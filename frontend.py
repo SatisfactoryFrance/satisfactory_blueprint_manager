@@ -145,7 +145,12 @@ class App(ctk.CTk):
 
         self.i18n = i18n
 
-        self.i18n.load_path.append('locale')
+        # fix i18n
+        extDataDir = os.getcwd()
+        if getattr(sys, 'frozen', False):
+            extDataDir = sys._MEIPASS
+
+        self.i18n.load_path.append(os.path.join(extDataDir, 'locale'))
         self.i18n.set('file_format', 'json')
         self.i18n.set('locale', str(self.current_lang))
         self.i18n.set('fallback', 'en')
@@ -159,20 +164,6 @@ class App(ctk.CTk):
             return  # Arrête l'initialisation
 
         self.current_site_page = 1
-
-        self.i18n = i18n
-
-        # fix i18n
-        extDataDir = os.getcwd()
-        if getattr(sys, 'frozen', False):
-            extDataDir = sys._MEIPASS
-
-        self.i18n.load_path.append(os.path.join(extDataDir, 'locale'))
-        self.i18n.set('file_format', 'json')
-        self.i18n.set('locale', str(self.current_lang))
-        self.i18n.set('fallback', 'en')
-        self.i18n.set('filename_format', '{locale}.{format}')
-        self.i18n.set('skip_locale_root_data', True)
 
         # Menu
         menubar = Menu(self)
