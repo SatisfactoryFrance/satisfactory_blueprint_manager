@@ -133,7 +133,7 @@ class Backend():
 
 
 # URL pour vérifier la version
-VERSION_URL = "https://raw.githubusercontent.com/SatisfactoryFrance/satisfactory_blueprint_manager/refs/heads/update_message/version.json?token=GHSAT0AAAAAACV6H3E7XPK42QGOGKIVXWRMZZ3LB3Q"
+VERSION_URL = "https://sbm.satisfactoryfr.com/version.json"
 
 
 def check_for_update(BUILD_NUMBER):
