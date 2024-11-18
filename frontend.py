@@ -1,4 +1,4 @@
-from backend import Backend
+from backend import Backend, check_for_update
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 from customtkinter import CTkImage
@@ -13,33 +13,26 @@ from bs4 import BeautifulSoup
 import requests
 from PIL import Image
 import i18n
-import json
 
 BUILD_NUMBER = "v1.1.3"
-VERSION_URL = "https://sbm.satisfactoryfr.com/version.json"
 
 
-def check_for_update():
-    try:
-        response = requests.get(VERSION_URL)
-        response.raise_for_status()
-        remote_data = response.json()
+def display_update_status():
+    is_up_to_date, remote_version, download_url, error_message = check_for_update(BUILD_NUMBER)
 
-        remote_version = remote_data.get("version")
-        download_url = remote_data.get("download_url")
-
-        if remote_version and remote_version > BUILD_NUMBER:
-            messagebox.showinfo(
-                "Mise à jour disponible",
-                f"Nouvelle version disponible : {remote_version}\n"
-                f"Téléchargez-la ici : {download_url}"
-            )
-        else:
-            return True  # Pas de mise à jour nécessaire
-    except requests.exceptions.RequestException as e:
-        messagebox.showerror("Erreur", f"Erreur lors de la vérification des mises à jour : {e}")
-    except json.JSONDecodeError:
-        messagebox.showerror("Erreur", "Impossible de lire les informations de version distantes.")
+    if error_message:
+        # Y'a une erreur ?
+        messagebox.showerror("WARNING", error_message)
+    elif not is_up_to_date:
+        # update disponible
+        messagebox.showinfo(
+            "Mise à jour disponible",
+            f"Nouvelle version disponible : {remote_version}\n"
+            f"Téléchargez-la ici : {download_url}"
+        )
+    else:
+        # On continue le lancement si pas d'update
+        return True
 
 
 class Sidebar(ctk.CTkFrame):

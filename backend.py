@@ -130,3 +130,28 @@ class Backend():
     def send_ping(self):
         t = threading.Thread(target=self.async_send_ping_request)
         t.start()
+
+
+# URL pour vérifier la version
+VERSION_URL = "https://sbm.satisfactoryfr.com/version.json"
+
+
+def check_for_update(BUILD_NUMBER):
+    try:
+        # Effectuer une requête pour obtenir les informations de la version
+        response = requests.get(VERSION_URL)
+        response.raise_for_status()
+        remote_data = response.json()
+
+        remote_version = remote_data.get("version")
+        download_url = remote_data.get("download_url")
+
+        if remote_version and remote_version > BUILD_NUMBER:
+            return False, remote_version, download_url, None  # Mise à jour disponible
+        else:
+            return True, remote_version, None, None  # Pas de mise à jour nécessaire
+
+    except requests.exceptions.RequestException as e:
+        return False, None, None, f"Erreur réseau : {e}"  # Erreur réseau
+    except json.JSONDecodeError:
+        return False, None, None, "Erreur de lecture des données JSON."  # Erreur JSON

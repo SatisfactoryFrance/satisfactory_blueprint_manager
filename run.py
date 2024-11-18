@@ -1,4 +1,4 @@
-from frontend import App, check_for_update
+from frontend import App, display_update_status
 import tkinter as tk
 
 if __name__ == "__main__":
@@ -6,7 +6,7 @@ if __name__ == "__main__":
     root = tk.Tk()
     root.withdraw()  # On lance pas le logiciel
 
-    check_for_update()
+    display_update_status()
 
     # Lancer l'application principale
     app = App()
