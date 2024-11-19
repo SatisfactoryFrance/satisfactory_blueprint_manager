@@ -11,7 +11,7 @@ import threading
 VERSION_URL = "https://sbm.satisfactoryfr.com/version.json"
 
 
-class Backend():
+class Backend:
 
     def __init__(self):
         self.config_file = os.getenv('LOCALAPPDATA') + '\\satisfactory_blueprint_manager.json'
