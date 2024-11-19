@@ -33,7 +33,8 @@ class Sidebar(ctk.CTkFrame):
             self,
             values=self.blueprint_folders,
             variable=self.selected_blueprint_folder,
-            command=self.update_game_folder
+            command=self.update_game_folder,
+            width=370
         )
         self.dropdown_game_folder.grid(column=0, row=0, padx=10, pady=5)
 
