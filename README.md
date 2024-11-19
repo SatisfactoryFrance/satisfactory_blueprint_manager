@@ -1,7 +1,7 @@
 <!-- MANPAGE: BEGIN EXCLUDED SECTION -->
 <div align="center">
 
-[![Release version](https://img.shields.io/github/v/release/satisfactoryfrance/satisfactory_blueprint_manager?color=brightgreen&label=Download&style=for-the-badge)]()
+[![latest version](https://img.shields.io/github/v/release/satisfactoryfrance/satisfactory_blueprint_manager?color=brightgreen&label=Download&style=for-the-badge)]()
 [![Discord](https://img.shields.io/discord/803459565064552519?color=blue&labelColor=555555&label=&logo=discord&style=for-the-badge)](https://discord.gg/satisfactoryfr "Discord")
 
 ![](https://sbm.satisfactoryfr.com/images/homepage-1204-background-lapto.png)
@@ -26,8 +26,8 @@ python -m PyInstaller --name SBM --onefile --windowed --icon=icone.ico --collect
 
 ## 🙇 Author
 #### Je0ffrey
-- Twitter: [@Je0ffrey]()
-- Github: [@Je0ffrey]()
+- Twitter: [@Je0ffrey](https://x.com/Jeoffreybauvin)
+- Github: [@Je0ffrey](https://github.com/Jeoffreybauvin)
 
 #### Allread
 - Twitter: [@satisfactoryfr](https://twitter.com/satisfactoryfr)
