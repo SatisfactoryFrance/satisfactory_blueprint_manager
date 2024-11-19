@@ -3,7 +3,7 @@
 [![Latest Version](https://img.shields.io/github/v/release/satisfactoryfrance/satisfactory_blueprint_manager?color=brightgreen&label=Download&style=for-the-badge)](https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/releases/latest)
 [![Discord](https://img.shields.io/discord/803459565064552519?color=blue&labelColor=555555&label=&logo=discord&style=for-the-badge)](https://discord.gg/satisfactoryfr "Join our Discord")
 
-![](https://sbm.satisfactoryfr.com/images/homepage-1204-background-lapto.png)
+![image](https://github.com/user-attachments/assets/688d58ea-9b86-4549-8c8d-aace48600eff)
 
 # **Satisfactory Blueprint Manager**  
 ##### Your ultimate tool for managing blueprints in Satisfactory
