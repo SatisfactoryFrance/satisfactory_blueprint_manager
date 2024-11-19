@@ -1,4 +1,4 @@
-from backend import Backend
+from app.backend import Backend
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 from customtkinter import CTkImage
@@ -14,7 +14,7 @@ import requests
 from PIL import Image
 import i18n
 
-BUILD_NUMBER = "v1.2.0"
+BUILD_NUMBER = "v1.2.1"
 
 
 class Sidebar(ctk.CTkFrame):

@@ -1,45 +1,73 @@
-<!-- MANPAGE: BEGIN EXCLUDED SECTION -->
 <div align="center">
 
-[![latest version](https://img.shields.io/github/v/release/satisfactoryfrance/satisfactory_blueprint_manager?color=brightgreen&label=Download&style=for-the-badge)]()
-[![Discord](https://img.shields.io/discord/803459565064552519?color=blue&labelColor=555555&label=&logo=discord&style=for-the-badge)](https://discord.gg/satisfactoryfr "Discord")
+[![Latest Version](https://img.shields.io/github/v/release/satisfactoryfrance/satisfactory_blueprint_manager?color=brightgreen&label=Download&style=for-the-badge)](https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/releases/latest)
+[![Discord](https://img.shields.io/discord/803459565064552519?color=blue&labelColor=555555&label=&logo=discord&style=for-the-badge)](https://discord.gg/satisfactoryfr "Join our Discord")
 
 ![](https://sbm.satisfactoryfr.com/images/homepage-1204-background-lapto.png)
-# SATISFACTORY BLUEPRINT MANAGER
-##### Blueprint Manager is a tool designed for Satisfactory players to facilitate blueprint management. Quickly find the root folder, move files with one click, and explore available blueprints via SCIM directly from the app.
+
+# **Satisfactory Blueprint Manager**  
+##### Your ultimate tool for managing blueprints in Satisfactory
 
 </div>
 
-## 🧐 Features    
-- Easily find and send your blueprints in Satisfactory. No need to search through Windows folders; the software does it for you.
-- S.B.M. is exclusively developed by the administrator staff of the Satisfactory FR community. The sources may be made available.
+## 📜 **Overview**  
+Satisfactory Blueprint Manager (SBM) is a comprehensive tool designed for players of *Satisfactory* to simplify the management of blueprints.  
+Easily locate your root folder, transfer files with a single click, and browse available blueprints directly via the app using SCIM integration.
 
-## 🧑🏻‍💻 Usage
-<!-- MANPAGE: BEGIN EXCLUDED SECTION -->
-[![Windows](https://img.shields.io/badge/-Windows_x64-blue.svg?style=for-the-badge&logo=windows)](https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/releases/latest/)
-<!-- MANPAGE: END EXCLUDED SECTION -->
+---
 
-## 🛠️ Compilation    
-```bash
+## 🧐 **Features**  
+- Effortlessly locate and manage your blueprints without manually navigating through directories.  
+- Seamless integration with SCIM for blueprint exploration.  
+- Exclusively developed by the Satisfactory FR community administrators.  
+
+---
+
+## 🖥️ **Usage**  
+### 📦 **Download**  
+Click the button below to download the latest version of SBM for Windows:  
+[![Download for Windows](https://img.shields.io/badge/-Windows_x64-blue.svg?style=for-the-badge&logo=windows)](https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/releases/latest)
+
+---
+
+## 🛠️ **Compilation Instructions**  
+To compile the project yourself, use the following command:  
+```
 python -m PyInstaller --name SBM --onefile --windowed --icon=icone.ico --collect-all customtkinter run.py
 ```
+## 🙇 **Authors**  
+### **Je0ffrey**  
+- [Twitter: @Je0ffrey](https://x.com/Jeoffreybauvin)  
+- [GitHub: @Je0ffreybauvin](https://github.com/Jeoffreybauvin)  
 
-## 🙇 Author
-#### Je0ffrey
-- Twitter: [@Je0ffrey](https://x.com/Jeoffreybauvin)
-- Github: [@Je0ffrey](https://github.com/Jeoffreybauvin)
+### **Allread**  
+- [Twitter: @satisfactoryfr](https://twitter.com/satisfactoryfr)  
 
-#### Allread
-- Twitter: [@satisfactoryfr](https://twitter.com/satisfactoryfr)
+---
 
-## 👨🏻‍💻 Community
-- [Discord FR](https://discord.gg/satisfactoryfr)
-- [Site FR](https://satisfactoryfr.com)
-- [Site EN](https://satisfactorygame.com)
+## 👨‍👩‍👧‍👦 **Community Links**  
+- Join our French-speaking community on [Discord](https://discord.gg/satisfactoryfr)  
+- Visit our websites:  
+  - [Satisfactory FR](https://satisfactoryfr.com)  
+  - [Satisfactory EN](https://satisfactorygame.com)  
 
-## 🌐 WIKI
-See the [Wiki](https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/wiki) for more information
+---
 
-## ❤️ Thanks to
-- [Satisfactory Calcutor](https://satisfactory-calculator.com/) - [Twitter Anthor.net](https://x.com/AnthorNet) - [Github Anthor.net](https://github.com/anthornet) - [Site Anthor.net](https://anthor.net/)
+## 🌐 **Documentation**  
+For detailed documentation and guides, please visit the [Wiki](https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/wiki).  
 
+---
+
+## ❤️ **Special Thanks**  
+- **[Satisfactory Calculator](https://satisfactory-calculator.com/)**  
+  - [Twitter: @AnthorNet](https://x.com/AnthorNet)  
+  - [GitHub: AnthorNet](https://github.com/anthornet)  
+  - [Website: Anthor.net](https://anthor.net)  
+
+---
+
+<div align="center">
+
+🔗 **Connect with Us:** [Discord](https://discord.gg/satisfactoryfr) • [Wiki](https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/wiki) • [Download SBM](https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/releases/latest)  
+
+</div>
