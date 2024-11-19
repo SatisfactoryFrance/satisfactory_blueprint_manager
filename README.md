@@ -39,3 +39,7 @@ python -m PyInstaller --name SBM --onefile --windowed --icon=icone.ico --collect
 
 ## 🌐 WIKI
 See the [Wiki](https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/wiki) for more information
+
+## ❤️ Thanks to
+- [Satisfactory Calcutor](https://satisfactory-calculator.com/) - [Twitter Anthor.net](https://x.com/AnthorNet) - [Github Anthor.net](https://github.com/anthornet) - [Site Anthor.net](https://anthor.net/)
+
