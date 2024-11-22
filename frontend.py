@@ -116,7 +116,8 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.backend = Backend()
-
+        self.scim_thread_cancel=False
+        self.scim_thread_dead=True
         icon_path = os.path.join(os.getcwd(), "icone.ico")  # Chemin vers .ico
         if os.path.exists(icon_path):
             self.iconbitmap(icon_path)
@@ -350,19 +351,30 @@ class App(ctk.CTk):
         except Exception as e:
             print(f"Erreur lors du défilement de la fenêtre principale : {e}")
 
+    # l'idée est de stopper le thread en cours et d'en relancer un autre avec la bonne page
+    def reload_scim_blueprints(self):
+        self.scim_thread_dead=True
+        self.scim_thread_cancel=False
+        threading.Thread(target=self.load_scim_blueprints, args=(self.current_site_page,), daemon=True).start()
+
     # ON PASSE SUR LE LOAD BP DE SCIM
 
     def load_scim_blueprints(self, site_page):
         """Charge les blueprints depuis la page spécifiée du site"""
-        # Efface les éléments précédents dans le cadre
-        for widget in self.scrollable_frame.winfo_children():
+        # Effacer le cadre et afficher un message "Téléchargement en cours"
+        self.scim_thread_dead=False
+        self.scim_thread_cancel=False
+        for widget in reversed(self.scrollable_frame.winfo_children()):
             widget.destroy()
+        self.loading_label = ctk.CTkLabel(self.scrollable_frame, text=self.i18n.t("download_in_progress"))
+        self.loading_label.pack(pady=20)
 
         # Mettre à jour le label de numéro de page
         self.page_label.configure(text=f"Page {site_page}")
 
         # On remonte en haut de la fenetre pour afficher les BP après un changement de page
-        self.canvas.after(100, lambda: self.canvas.yview_moveto(0))
+        # self.canvas.after(100, lambda: self.canvas.yview_moveto(0))
+        self.canvas.yview_moveto(0)
 
         # Construire l'URL pour la page actuelle
         url = f"https://satisfactory-calculator.com/fr/blueprints/index/index/p/{site_page}"
@@ -372,8 +384,15 @@ class App(ctk.CTk):
         soup = BeautifulSoup(response.text, "html.parser")
         blueprint_items = soup.find_all("div", class_="card-body")
 
+        # Efface les éléments précédents dans le cadre
+        for widget in reversed(self.scrollable_frame.winfo_children()):
+            widget.destroy()
+
         # Afficher les blueprints pour la page actuelle du site
         for item in blueprint_items:
+            if self.scim_thread_cancel:
+                self.reload_scim_blueprints()
+                return
             # Récupération du lien, de l'image, du titre et de l'ID du blueprint
             link = item.find("a", href=True)
             if link is None:
@@ -428,6 +447,9 @@ class App(ctk.CTk):
 
             download_button = ctk.CTkButton(frame, text=self.i18n.t('download'), command=lambda bid=blueprint_id, t=title: self.download_blueprint(bid, t))
             download_button.pack(side="right", padx=20, pady=5)
+        if self.scim_thread_cancel:
+            self.reload_scim_blueprints()
+        self.scim_thread_dead=True
 
     def download_blueprint(self, blueprint_id, title):
         """Télécharge les fichiers .sbp et .sbpcfg pour un blueprint sélectionné"""
@@ -489,14 +511,15 @@ class App(ctk.CTk):
 
     def update_page(self):
         """Met à jour la page des blueprints en utilisant un thread"""
-        # Effacer le cadre et afficher un message "Téléchargement en cours"
-        for widget in self.scrollable_frame.winfo_children():
-            widget.destroy()
-        self.loading_label = ctk.CTkLabel(self.scrollable_frame, text="Téléchargement en cours...")
-        self.loading_label.pack(pady=20)
 
         # Utiliser un thread pour charger les blueprints
-        threading.Thread(target=self.load_scim_blueprints, args=(self.current_site_page,), daemon=True).start()
+        if (self.scim_thread_dead):
+            # si pas de thread (tout est chargé), on lance un thread
+            self.reload_scim_blueprints()
+        else:
+            # sinon on lui demande de s'arreter
+            self.scim_thread_cancel=True
+
 
     def get_blueprint_description(self, blueprint_id):
         """Récupère et retourne une courte description (150 mots) du blueprint"""
