@@ -3,12 +3,11 @@ on:
   pull_request:
     types:
       - closed
-      - opened
-    branches:
-      - feature/czfreeze
-  push:
     branches:
       - main
+  push:
+    branches:
+      - feature/czfreeze
 
 jobs:
   lint:
