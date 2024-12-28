@@ -1,10 +1,10 @@
 name: Lint and release .exe on Github
 on:
-  pull_request:
-    types:
-      - closed
-    branches:
-      - main
+  # pull_request:
+  #   types:
+  #     - closed
+  #   branches:
+  #     - main
   push:
     branches:
       - feature/czfreeze
