@@ -7,7 +7,7 @@ on:
   #     - main
   push:
     branches:
-      - feature/czfreeze
+      - feature/cxfreeze
 
 jobs:
   lint:
