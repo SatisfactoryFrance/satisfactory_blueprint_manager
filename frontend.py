@@ -147,9 +147,10 @@ class App(ctk.CTk):
         self.i18n = i18n
 
         # fix i18n
-        extDataDir = os.getcwd()
-        if getattr(sys, 'frozen', False):
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
             extDataDir = sys._MEIPASS
+        else:
+            extDataDir = os.getcwd()
 
         self.i18n.load_path.append(os.path.join(extDataDir, 'locale'))
         self.i18n.set('file_format', 'json')

@@ -44,16 +44,20 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller
+        pip install cx_Freeze
         pip install -r requirements.txt
     - name: Build exe file
       run: |
-        python -m PyInstaller --name SBM --onefile --windowed --icon=icone.ico --add-data="locale/:./locale/" --collect-all customtkinter run.py --clean
+        python.exe .\setup.py  build
+
+    - name: Make zip with exe
+      run: |
+        Compress-Archive -Path build/exe.win-amd64-3.12/* -Destination SBM_Portable.zip
 
     - name: Upload .exe to Release
       uses: ncipollo/release-action@v1
       with:
         tag: Test
         name: Release SBM
-        artifacts: dist/SBM.exe
+        artifacts: SBM_Portable.zip
         draft: true
