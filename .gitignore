@@ -163,3 +163,7 @@ cython_debug/
 data.db
 /.vs/*
 *.vsidx
+/ui/.vshistory/app.py
+/.vshistory
+/services/.vshistory/blueprint_service.py
+/ui/.vshistory
