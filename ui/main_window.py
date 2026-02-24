@@ -23,6 +23,51 @@ class MainWindow(ctk.CTkFrame):
         for w in self.list.winfo_children():
             w.destroy()
 
+    # ================= EMPTY STATE =================
+        if not items:
+
+            empty_frame = ctk.CTkFrame(
+                self.list,
+                fg_color="transparent"
+            )
+            empty_frame.pack(expand=True, pady=80)
+
+            ctk.CTkLabel(
+                empty_frame,
+                text="🧩 " + self.master.t("empty_local_title"),
+                font=ctk.CTkFont(size=18, weight="bold"),
+                text_color="#9aa7b2"
+            ).pack(pady=(0, 20))
+
+            ctk.CTkLabel(
+                empty_frame,
+                text=self.master.t("empty_local_hint"),
+                font=ctk.CTkFont(size=13),
+                text_color="#7f8c8d"
+            ).pack(pady=(0, 25))
+
+            btns = ctk.CTkFrame(empty_frame, fg_color="transparent")
+            btns.pack()
+
+            ctk.CTkButton(
+                btns,
+                text=self.master.t("add_blueprints"),
+                width=200,
+                command=self.master.upload_blueprints
+            ).pack(side="left", padx=10)
+
+            ctk.CTkButton(
+                btns,
+                text=self.master.t("open_scim"),
+                width=200,
+                fg_color="#3b82f6",
+                hover_color="#2563eb",
+                command=self.master.open_scim
+            ).pack(side="left", padx=10)
+
+            return
+
+        # RETOUR A LA LISTE NORMALE
         for bp in items:
 
             name = bp["blueprint"]
