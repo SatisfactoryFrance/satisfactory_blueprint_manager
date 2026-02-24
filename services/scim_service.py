@@ -117,7 +117,7 @@ class ScimService:
             if txt:
                 return " ".join(txt.split()[:150]) + "..."
 
-        return "No description"
+        return "Pas de description"
 
     # ======================================================
     # HELPERS
