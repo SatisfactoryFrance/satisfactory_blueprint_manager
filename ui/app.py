@@ -12,15 +12,11 @@ from services.scim_service import ScimService
 from services.update_service import UpdateService
 from services.ping_service import PingService
 
-from utils.threads import run_bg
-
 from core.version import BUILD_NUMBER
 from core.paths import get_blueprints_base
 
 from ui.menubar import build_menubar
 from services.i18n_service import I18nService
-
-# BUILD_NUMBER = "v2.0.0"
 
 
 class App(ctk.CTk):
@@ -28,20 +24,24 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        build_menubar(self)
-
         # ---------------- SERVICES ----------------
 
-        self.config = ConfigService()
+        self.config_service = ConfigService()
+        self.config = self.config_service  # alias pour le code existant
         self.blueprints = BlueprintService()
         self.scim = ScimService()
         self.updater = UpdateService()
         self.ping = PingService()
 
-        self.i18n = I18nService(self.config.get_lang())
-        self.t = self.i18n.t  # d'après la documentation i18n
+        # ---------------- I18N ----------------
 
-        self.ping.send(self.config.get_id())
+        self.i18n = I18nService(self.config_service.get_lang())
+        self.t = self.i18n.t
+
+        # Menubar APRÈS i18n
+        build_menubar(self)
+
+        self.ping.send(self.config_service.get_id())
 
         # ---------------- UI ----------------
 
@@ -64,49 +64,65 @@ class App(ctk.CTk):
     # ======================================================
 
     def load_blueprints(self):
-        folder = self.config.get_game_folder()
+        folder = self.config_service.get_game_folder()
 
         if not folder or folder == "undefined":
 
             default = get_blueprints_base()
 
-            folder = filedialog.askdirectory(initialdir=default)
+            folder = filedialog.askdirectory(
+                initialdir=default,
+                title=self.t("filedialog_select_folder")
+            )
 
             if not folder:
                 return
 
-            self.config.set_game_folder(folder)
+            self.config_service.set_game_folder(folder)
 
         bps = self.blueprints.list_blueprints(folder)
         self.main.render_blueprints(bps)
-        self.sidebar.dropdown.set(os.path.basename(folder))
+
+        if hasattr(self.sidebar, "dropdown"):
+            self.sidebar.dropdown.set(os.path.basename(folder))
 
     def delete_blueprint(self, name):
-        folder = self.config.get_game_folder()
+        folder = self.config_service.get_game_folder()
 
-        if messagebox.askyesno("Supprimer", "Supprimer ce blueprint ?"):
+        if messagebox.askyesno(
+            self.t("confirm_delete"),
+            self.t("confirm_delete_long")
+        ):
             self.blueprints.delete_blueprint(folder, name)
             self.load_blueprints()
 
     def upload_blueprints(self):
 
-        files = filedialog.askopenfilenames(filetypes=[("Blueprint", "*.sbp")])
+        files = filedialog.askopenfilenames(
+            title=self.t("upload_blueprint"),
+            filetypes=[(self.t("sbp_files"), "*.sbp")]
+        )
 
         if not files:
             return
 
-        folder = self.config.get_game_folder()
+        folder = self.config_service.get_game_folder()
 
         if not self.blueprints.check_sbpcfg_exists(files):
-            messagebox.showerror("Erreur", "Fichier .sbpcfg manquant")
+            messagebox.showerror(self.t("error"), self.t("error_no_sbpcfg"))
             return
 
         if not self.blueprints.check_duplicates(files, folder):
-            messagebox.showerror("Erreur", "Blueprint déjà existant")
+            messagebox.showerror(self.t("error"), self.t("error_already_same_bp"))
             return
 
         self.blueprints.upload_blueprints(files, folder)
         self.load_blueprints()
+
+        messagebox.showinfo(
+            self.t("blueprint_added"),
+            self.t("blueprint_added_long")
+        )
 
     # ======================================================
     # SCIM
@@ -117,15 +133,23 @@ class App(ctk.CTk):
 
     def download_scim(self, blueprint_id, title):
 
-        folder = self.config.get_game_folder()
+        folder = self.config_service.get_game_folder()
 
         try:
             name = self.scim.download_blueprint(blueprint_id, title, folder)
-            messagebox.showinfo("OK", f"{name} téléchargé")
+
+            messagebox.showinfo(
+                self.t("download_successful"),
+                self.t("download_successful_long", title=name)
+            )
+
             self.load_blueprints()
 
         except Exception as e:
-            messagebox.showerror("Erreur", str(e))
+            messagebox.showerror(
+                self.t("error"),
+                self.t("download_failure_long", error=str(e))
+            )
 
     # ======================================================
     # UPDATE
@@ -139,6 +163,6 @@ class App(ctk.CTk):
 
         if not ok:
             messagebox.showinfo(
-                "Mise à jour",
-                f"Nouvelle version : {remote}\n{url}"
+                self.t("update_available"),
+                f"{self.t('new_version_available')} : {remote}\n{self.t('download_here')} : {url}"
             )

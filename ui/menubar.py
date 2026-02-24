@@ -1,71 +1,103 @@
-﻿import webbrowser
+import webbrowser
 from tkinter import Menu, messagebox
+import customtkinter as ctk
 
 
 def build_menubar(app):
     """
     app = instance de App (CTk)
-    On ne met ici que de l'UI/menus + appels vers app / services.
+    On utilise app.t(...) pour toutes les chaînes.
     """
+
+    t = app.t  # raccourci
+
     menubar = Menu(app)
-    app.config(menu=menubar)
+    ctk.CTk.config(app, menu=menubar)
 
-    # ---------------- Fichier ----------------
+    # =========================
+    # FICHIER
+    # =========================
+
     menu_file = Menu(menubar, tearoff=0)
-    menu_file.add_command(label="Quitter", command=app.quit)
-    menubar.add_cascade(label="Fichier", menu=menu_file)
+    menu_file.add_command(label=t("quit"), command=app.quit)
+    menubar.add_cascade(label=t("menu_file"), menu=menu_file)
 
-    # ---------------- Langue ----------------
+    # =========================
+    # LANGUE
+    # =========================
+
     menu_lang = Menu(menubar, tearoff=0)
 
     def set_fr():
-        app.config.set_lang("fr")
-        messagebox.showinfo("Langue", "Langue changée en FR. Redémarre l'app si besoin.")
+        app.config_service.set_lang("fr")
+        app.i18n.set_locale("fr")
+
+        # rebuild menubar live
+        build_menubar(app)
+
+        messagebox.showinfo("Info", t("switch_lang"))
 
     def set_en():
-        app.config.set_lang("en")
-        messagebox.showinfo("Langue", "Language set to EN. Restart app if needed.")
+        app.config_service.set_lang("en")
+        app.i18n.set_locale("en")
 
-    # Simple et robuste (radio)
-    menu_lang.add_radiobutton(label="Français", command=set_fr)
-    menu_lang.add_radiobutton(label="English", command=set_en)
-    menubar.add_cascade(label="Langue", menu=menu_lang)
+        # rebuild menubar live
+        build_menubar(app)
 
-    # ---------------- Liens utiles ----------------
+        messagebox.showinfo("Info", t("switch_lang"))
+
+    menu_lang.add_command(label=t("menu_fr"), command=set_fr)
+    menu_lang.add_command(label=t("menu_en"), command=set_en)
+
+    menubar.add_cascade(label=t("menu_lang"), menu=menu_lang)
+
+    # =========================
+    # LIENS UTILES
+    # =========================
+
     menu_links = Menu(menubar, tearoff=0)
+
     menu_links.add_command(label="Site Satisfactory FR", command=lambda: webbrowser.open("https://satisfactoryfr.com"))
     menu_links.add_command(label="Site Satisfactory EN", command=lambda: webbrowser.open("https://satisfactorygame.com"))
     menu_links.add_command(label="Discord FR", command=lambda: webbrowser.open("https://discord.gg/satisfactoryfr"))
     menu_links.add_command(label="Discord EN", command=lambda: webbrowser.open("https://discord.gg/satisfactory"))
     menu_links.add_command(label="Site S.B.M.", command=lambda: webbrowser.open("https://sbm.satisfactoryfr.com"))
     menu_links.add_command(label="Blueprints SCIM", command=lambda: webbrowser.open("https://satisfactory-calculator.com/fr/blueprints"))
-    menubar.add_cascade(label="Liens utiles", menu=menu_links)
 
-    # ---------------- Aide ----------------
+    menubar.add_cascade(label=t("useful_links"), menu=menu_links)
+
+    # =========================
+    # AIDE
+    # =========================
+
     menu_help = Menu(menubar, tearoff=0)
 
-    def about():
+    def show_about():
         messagebox.showinfo(
-            "À propos",
-            "Satisfactory Blueprint Manager\nProjet communautaire Satisfactory France"
+            t("menu_about"),
+            t("software_aboutsbm")
         )
 
-    def help_():
+    def show_help():
         messagebox.showinfo(
-            "Aide",
-            "• Choisis un dossier de save via la liste déroulante\n"
-            "• Ajoute des .sbp (+ .sbpcfg)\n"
-            "• Télécharge depuis SCIM\n"
+            t("menu_howitisworking"),
+            f"{t('software_specs')}\n\n"
+            f"{t('software_before_anything')}\n"
+            f"{t('software_create_first_blueprint')}\n\n"
+            f"{t('software_step_1')}\n"
+            f"{t('software_step_2')}\n"
+            f"{t('software_step_3')}\n"
+            f"{t('software_step_4')}\n"
+            f"{t('software_step_5')}\n\n"
+            f"{t('software_additional_options')}\n"
+            f"{t('software_local_only')}"
         )
 
-    def open_latest_release():
-        webbrowser.open("https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/releases/latest/")
-
-    menu_help.add_command(label="Comment ça marche", command=help_)
-    menu_help.add_command(label="À propos", command=about)
+    menu_help.add_command(label=t("menu_howitisworking"), command=show_help)
+    menu_help.add_command(label=t("menu_about"), command=show_about)
     menu_help.add_separator()
-    menu_help.add_command(label="Vérifier les mises à jour", command=app.check_update)
-    menu_help.add_command(label="Dernière release (GitHub)", command=open_latest_release)
-    menubar.add_cascade(label="Aide", menu=menu_help)
+    menu_help.add_command(label=t("menu_update"), command=app.check_update)
+
+    menubar.add_cascade(label=t("menu_help"), menu=menu_help)
 
     return menubar
