@@ -55,12 +55,13 @@ class ScimService:
                 except:
                     pass
 
-            description = self.get_description(blueprint_id)
+            # description = self.get_description(blueprint_id)
+            
 
             results.append({
                 "id": blueprint_id,
                 "title": title,
-                "description": description,
+                "description": None,
                 "image": image_bytes,
                 "url": f"{self.BASE_URL}/index/details/id/{blueprint_id}"
             })
@@ -101,7 +102,7 @@ class ScimService:
         return safe
 
     # ======================================================
-    # DESCRIPTION
+    # TROUVER LA DESCRIPTION
     # ======================================================
 
     def get_description(self, blueprint_id):

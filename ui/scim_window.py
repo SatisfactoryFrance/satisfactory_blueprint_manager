@@ -107,6 +107,8 @@ class ScimWindow(ctk.CTkToplevel):
             self
         )
 
+
+
     # ======================================================
     # Render
     # ======================================================
@@ -168,20 +170,25 @@ class ScimWindow(ctk.CTkToplevel):
                 text_color="#e5e5e5"
             ).pack(anchor="w")
 
-            desc = bp["description"]
+            desc = bp.get("description") or self.master.t("scim_no_description")
 
-            # clamp manuel (~300 caractères ≈ 3 lignes)
-            if len(desc) > 300:
-                desc = desc[:300].rsplit(" ", 1)[0] + "..."
-
-            ctk.CTkLabel(
+            desc_label = ctk.CTkLabel(
                 text_block,
-                text=desc,
+                text=self.master.t("scim_click_description"),
                 font=ctk.CTkFont(size=12),
                 wraplength=420,
                 justify="left",
-                text_color="#9aa7b2"
-            ).pack(anchor="w", pady=(4, 0))
+                text_color="#60a5fa"
+            )
+            desc_label.pack(anchor="w", pady=(4, 0))
+
+            def click(e, b=bp, lbl=desc_label):
+                self.load_description(b, lbl)
+
+            for widget in (card, row, text_block, desc_label):
+                widget.bind("<Button-1>", click)
+            
+            
 
             # ================= DOWNLOAD BUTTON =================
 
@@ -198,3 +205,14 @@ class ScimWindow(ctk.CTkToplevel):
             )
 
             btn.pack(side="right", padx=10)
+
+    def load_description(self, bp, label):
+        if bp.get("description"):
+            return
+        label.configure(text="Chargement…")
+        def work():
+            return self.master.scim.get_description(bp["id"])
+        def done(desc):
+            bp["description"] = desc
+            label.configure(text=desc)
+        run_bg(work, done, self)

@@ -53,5 +53,6 @@
   "download_here": "Téléchargement",
   "menu_update": "Mise-à-jour",
   "empty_local_title": "Aucun blueprint dans ce dossier",
-  "empty_local_hint": "Ajoutez un blueprint local ou parcourez SCIM."
+  "empty_local_hint": "Ajoutez un blueprint local ou parcourez SCIM.",
+  "scim_click_description": "Cliquez pour afficher la description"
 }

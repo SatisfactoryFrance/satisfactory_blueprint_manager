@@ -169,3 +169,4 @@ data.db
 /ui/.vshistory
 /services/.vshistory/scim_service.py
 /services/.vshistory/update_service.py
+/locale/.vshistory
