@@ -64,6 +64,14 @@ class App(ctk.CTk):
         )
         self.save_selector.pack(side="left", padx=10)
 
+        # ouverture dossier courant
+        ctk.CTkButton(
+            header,
+            text="📂",
+            width=40,
+            command=self.open_current_folder
+        ).pack(side="left", padx=6)
+
         # On compte le nombre de BP et on l'affiche dans une petite étiquette
         self.bp_count_label = ctk.CTkLabel(
             header,
@@ -83,6 +91,7 @@ class App(ctk.CTk):
             width=170,
             command=self.upload_blueprints
         ).pack(side="left", padx=6)
+
 
         # Open SCIM
         ctk.CTkButton(
@@ -185,7 +194,7 @@ class App(ctk.CTk):
         )
 
     # ======================================================
-    # SCIM
+    # ouverture fenetre SCIM
     # ======================================================
 
     def open_scim(self):
@@ -289,3 +298,19 @@ class App(ctk.CTk):
 
         if self.saves.set_current(name):
             self.load_blueprints()
+
+    # ======================================================
+    # Ouverture du dossier courant
+    # ======================================================
+
+    def open_current_folder(self):
+
+        folder = self.config_service.get_game_folder()
+
+        if not folder or folder == "undefined":
+            return
+
+        try:
+            os.startfile(folder)   # Windows
+        except Exception as e:
+            messagebox.showerror(self.t("error"), str(e))
