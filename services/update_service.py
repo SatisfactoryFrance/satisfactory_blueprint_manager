@@ -1,9 +1,9 @@
-﻿import requests
+import requests
 
 
 class UpdateService:
 
-    VERSION_URL = "https://sbm.satisfactoryfr.com/version.json"
+    VERSION_URL = "https://raw.githubusercontent.com/SatisfactoryFrance/satisfactory_blueprint_manager/refs/heads/v2/version.json"
 
     def __init__(self):
         pass
