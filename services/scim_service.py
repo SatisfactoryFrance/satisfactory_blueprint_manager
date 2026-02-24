@@ -17,9 +17,11 @@ class ScimService:
     # LISTING
     # ======================================================
 
-    def get_blueprints(self, page: int):
+    def get_blueprints(self, page: int, query: str = ""):
 
         url = f"{self.BASE_URL}/index/index/p/{page}"
+        if query:
+            url += f"/query/{requests.utils.quote(query)}"
         response = requests.get(url, headers=self.headers, timeout=15)
 
         soup = BeautifulSoup(response.text, "html.parser")

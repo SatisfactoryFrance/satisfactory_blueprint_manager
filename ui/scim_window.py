@@ -47,6 +47,72 @@ class ScimWindow(ctk.CTkToplevel):
         )
         self.next_btn.pack(side="left")
 
+        # ================= SEARCH =================
+
+        search_frame = ctk.CTkFrame(self, fg_color="transparent")
+        search_frame.pack(fill="x", padx=10)
+
+        self.search_var = ctk.StringVar()
+
+        self.search_entry = ctk.CTkEntry(
+            search_frame,
+            textvariable=self.search_var,
+            placeholder_text=self.master.t("search_scim"),
+            fg_color="#1b2838",
+            text_color="#ffffff",
+            placeholder_text_color="#9aa7b2",
+            border_color="#3a5a75",
+            corner_radius=8,
+            height=32
+        )
+        self.search_entry.pack(fill="x", pady=(0, 8))
+        # rendre le curseur visible et donner le focus au champ (améliore l'UX)
+        try:
+            # certaines versions exposent 'insertbackground' via configure
+            self.search_entry.configure(insertbackground="#ffffff")
+        except Exception:
+            pass
+        # Donner le focus pour que l'utilisateur voie le caret immédiatement
+        try:
+            self.search_entry.focus_set()
+        except Exception:
+            pass
+
+        # Put a visible default text in the field (placeholder-like) and
+        # clear/restore it on focus so the user always sees a hint.
+        self._default_search_text = self.master.t("search_scim")
+        # set initial value to the default text and make it look like a placeholder
+        self.search_var.set(self._default_search_text)
+        try:
+            self.search_entry.configure(text_color="#9aa7b2")
+        except Exception:
+            pass
+
+        def _clear_placeholder(e):
+            if self.search_var.get() == self._default_search_text:
+                self.search_var.set("")
+                try:
+                    self.search_entry.configure(text_color="#ffffff")
+                except Exception:
+                    pass
+
+        def _restore_placeholder(e):
+            if not self.search_var.get().strip():
+                self.search_var.set(self._default_search_text)
+                try:
+                    self.search_entry.configure(text_color="#9aa7b2")
+                except Exception:
+                    pass
+
+        self.search_entry.bind("<FocusIn>", _clear_placeholder)
+        self.search_entry.bind("<FocusOut>", _restore_placeholder)
+
+        def search_local():
+            self.page = 1
+            self.load_page()
+        self.search = search_local
+        self.search_entry.bind("<Return>", lambda e: self.search())
+
         # Scrollable list
         self.list = ctk.CTkScrollableFrame(
             self,
@@ -101,8 +167,12 @@ class ScimWindow(ctk.CTkToplevel):
 
         self.list._parent_canvas.yview_moveto(0) #Remonte en haut de la liste
 
+        query = self.search_var.get().strip() if hasattr(self, "search_var") else ""
+        if hasattr(self, "_default_search_text") and query == self._default_search_text:
+            query = ""
+
         run_bg(
-            lambda: self.master.scim.get_blueprints(self.page),
+            lambda: self.master.scim.get_blueprints(self.page, query),
             self.render_items,
             self
         )
