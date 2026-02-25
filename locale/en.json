@@ -55,5 +55,6 @@
   "empty_local_title": "No blueprints in this folder",
   "empty_local_hint": "Add a local blueprint or browse SCIM.",
   "scim_click_description": "Click to load description",
-  "search_scim": "Search blueprint..."
+  "search_scim": "Search blueprint...",
+  "folder_missing_reset": "The saved blueprints folder no longer exists:\n%{folder}\n\nPlease select another folder."
 }

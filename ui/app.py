@@ -64,7 +64,7 @@ class App(ctk.CTk):
         # ---------------- UI ----------------
 
         self.title(f"Satisfactory Blueprint Manager - {BUILD_NUMBER}")
-        self.geometry("1200x600")
+        self.center_window(1200, 600)
 
 # ================= HEADER =================
 
@@ -132,8 +132,10 @@ class App(ctk.CTk):
         self.save_selector.configure(values=folders)
 
         current = self.saves.get_current()
-        if current:
+        if current and current in folders:
             self.save_selector.set(current)
+        else:
+            self.save_selector.set(self.t("select_save"))
 
         self.main = MainWindow(self)
         self.main.pack(fill="both", expand=True)
@@ -150,8 +152,23 @@ class App(ctk.CTk):
     def load_blueprints(self):
         folder = self.config_service.get_game_folder()
 
-        if not folder or folder == "undefined":
+        # ✅ Si le dossier mémorisé n'existe plus, on reset proprement
+        if folder and folder != "undefined" and not os.path.isdir(folder):
+            old = folder
+            self.config_service.set_game_folder("undefined")
 
+            # UI: on remet un texte neutre dans le dropdown (évite “valeur fantôme”)
+            if hasattr(self, "save_selector"):
+                self.save_selector.set(self.t("select_save"))
+
+            # UI: état vide
+            self.main.render_blueprints([])
+            self.bp_count_label.configure(text="0 BP")
+
+            self.show_missing_folder_popup(old)
+            return
+
+        if not folder or folder == "undefined":
             default = get_blueprints_base()
 
             folder = filedialog.askdirectory(
@@ -160,6 +177,9 @@ class App(ctk.CTk):
             )
 
             if not folder:
+                # état vide propre si l'utilisateur annule
+                self.main.render_blueprints([])
+                self.bp_count_label.configure(text="0 BP")
                 return
 
             self.config_service.set_game_folder(folder)
@@ -192,6 +212,12 @@ class App(ctk.CTk):
             return
 
         folder = self.config_service.get_game_folder()
+
+        # 🔐 Sécurité : dossier disparu / non défini
+        if not folder or folder == "undefined" or not os.path.isdir(folder):
+            messagebox.showerror(self.t("error"), self.t("folder_not_set"))
+            self.load_blueprints()
+            return
 
         if not self.blueprints.check_sbpcfg_exists(files):
             messagebox.showerror(self.t("error"), self.t("error_no_sbpcfg"))
@@ -330,3 +356,84 @@ class App(ctk.CTk):
             os.startfile(folder)   # Windows
         except Exception as e:
             messagebox.showerror(self.t("error"), str(e))
+
+    # ======================================================
+    # CENTRAGE FENETRE
+    # ======================================================
+
+    def center_window(self, width=1200, height=600):
+        self.update_idletasks()
+        screen_w = self.winfo_screenwidth()
+        screen_h = self.winfo_screenheight()
+        x = (screen_w // 2) - (width // 2)
+        y = (screen_h // 2) - (height // 2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
+
+    # ======================================================
+    # FENETRE DE DOSSIER MANQUANT 
+    # ======================================================
+
+    def show_missing_folder_popup(self, missing_path):
+
+        win = ctk.CTkToplevel(self)
+        win.title(self.t("error"))
+        win.geometry("480x220")
+        win.transient(self)
+        win.grab_set()
+        win.lift()
+        win.focus_force()
+
+        # centrer
+        win.update_idletasks()
+        x = (win.winfo_screenwidth() // 2) - 240
+        y = (win.winfo_screenheight() // 2) - 110
+        win.geometry(f"+{x}+{y}")
+
+        frame = ctk.CTkFrame(win, corner_radius=12)
+        frame.pack(fill="both", expand=True, padx=20, pady=20)
+
+        ctk.CTkLabel(
+            frame,
+            text="📁",
+            font=ctk.CTkFont(size=28)
+        ).pack(pady=(0, 5))
+
+        ctk.CTkLabel(
+            frame,
+            text=self.t("folder_missing_reset", folder=missing_path),
+            wraplength=420,
+            justify="center"
+        ).pack(pady=(0, 15))
+
+        btns = ctk.CTkFrame(frame, fg_color="transparent")
+        btns.pack()
+
+        def choose_folder():
+            default = get_blueprints_base()
+            folder = filedialog.askdirectory(
+                initialdir=default,
+                title=self.t("filedialog_select_folder")
+            )
+
+            if folder:
+                self.config_service.set_game_folder(folder)
+                win.destroy()
+                self.load_blueprints()
+
+        ctk.CTkButton(
+            btns,
+            text=self.t("filedialog_select_folder"),
+            width=180,
+            fg_color="#3b82f6",
+            hover_color="#2563eb",
+            command=choose_folder
+        ).pack(side="left", padx=10)
+
+        ctk.CTkButton(
+            btns,
+            text=self.t("quit"),
+            width=120,
+            fg_color="#374151",
+            hover_color="#4b5563",
+            command=win.destroy
+        ).pack(side="left", padx=10)
