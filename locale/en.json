@@ -57,5 +57,6 @@
   "scim_click_description": "Click to load description",
   "search_scim": "Search blueprint...",
   "folder_missing_reset": "The saved blueprints folder no longer exists:\n%{folder}\n\nPlease select another folder.",
-  "loading_blueprints": "Loading list…"
+  "loading_blueprints": "Loading list…",
+  "no_update_available": "No update available. You are up to date"
 }

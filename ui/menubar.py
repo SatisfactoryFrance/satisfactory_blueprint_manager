@@ -96,7 +96,8 @@ def build_menubar(app):
     menu_help.add_command(label=t("menu_howitisworking"), command=show_help)
     menu_help.add_command(label=t("menu_about"), command=show_about)
     menu_help.add_separator()
-    menu_help.add_command(label=t("menu_update"), command=app.check_update)
+    menu_help.add_command(label=t("menu_update"),command=lambda: app.check_update(manual=True)
+)
 
     menubar.add_cascade(label=t("menu_help"), menu=menu_help)
 

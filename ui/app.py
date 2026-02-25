@@ -126,26 +126,21 @@ class App(ctk.CTk):
 
         # -------- Populate saves --------
 
-        folders = self.saves.list_saves()
-
-        if not folders:
-            folders = [self.t("select_save")]
-
-        self.save_selector.configure(values=folders)
-
-        current = self.saves.get_current()
-        if current and current in folders:
-            self.save_selector.set(current)
-        else:
-            self.save_selector.set(self.t("select_save"))
-
-        self.main = MainWindow(self)
-        self.main.pack(fill="both", expand=True)
+        # self.refresh_saves_dropdown(keep_selection=True)
 
         # ---------------- Startup ----------------
 
+        self._focus_refresh_job = None
+        self.bind("<FocusIn>", self._on_focus_in)
+
+        # Main window
+        self.main = MainWindow(self)
+        self.main.pack(fill="both", expand=True, padx=10, pady=10)
+
         self.check_update()
         self.load_blueprints()
+
+        self.refresh_saves_dropdown(keep_selection=True)
 
     # ======================================================
     # BLUEPRINTS
@@ -277,14 +272,22 @@ class App(ctk.CTk):
     # UPDATE
     # ======================================================
 
-    def check_update(self):
+    def check_update(self, manual=False):
         ok, remote, url, error = self.updater.check_for_update(BUILD_NUMBER)
 
         if error:
+            if manual:
+                messagebox.showerror(self.t("error"), error)
             return
 
-        if not ok:
+        if not ok and remote and url:
             self.show_update_popup(remote, url)
+        else:
+            if manual:
+                messagebox.showinfo(
+                    self.t("update_available"),
+                    self.t("no_update_available")
+                )
 
     def show_update_popup(self, version, url):
         import webbrowser
@@ -349,7 +352,23 @@ class App(ctk.CTk):
 
     def on_save_changed(self, name):
 
+        # 🔄 resync avec le disque avant d'accepter la sélection
+        existing = self.saves.list_saves()
+
+        if name not in existing:
+            # le dossier a été supprimé entre temps
+            self.refresh_saves_dropdown(keep_selection=False)
+
+            # état UI cohérent
+            self.main.render_blueprints([])
+            self.bp_count_label.configure(text="0 BP")
+
+            self.show_missing_folder_popup(name)
+            return
+
         if self.saves.set_current(name):
+            # optionnel : resync pour retirer d’éventuels dossiers supprimés
+            self.refresh_saves_dropdown(keep_selection=True)
             self.load_blueprints()
 
     # ======================================================
@@ -448,3 +467,32 @@ class App(ctk.CTk):
             hover_color="#4b5563",
             command=win.destroy
         ).pack(side="left", padx=10)
+
+    # ======================================================
+    # Droplist des saves
+    # ======================================================
+
+    def refresh_saves_dropdown(self, keep_selection=True):
+        folders = self.saves.list_saves()
+        if not folders:
+            folders = [self.t("select_save")]
+
+        # on garde la sélection actuelle si possible
+        current = self.save_selector.get() if keep_selection else None
+
+        self.save_selector.configure(values=folders)
+
+        if current and current in folders:
+            self.save_selector.set(current)
+        else:
+            self.save_selector.set(self.t("select_save"))
+
+    def _on_focus_in(self, event=None):
+        if self._focus_refresh_job:
+            self.after_cancel(self._focus_refresh_job)
+
+        self._focus_refresh_job = self.after(300, self._do_focus_refresh)
+
+    def _do_focus_refresh(self):
+        self._focus_refresh_job = None
+        self.refresh_saves_dropdown(keep_selection=True)

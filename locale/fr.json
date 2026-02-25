@@ -57,5 +57,6 @@
   "scim_click_description": "Cliquez pour afficher la description",
   "search_scim": "Rechercher un blueprint...",
   "folder_missing_reset": "Le dossier de blueprints enregistré n’existe plus :\n%{folder}\n\nVeuillez sélectionner un autre dossier.",
-  "loading_blueprints": "Chargement de la liste …"
+  "loading_blueprints": "Chargement de la liste …",
+  "no_update_available": "Aucune mise à jour disponible. Vous êtes à jour"
 }

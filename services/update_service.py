@@ -1,4 +1,5 @@
 import requests
+import re
 
 
 class UpdateService:
@@ -8,6 +9,29 @@ class UpdateService:
     def __init__(self):
         pass
 
+    # ------------------------------
+    # Utils
+    # ------------------------------
+    def _parse_version(self, v: str):
+        """
+        Transforme 'v2.1.1' -> (2, 1, 1)
+        """
+        if not v:
+            return (0, 0, 0)
+
+        v = v.strip().lower()
+        if v.startswith("v"):
+            v = v[1:]
+
+        match = re.match(r"(\d+)\.(\d+)\.(\d+)", v)
+        if not match:
+            return (0, 0, 0)
+
+        return tuple(int(x) for x in match.groups())
+
+    # ------------------------------
+    # Update check
+    # ------------------------------
     def check_for_update(self, current_version: str):
         """
         Retourne :
@@ -24,15 +48,22 @@ class UpdateService:
             download_url = remote_data.get("download_url")
 
             if not remote_version:
-                return False, None, None, "Version distante introuvable"
+                return True, None, None, "Version distante introuvable"
 
-            if remote_version > current_version:
+            local_v = self._parse_version(current_version)
+            remote_v = self._parse_version(remote_version)
+
+            # DEBUG (tu peux supprimer plus tard)
+            print(f"[UPDATE] local={local_v} remote={remote_v}")
+
+            if remote_v > local_v:
                 return False, remote_version, download_url, None
 
             return True, remote_version, None, None
 
         except requests.exceptions.RequestException as e:
-            return False, None, None, f"Erreur réseau : {e}"
+            # On n'embête pas l'utilisateur si GitHub est HS
+            return True, None, None, f"Erreur réseau : {e}"
 
         except ValueError:
-            return False, None, None, "Erreur lecture JSON"
+            return True, None, None, "Erreur lecture JSON"
