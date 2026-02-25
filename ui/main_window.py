@@ -103,3 +103,27 @@ class MainWindow(ctk.CTkFrame):
                 command=lambda n=name: self.master.delete_blueprint(n)
             ).pack(side="right")
 
+
+    # =======================================================================
+    # ================= LOADING SI LISTE DES BP TROP GRANDE =================
+    # =======================================================================
+
+    def show_loading(self, text="Chargement..."):
+        # évite d'empiler plusieurs overlays
+        self.hide_loading()
+
+        self._loading = ctk.CTkFrame(self, fg_color="transparent")
+        self._loading.place(relx=0.5, rely=0.5, anchor="center")
+
+        ctk.CTkLabel(
+            self._loading,
+            text=text,
+            font=ctk.CTkFont(size=16, weight="bold"),
+            text_color="#9aa7b2"
+        ).pack()
+
+    def hide_loading(self):
+        if hasattr(self, "_loading") and self._loading:
+            self._loading.destroy()
+            self._loading = None
+

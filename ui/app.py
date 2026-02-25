@@ -20,6 +20,8 @@ from core.paths import get_blueprints_base
 from ui.menubar import build_menubar
 from services.i18n_service import I18nService
 
+from utils.threads import run_bg
+
 
 class App(ctk.CTk):
 
@@ -184,9 +186,18 @@ class App(ctk.CTk):
 
             self.config_service.set_game_folder(folder)
 
-        bps = self.blueprints.list_blueprints(folder)
-        self.main.render_blueprints(bps)
-        self.bp_count_label.configure(text=f"{len(bps)} BP")
+        # Affiche immédiatement un état de chargement
+        self.main.show_loading(self.t("loading_blueprints"))
+
+        def work():
+            return self.blueprints.list_blueprints(folder)
+
+        def done(bps):
+            self.main.hide_loading()
+            self.main.render_blueprints(bps)
+            self.bp_count_label.configure(text=f"{len(bps)} BP")
+
+        run_bg(work, done, self)
 
 #        if hasattr(self.sidebar, "dropdown"):
 #            self.sidebar.dropdown.set(os.path.basename(folder))
