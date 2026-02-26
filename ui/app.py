@@ -523,12 +523,16 @@ class App(ctk.CTk):
     def show_no_blueprint_folder_popup(self):
 
         win = ctk.CTkToplevel(self)
-        win.title("Blueprints introuvables")
+        win.title(self.t("no_bp_title"))
         win.geometry("520x260")
         win.transient(self)
         win.grab_set()
         win.lift()
         win.focus_force()
+        win.update_idletasks()
+        x = (win.winfo_screenwidth() // 2) - 260
+        y = (win.winfo_screenheight() // 2) - 130
+        win.geometry(f"+{x}+{y}")
 
         # empêcher fermeture via X
         win.protocol("WM_DELETE_WINDOW", lambda: None)
@@ -538,25 +542,20 @@ class App(ctk.CTk):
 
         ctk.CTkLabel(
             frame,
-            text="⚠️ Dossier Blueprints introuvable",
+            text="⚠️ " + self.t("no_bp_header"),
             font=ctk.CTkFont(size=16, weight="bold")
         ).pack(pady=(0, 10))
 
         ctk.CTkLabel(
             frame,
-            text=(
-                "Avez-vous débloqué le jalon Blueprints dans votre HUB ?\n\n"
-                "Vous devez créer au moins un blueprint (même très simple)\n"
-                "pour que Satisfactory génère les dossiers sur votre disque.\n\n"
-                "Ensuite, relancez Satisfactory Blueprint Manager."
-            ),
+            text=self.t("no_bp_message"),
             wraplength=460,
             justify="center"
         ).pack(pady=(0, 20))
 
         ctk.CTkButton(
             frame,
-            text="Quitter le logiciel",
+            text=self.t("quit"),
             width=200,
             fg_color="#b91c1c",
             hover_color="#991b1b",
