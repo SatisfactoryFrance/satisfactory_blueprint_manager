@@ -180,20 +180,25 @@ class App(ctk.CTk):
             return
 
         if not folder or folder == "undefined":
-            default = get_blueprints_base()
 
-            folder = filedialog.askdirectory(
-                initialdir=default,
-                title=self.t("filedialog_select_folder")
-            )
+            saves = self.saves.list_saves()
 
-            if not folder:
-                # état vide propre si l'utilisateur annule
-                self.main.render_blueprints([])
-                self.bp_count_label.configure(text="0 BP")
+            if saves:
+                # 🔥 Sélection automatique du premier dossier
+                first_save = saves[0]
+
+                self.saves.set_current(first_save)
+
+                # Sync dropdown proprement
+                self.refresh_saves_dropdown(keep_selection=False)
+                self.save_selector.set(first_save)
+
+                folder = self.config_service.get_game_folder()
+
+            else:
+                # Aucun dossier blueprint existant
+                self.show_no_blueprint_folder_popup()
                 return
-
-            self.config_service.set_game_folder(folder)
 
         # Affiche immédiatement un état de chargement
         self.main.show_loading(self.t("loading_blueprints"))
@@ -472,7 +477,7 @@ class App(ctk.CTk):
             hover_color="#2563eb",
             command=choose_folder
         ).pack(side="left", padx=10)
-
+        '''
         ctk.CTkButton(
             btns,
             text=self.t("quit"),
@@ -481,6 +486,7 @@ class App(ctk.CTk):
             hover_color="#4b5563",
             command=win.destroy
         ).pack(side="left", padx=10)
+        '''
 
     # ======================================================
     # Droplist des saves
