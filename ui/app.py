@@ -60,6 +60,9 @@ class App(ctk.CTk):
         self.i18n = I18nService(self.config_service.get_lang())
         self.t = self.i18n.t
 
+        print("LANG START =", self.config_service.get_lang())
+        print("DELETE =", self.t("delete"))
+
         # Menubar APRÈS i18n
         build_menubar(self)
 
@@ -139,10 +142,11 @@ class App(ctk.CTk):
         self.main = MainWindow(self)
         self.main.pack(fill="both", expand=True, padx=10, pady=10)
 
-        self.check_update()
+        self.refresh_saves_dropdown(keep_selection=True)
+
         self.load_blueprints()
 
-        self.refresh_saves_dropdown(keep_selection=True)
+        self.check_update()
 
     # ======================================================
     # BLUEPRINTS
@@ -341,7 +345,7 @@ class App(ctk.CTk):
 
         ctk.CTkButton(
             btns,
-            text="Plus tard",
+            text=self.t("later"),
             width=120,
             fg_color="#374151",
             hover_color="#4b5563",
@@ -479,10 +483,11 @@ class App(ctk.CTk):
         if not folders:
             folders = [self.t("select_save")]
 
-        # on garde la sélection actuelle si possible
-        current = self.save_selector.get() if keep_selection else None
-
         self.save_selector.configure(values=folders)
+
+        # 👉 Au lieu d'utiliser la valeur actuelle du widget,
+        # on utilise la save réellement active
+        current = self.saves.get_current()
 
         if current and current in folders:
             self.save_selector.set(current)

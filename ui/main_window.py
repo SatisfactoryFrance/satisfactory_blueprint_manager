@@ -95,7 +95,7 @@ class MainWindow(ctk.CTkFrame):
 
             ctk.CTkButton(
                 row,
-                text="Supprimer",
+                text=self.master.t("delete"),
                 width=110,
                 fg_color="#b91c1c",
                 hover_color="#991b1b",

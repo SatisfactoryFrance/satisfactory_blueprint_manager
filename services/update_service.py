@@ -53,7 +53,7 @@ class UpdateService:
             local_v = self._parse_version(current_version)
             remote_v = self._parse_version(remote_version)
 
-            # DEBUG (tu peux supprimer plus tard)
+            # DEBUG
             print(f"[UPDATE] local={local_v} remote={remote_v}")
 
             if remote_v > local_v:
