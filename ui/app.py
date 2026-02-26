@@ -502,4 +502,12 @@ class App(ctk.CTk):
 
     def _do_focus_refresh(self):
         self._focus_refresh_job = None
+
+        previous = self.saves.get_current()
+        existing = self.saves.list_saves()
+
         self.refresh_saves_dropdown(keep_selection=True)
+
+        if previous and previous not in existing:
+            self.config_service.set_game_folder("undefined")
+            self.load_blueprints()
