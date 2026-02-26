@@ -2,6 +2,8 @@ import os
 import customtkinter as ctk
 from tkinter import messagebox, filedialog
 import ctypes
+import sys
+from PIL import Image, ImageTk
 
 from ui.sidebar import Sidebar
 from ui.main_window import MainWindow
@@ -28,6 +30,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
+       # ---------------- ICON ----------------
 
         #la, on va attacher l'icone à la fenêtre, et aussi à la barre des tâches sous Windows
         icon_path = os.path.join(os.getcwd(), "icone.ico")  # Chemin vers .ico
@@ -41,7 +44,6 @@ class App(ctk.CTk):
             app_id = "Satisfactory blueprint Manager"  # Identifiant unique pour votre application
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
             self.iconbitmap(icon_path)  # Appliquer l'icône
-
 
         # ---------------- SERVICES ----------------
 
