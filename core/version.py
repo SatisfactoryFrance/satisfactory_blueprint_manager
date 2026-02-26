@@ -1,1 +1,2 @@
 BUILD_NUMBER = "2.3.0"
+CHANNEL = "BETA"
