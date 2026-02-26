@@ -60,7 +60,7 @@
   "loading_blueprints": "Chargement de la liste …",
   "no_update_available": "Aucune mise à jour disponible. Vous êtes à jour",
   "later": "Plus tard",
-  "no_bp_title": "Dossier Blueprints global introuvables",
+  "no_bp_title": "Dossier Blueprints global introuvable",
   "no_bp_header": "Dossier Blueprints global introuvable",
   "no_bp_message": "Avez-vous débloqué le jalon Blueprints dans votre HUB ?\n\nVous devez créer au moins un blueprint (même très simple) pour que Satisfactory génère les dossiers sur votre disque.\n\nEnsuite, relancez Satisfactory Blueprint Manager."
 }
