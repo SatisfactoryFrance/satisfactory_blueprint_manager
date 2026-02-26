@@ -153,6 +153,14 @@ class App(ctk.CTk):
     # ======================================================
 
     def load_blueprints(self):
+
+        base_path = get_blueprints_base()
+
+        # 🚨 Cas : aucun dossier blueprint global n'existe
+        if not os.path.isdir(base_path):
+            self.show_no_blueprint_folder_popup()
+            return
+
         folder = self.config_service.get_game_folder()
 
         # ✅ Si le dossier mémorisé n'existe plus, on reset proprement
@@ -511,3 +519,46 @@ class App(ctk.CTk):
         if previous and previous not in existing:
             self.config_service.set_game_folder("undefined")
             self.load_blueprints()
+
+    def show_no_blueprint_folder_popup(self):
+
+        win = ctk.CTkToplevel(self)
+        win.title("Blueprints introuvables")
+        win.geometry("520x260")
+        win.transient(self)
+        win.grab_set()
+        win.lift()
+        win.focus_force()
+
+        # empêcher fermeture via X
+        win.protocol("WM_DELETE_WINDOW", lambda: None)
+
+        frame = ctk.CTkFrame(win, corner_radius=12)
+        frame.pack(fill="both", expand=True, padx=20, pady=20)
+
+        ctk.CTkLabel(
+            frame,
+            text="⚠️ Dossier Blueprints introuvable",
+            font=ctk.CTkFont(size=16, weight="bold")
+        ).pack(pady=(0, 10))
+
+        ctk.CTkLabel(
+            frame,
+            text=(
+                "Avez-vous débloqué le jalon Blueprints dans votre HUB ?\n\n"
+                "Vous devez créer au moins un blueprint (même très simple)\n"
+                "pour que Satisfactory génère les dossiers sur votre disque.\n\n"
+                "Ensuite, relancez Satisfactory Blueprint Manager."
+            ),
+            wraplength=460,
+            justify="center"
+        ).pack(pady=(0, 20))
+
+        ctk.CTkButton(
+            frame,
+            text="Quitter le logiciel",
+            width=200,
+            fg_color="#b91c1c",
+            hover_color="#991b1b",
+            command=self.destroy
+        ).pack()
