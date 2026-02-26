@@ -6,6 +6,16 @@ class UpdateService:
 
     VERSION_URL = "https://raw.githubusercontent.com/SatisfactoryFrance/satisfactory_blueprint_manager/refs/heads/v2/version.json"
 
+    ''' 
+    URLS = {
+        "stable": "https://raw.githubusercontent.com/SatisfactoryFrance/satisfactory_blueprint_manager/refs/heads/v2/version.json",
+        "beta":   "https://sbm.satisfactoryfr.com/version-beta.json",
+        }
+
+        ==> URLS[UPDATE_CHANNEL]
+    '''
+
+
     def __init__(self):
         pass
 
