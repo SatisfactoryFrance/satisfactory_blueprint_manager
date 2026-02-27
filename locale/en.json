@@ -62,5 +62,7 @@
   "later": "Plus tard",
   "no_bp_title": "Blueprints folderNot Found",
   "no_bp_header": "Global blueprint Folder Not Found",
-  "no_bp_message": "Have you unlocked the Blueprint milestone in your HUB?\n\nYou must create at least one blueprint (even a simple one) so the game can generate the required folders on your disk.\n\nThen restart Satisfactory Blueprint Manager."
+  "no_bp_message": "Have you unlocked the Blueprint milestone in your HUB?\n\nYou must create at least one blueprint (even a simple one) so the game can generate the required folders on your disk.\n\nThen restart Satisfactory Blueprint Manager.",
+  "update_note": "Release notes",
+  "send_comment": "Send comment"
 }
