@@ -27,7 +27,13 @@ class ScimService:
         soup = BeautifulSoup(response.text, "html.parser")
         cards = soup.find_all("div", class_="card-body")
 
-        results = []
+        pagination = soup.find("ul", class_="pagination")
+        if (pagination is None):
+            pagination_maxpage = 1
+        else:
+            pagination_maxpage = int(pagination.find_all("li")[-1].find("a").get("href", "0").split("/")[-1])
+
+        results = type('',(object,),{"items": [],"maxPage":pagination_maxpage})()
 
         for card in cards:
 
@@ -60,7 +66,7 @@ class ScimService:
             # description = self.get_description(blueprint_id)
             
 
-            results.append({
+            results.items.append({
                 "id": blueprint_id,
                 "title": title,
                 "description": None,
