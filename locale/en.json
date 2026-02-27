@@ -51,7 +51,7 @@
   "update_available": "Update available",
   "new_version_available": "New version",
   "download_here": "Download",
-  "menu_update": "Update",
+  "menu_update": "Check update",
   "empty_local_title": "No blueprints in this folder",
   "empty_local_hint": "Add a local blueprint or browse SCIM.",
   "scim_click_description": "Click to load description",
