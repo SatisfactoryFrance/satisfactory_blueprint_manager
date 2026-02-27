@@ -43,7 +43,7 @@
   "software_step_4": "4. Une fenetre d'information vous indique sur le transfert s'est bien passé ou non.",
   "software_step_5": "5. Vous pouvez utiliser le bouton SUPPRIMER pour supprimer les BP de votre partie.",
   "software_additional_options": "Informations additionnelles :",
-  "software_local_only": "- Cela ne marche qu'en local, pas sur les serveurs dédiés",
+  "software_local_only": "- Cela ne marche qu'en local, pas sur les serveurs dédiés\n- Le logiciel est donné pour afficher 300 blueprints facilement. Au delà, un temps de chargement est necessaire",
   "add_blueprints": "Ajouter des blueprints",
   "open_scim": "Ouvrir Satisfactory Calculator (SCIM)",
   "no_bp_folder": "Le dossier /blueprints/ n'existe pas. Pour utiliser le logiciel, il faut débloquer le modeleur en jeu et créer un 1er blueprint manuellement",

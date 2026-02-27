@@ -43,7 +43,7 @@
   "software_step_4": "An information window will tell you whether the transfer went well or not.",
   "software_step_5": "You can use the DELETE button to remove BP from your game.",
   "software_additional_options": "Additional informations :",
-  "software_local_only": "- This only works locally, not on dedicated servers",
+  "software_local_only": "- This only works locally, not on dedicated servers.\n- The software is designed to display 300 blueprints easily. Beyond that, a loading time is required",
   "add_blueprints": "Add blueprints",
   "open_scim": "Open Satisfactory Calculator (SCIM)",
   "no_bp_folder": "The /blueprints/ folder does not exist. To use the software, you must unlock the in-game modeler and create a first blueprint manually",
