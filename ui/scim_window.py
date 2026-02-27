@@ -20,7 +20,7 @@ class ScimWindow(ctk.CTkToplevel):
         self.focus_force()      # prend le focus
 
         self.master = master
-        self.paginatator.currentPage = 1
+        self.paginatator.setCurrentPage(1)
 
         self.title(master.t("title_scim_windows"))
         self.center_window(1000, 600)
@@ -94,9 +94,9 @@ class ScimWindow(ctk.CTkToplevel):
         self.search_entry.bind("<FocusOut>", _restore_placeholder)
 
         def search_local():
-            self.paginatator.currentPage = 1
+            self.paginatator.setCurrentPage(1)
             self.load_page()
-            self.redrawHeader()
+
         self.search = search_local
         self.search_entry.bind("<Return>", lambda e: self.search())
 
@@ -133,28 +133,28 @@ class ScimWindow(ctk.CTkToplevel):
         self.paginatator.setCurrentPage(page)
         self.load_page()
 
-    def headerBtn(self, page:int, text:str):
+    def headerBtn(self,  targetPage:int, currentPage:int, text:str):
         btn = ctk.CTkButton(
             self.header,
             text=self.master.t(text),
             width=10,
             fg_color="#3b82f6",
             hover_color="#2563eb",
-            command= lambda : self.go_to_page(page)
+            command= lambda : self.go_to_page(targetPage)
         )
         btn.pack(side="left", padx=1)
-        if (page == self.paginatator.currentPage):
+        if (targetPage == currentPage):
             btn.configure(state = 'disabled',fg_color="#3d6485")
         return btn
 
     def redrawHeader(self):
         for child in self.header.winfo_children():
             child.destroy()
-        self.paginatator.generateFirst(lambda page:self.headerBtn(page,"<<"))
-        self.paginatator.generatePrevious(lambda page:self.headerBtn(page,"<"))
-        self.paginatator.generateRange(lambda page, currentPage:self.headerBtn(page,str(page)))
-        self.paginatator.generateNext(lambda page:self.headerBtn(page,">"))
-        self.paginatator.generateLast(lambda page:self.headerBtn(page,">>"))
+        self.paginatator.generateFirst(lambda targetPage, currentPage:self.headerBtn(targetPage, currentPage,"<<"))
+        self.paginatator.generatePrevious(lambda targetPage, currentPage:self.headerBtn(targetPage, currentPage,"<"))
+        self.paginatator.generateRange(lambda targetPage, currentPage:self.headerBtn(targetPage, currentPage,str(targetPage)))
+        self.paginatator.generateNext(lambda targetPage, currentPage:self.headerBtn(targetPage, currentPage,">"))
+        self.paginatator.generateLast(lambda targetPage, currentPage:self.headerBtn(targetPage, currentPage,">>"))
 
     # ======================================================
     # Loading

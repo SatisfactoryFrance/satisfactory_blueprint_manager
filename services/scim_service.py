@@ -17,6 +17,9 @@ class ScimService:
     # LISTING
     # ======================================================
 
+    def extract_pagenumber(self, url:str):
+        return int(re.search("p/([0-9]+)",url).group(1))
+    
     def get_blueprints(self, page: int, query: str = ""):
 
         url = f"{self.BASE_URL}/index/index/p/{page}"
@@ -31,7 +34,7 @@ class ScimService:
         if (pagination is None):
             pagination_maxpage = 1
         else:
-            pagination_maxpage = int(pagination.find_all("li")[-1].find("a").get("href", "0").split("/")[-1])
+            pagination_maxpage = self.extract_pagenumber(pagination.find_all("li")[-1].find("a").get("href", "p/0"))
 
         results = type('',(object,),{"items": [],"maxPage":pagination_maxpage})()
 
