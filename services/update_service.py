@@ -4,28 +4,14 @@ import re
 
 class UpdateService:
 
-    VERSION_URL = "https://raw.githubusercontent.com/SatisfactoryFrance/satisfactory_blueprint_manager/refs/heads/v2/version.json"
-
-    ''' 
-    URLS = {
-        "stable": "https://raw.githubusercontent.com/SatisfactoryFrance/satisfactory_blueprint_manager/refs/heads/v2/version.json",
-        "beta":   "https://sbm.satisfactoryfr.com/version-beta.json",
-        }
-
-        ==> URLS[UPDATE_CHANNEL]
-    '''
-
-
-    def __init__(self):
-        pass
+    VERSION_URL_STABLE = "https://raw.githubusercontent.com/SatisfactoryFrance/satisfactory_blueprint_manager/main/version.json"
+    VERSION_URL_BETA = "https://sbm.satisfactoryfr.com/version-beta.json"
 
     # ------------------------------
     # Utils
     # ------------------------------
+
     def _parse_version(self, v: str):
-        """
-        Transforme 'v2.1.1' -> (2, 1, 1)
-        """
         if not v:
             return (0, 0, 0)
 
@@ -42,14 +28,20 @@ class UpdateService:
     # ------------------------------
     # Update check
     # ------------------------------
-    def check_for_update(self, current_version: str):
-        """
-        Retourne :
-        (is_up_to_date, remote_version, download_url, error_message)
-        """
+
+    def check_for_update(self, current_version: str, channel: str):
 
         try:
-            response = requests.get(self.VERSION_URL, timeout=10)
+
+            # ✅ choix URL selon channel
+            if channel.lower() == "beta":
+                url = self.VERSION_URL_BETA
+            else:
+                url = self.VERSION_URL_STABLE
+
+            print(f"[UPDATE] Checking {channel} channel → {url}")
+
+            response = requests.get(url, timeout=10)
             response.raise_for_status()
 
             remote_data = response.json()
@@ -63,7 +55,6 @@ class UpdateService:
             local_v = self._parse_version(current_version)
             remote_v = self._parse_version(remote_version)
 
-            # DEBUG
             print(f"[UPDATE] local={local_v} remote={remote_v}")
 
             if remote_v > local_v:
@@ -72,7 +63,6 @@ class UpdateService:
             return True, remote_version, None, None
 
         except requests.exceptions.RequestException as e:
-            # On n'embête pas l'utilisateur si GitHub est HS
             return True, None, None, f"Erreur réseau : {e}"
 
         except ValueError:

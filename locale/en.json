@@ -59,10 +59,11 @@
   "folder_missing_reset": "The saved blueprints folder no longer exists:\n%{folder}\n\nPlease select another folder.",
   "loading_blueprints": "Loading list…",
   "no_update_available": "No update available. You are up to date",
-  "later": "Plus tard",
+  "later": "Later",
   "no_bp_title": "Blueprints folderNot Found",
   "no_bp_header": "Global blueprint Folder Not Found",
   "no_bp_message": "Have you unlocked the Blueprint milestone in your HUB?\n\nYou must create at least one blueprint (even a simple one) so the game can generate the required folders on your disk.\n\nThen restart Satisfactory Blueprint Manager.",
   "update_note": "Release notes",
-  "send_comment": "Send comment"
+  "send_comment": "Send comment",
+  "update_confirm": "The software will update and restart.\nContinue?"
 }

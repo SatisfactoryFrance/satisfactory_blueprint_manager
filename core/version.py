@@ -1,2 +1,2 @@
-BUILD_NUMBER = "2.5.5"
+BUILD_NUMBER = "2.1.1"
 CHANNEL = "beta" # stable ou beta

@@ -64,5 +64,6 @@
   "no_bp_header": "Dossier Blueprints global introuvable",
   "no_bp_message": "Avez-vous débloqué le jalon Blueprints dans votre HUB ?\n\nVous devez créer au moins un blueprint (même très simple) pour que Satisfactory génère les dossiers sur votre disque.\n\nEnsuite, relancez Satisfactory Blueprint Manager.",
   "update_note": "Notes de publications",
-  "send_comment": "Envoyer des commentaires"
+  "send_comment": "Envoyer des commentaires",
+  "update_confirm": "Le logiciel va se mettre à jour et redémarrer."
 }

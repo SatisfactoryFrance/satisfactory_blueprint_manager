@@ -15,9 +15,12 @@ from services.scim_service import ScimService
 from services.update_service import UpdateService
 from services.ping_service import PingService
 from services.save_service import SaveService
+from services.auto_update_service import AutoUpdateService
 
 from core.version import BUILD_NUMBER
 from core.paths import get_blueprints_base
+from core.version import CHANNEL
+
 
 from ui.menubar import build_menubar
 from services.i18n_service import I18nService
@@ -29,6 +32,9 @@ class App(ctk.CTk):
 
     def __init__(self):
         super().__init__()
+
+        if getattr(sys, 'frozen', False):
+            os.chdir(os.path.dirname(sys.executable))
 
        # ---------------- ICON ----------------
 
@@ -52,6 +58,7 @@ class App(ctk.CTk):
         self.blueprints = BlueprintService()
         self.scim = ScimService()
         self.updater = UpdateService()
+        self.auto_updater = AutoUpdateService(self)
         self.ping = PingService()
         self.saves = SaveService(self.config_service)
 
@@ -70,7 +77,7 @@ class App(ctk.CTk):
 
         # ---------------- UI ----------------
 
-        self.title(f"Satisfactory Blueprint Manager - {BUILD_NUMBER}")
+        self.title(f"Satisfactory Blueprint Manager - {BUILD_NUMBER} ({CHANNEL.upper()})")
         self.center_window(1200, 600)
 
 # ================= HEADER =================
@@ -292,7 +299,7 @@ class App(ctk.CTk):
     # ======================================================
 
     def check_update(self, manual=False):
-        ok, remote, url, error = self.updater.check_for_update(BUILD_NUMBER)
+        ok, remote, url, error = self.updater.check_for_update(BUILD_NUMBER,CHANNEL)
 
         if error:
             if manual:
@@ -344,12 +351,27 @@ class App(ctk.CTk):
         btns.pack()
 
         def download():
-            webbrowser.open(url)
-            win.destroy()
+
+            try:
+                win.destroy()
+
+                confirm = messagebox.askyesno(
+                    self.t("update_available"),
+                    self.t("update_confirm")
+                )
+
+                if not confirm:
+                    return
+
+                # lancement auto update
+                self.auto_updater.download_and_apply(url)
+
+            except Exception as e:
+                messagebox.showerror(self.t("error"), str(e))
 
         ctk.CTkButton(
             btns,
-            text=self.t("download"),
+            text=f"{self.t('download')} ({version})",
             width=140,
             fg_color="#3b82f6",
             hover_color="#2563eb",
