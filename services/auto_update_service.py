@@ -4,6 +4,7 @@ import subprocess
 import tempfile
 import requests
 import zipfile
+from tkinter import messagebox
 
 
 class AutoUpdateService:
@@ -63,16 +64,17 @@ class AutoUpdateService:
         if not os.path.exists(updater_path):
             raise Exception("updater.exe introuvable")
 
+        #messagebox.showinfo(
+        #    self.app.t("update_available"),
+        #    self.app.t("update_confirm")
+        #)
+
         subprocess.Popen([
             updater_path,
             current_exe,
             new_exe
         ])
 
-        messagebox.showinfo(
-            self.app.t("update_available"),
-            self.app.t("update_confirm")
-        )
 
         # fermer IMMÉDIATEMENT SBM
         os._exit(0)
