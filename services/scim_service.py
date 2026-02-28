@@ -17,9 +17,9 @@ class ScimService:
     # LISTING
     # ======================================================
 
-    def extract_pagenumber(self, url:str):
-        return int(re.search("p/([0-9]+)",url).group(1))
-    
+    def extract_pagenumber(self, url: str):
+        return int(re.search("p/([0-9]+)", url).group(1))
+
     def get_blueprints(self, page: int, query: str = ""):
 
         url = f"{self.BASE_URL}/index/index/p/{page}"
@@ -36,7 +36,7 @@ class ScimService:
         else:
             pagination_maxpage = self.extract_pagenumber(pagination.find_all("li")[-1].find("a").get("href", "p/0"))
 
-        results = type('',(object,),{"items": [],"maxPage":pagination_maxpage})()
+        results = type('', (object, ), {"items": [], "maxPage": pagination_maxpage})()
 
         for card in cards:
 
@@ -67,7 +67,6 @@ class ScimService:
                     pass
 
             # description = self.get_description(blueprint_id)
-            
 
             results.items.append({
                 "id": blueprint_id,

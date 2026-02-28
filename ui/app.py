@@ -36,9 +36,9 @@ class App(ctk.CTk):
         if getattr(sys, 'frozen', False):
             os.chdir(os.path.dirname(sys.executable))
 
-       # ---------------- ICON ----------------
+        # ---------------- ICON ----------------
 
-        #la, on va attacher l'icone à la fenêtre, et aussi à la barre des tâches sous Windows
+        # la, on va attacher l'icone à la fenêtre, et aussi à la barre des tâches sous Windows
         icon_path = os.path.join(os.getcwd(), "icone.ico")  # Chemin vers .ico
         if os.path.exists(icon_path):
             self.iconbitmap(icon_path)
@@ -111,7 +111,8 @@ class App(ctk.CTk):
             corner_radius=12,
             font=ctk.CTkFont(size=12, weight="bold"),
             width=36
-            )
+        )
+
         self.bp_count_label.pack(side="left", padx=(5, 15))
 
         # Add blueprints
@@ -121,7 +122,6 @@ class App(ctk.CTk):
             width=170,
             command=self.upload_blueprints
         ).pack(side="left", padx=6)
-
 
         # Open SCIM
         ctk.CTkButton(
@@ -299,7 +299,7 @@ class App(ctk.CTk):
     # ======================================================
 
     def check_update(self, manual=False):
-        ok, remote, url, error = self.updater.check_for_update(BUILD_NUMBER,CHANNEL)
+        ok, remote, url, error = self.updater.check_for_update(BUILD_NUMBER, CHANNEL)
 
         if error:
             if manual:
@@ -316,7 +316,6 @@ class App(ctk.CTk):
                 )
 
     def show_update_popup(self, version, url):
-        import webbrowser
 
         win = ctk.CTkToplevel(self)
         win.title(self.t("update_available"))
@@ -441,7 +440,7 @@ class App(ctk.CTk):
         self.geometry(f"{width}x{height}+{x}+{y}")
 
     # ======================================================
-    # FENETRE DE DOSSIER MANQUANT 
+    # FENETRE DE DOSSIER MANQUANT
     # ======================================================
 
     def show_missing_folder_popup(self, missing_path):

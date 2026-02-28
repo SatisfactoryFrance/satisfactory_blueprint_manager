@@ -6,6 +6,7 @@ from customtkinter import CTkImage
 import io
 from utils.paginatator import Paginatator
 
+
 class ScimWindow(ctk.CTkToplevel):
 
     def __init__(self, master):
@@ -13,7 +14,7 @@ class ScimWindow(ctk.CTkToplevel):
 
         self.paginatator = Paginatator()
         self.paginatator.setMaxPage(1)
-        self.paginatator.setWidth(20) # nombre de bouton de la pagination
+        self.paginatator.setWidth(20)  # nombre de bouton de la pagination
 
         self.transient(master)   # liée à la fenêtre principale
         self.lift()             # remonte au premier plan
@@ -129,32 +130,32 @@ class ScimWindow(ctk.CTkToplevel):
     # Pagination
     # ======================================================
 
-    def go_to_page(self, page:int):
+    def go_to_page(self, page: int):
         self.paginatator.setCurrentPage(page)
         self.load_page()
 
-    def headerBtn(self,  targetPage:int, currentPage:int, text:str):
+    def headerBtn(self, targetPage: int, currentPage: int, text: str):
         btn = ctk.CTkButton(
             self.header,
             text=self.master.t(text),
             width=10,
             fg_color="#3b82f6",
             hover_color="#2563eb",
-            command= lambda : self.go_to_page(targetPage)
+            command=lambda: self.go_to_page(targetPage)
         )
         btn.pack(side="left", padx=1)
         if (targetPage == currentPage):
-            btn.configure(state = 'disabled',fg_color="#3d6485")
+            btn.configure(state='disabled', fg_color="#3d6485")
         return btn
 
     def redrawHeader(self):
         for child in self.header.winfo_children():
             child.destroy()
-        self.paginatator.generateFirst(lambda targetPage, currentPage:self.headerBtn(targetPage, currentPage,"<<"))
-        self.paginatator.generatePrevious(lambda targetPage, currentPage:self.headerBtn(targetPage, currentPage,"<"))
-        self.paginatator.generateRange(lambda targetPage, currentPage:self.headerBtn(targetPage, currentPage,str(targetPage)))
-        self.paginatator.generateNext(lambda targetPage, currentPage:self.headerBtn(targetPage, currentPage,">"))
-        self.paginatator.generateLast(lambda targetPage, currentPage:self.headerBtn(targetPage, currentPage,">>"))
+        self.paginatator.generateFirst(lambda targetPage, currentPage: self.headerBtn(targetPage, currentPage, "<<"))
+        self.paginatator.generatePrevious(lambda targetPage, currentPage: self.headerBtn(targetPage, currentPage, "<"))
+        self.paginatator.generateRange(lambda targetPage, currentPage: self.headerBtn(targetPage, currentPage, str(targetPage)))
+        self.paginatator.generateNext(lambda targetPage, currentPage: self.headerBtn(targetPage, currentPage, ">"))
+        self.paginatator.generateLast(lambda targetPage, currentPage: self.headerBtn(targetPage, currentPage, ">>"))
 
     # ======================================================
     # Loading
@@ -168,9 +169,9 @@ class ScimWindow(ctk.CTkToplevel):
         self.loading = ctk.CTkLabel(self.list, text=self.master.t("download_in_progress"))
         self.loading.pack(pady=30)
 
-        #self.paginatator.currentPage_label.configure(text=f"Page {self.paginatator.currentPage}")
+        # self.paginatator.currentPage_label.configure(text=f"Page {self.paginatator.currentPage}")
 
-        self.list._parent_canvas.yview_moveto(0) #Remonte en haut de la liste
+        self.list._parent_canvas.yview_moveto(0)  # Remonte en haut de la liste
 
         query = self.search_var.get().strip() if hasattr(self, "search_var") else ""
         if hasattr(self, "_default_search_text") and query == self._default_search_text:
@@ -182,8 +183,6 @@ class ScimWindow(ctk.CTkToplevel):
             self
         )
 
-
-
     # ======================================================
     # Render
     # ======================================================
@@ -193,7 +192,7 @@ class ScimWindow(ctk.CTkToplevel):
         for w in self.list.winfo_children():
             w.destroy()
 
-        if (results.maxPage>0):
+        if (results.maxPage > 0):
             self.paginatator.setMaxPage(results.maxPage)
         self.redrawHeader()
         self._images = []
@@ -265,8 +264,6 @@ class ScimWindow(ctk.CTkToplevel):
 
             for widget in (card, row, text_block, desc_label):
                 widget.bind("<Button-1>", click)
-            
-            
 
             # ================= DOWNLOAD BUTTON =================
 
@@ -288,8 +285,10 @@ class ScimWindow(ctk.CTkToplevel):
         if bp.get("description"):
             return
         label.configure(text="Chargement…")
+
         def work():
             return self.master.scim.get_description(bp["id"])
+
         def done(desc):
             bp["description"] = desc
             label.configure(text=desc)

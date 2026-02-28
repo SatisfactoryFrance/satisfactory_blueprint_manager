@@ -98,7 +98,7 @@ def build_menubar(app):
     menu_help.add_separator()
     menu_help.add_command(label=t("update_note"), command=lambda: webbrowser.open("https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/releases"))
     menu_help.add_command(label=t("send_comment"), command=lambda: webbrowser.open("https://github.com/SatisfactoryFrance/satisfactory_blueprint_manager/issues/new/choose"))
-    menu_help.add_command(label=t("menu_update"),command=lambda: app.check_update(manual=True))
+    menu_help.add_command(label=t("menu_update"), command=lambda: app.check_update(manual=True))
 
     menubar.add_cascade(label=t("menu_help"), menu=menu_help)
 

@@ -1,4 +1,4 @@
-﻿import os
+import os
 import json
 import uuid
 
@@ -6,7 +6,7 @@ import uuid
 class ConfigService:
 
     def __init__(self):
-        self.path = os.path.join(os.getenv("LOCALAPPDATA"),"satisfactory_blueprint_manager.json")
+        self.path = os.path.join(os.getenv("LOCALAPPDATA"), "satisfactory_blueprint_manager.json")
 
         self.data = {}
         self.load()

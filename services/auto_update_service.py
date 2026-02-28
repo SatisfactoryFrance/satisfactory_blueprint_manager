@@ -64,17 +64,16 @@ class AutoUpdateService:
         if not os.path.exists(updater_path):
             raise Exception("updater.exe introuvable")
 
-        #messagebox.showinfo(
+        # messagebox.showinfo(
         #    self.app.t("update_available"),
         #    self.app.t("update_confirm")
-        #)
+        # )
 
         subprocess.Popen([
             updater_path,
             current_exe,
             new_exe
         ])
-
 
         # fermer IMMÉDIATEMENT SBM
         os._exit(0)

@@ -7,12 +7,14 @@ import subprocess
 base_dir = os.path.dirname(sys.argv[1]) if len(sys.argv) > 1 else os.getcwd()
 log = os.path.join(base_dir, "updater.log")
 
+
 def write(msg):
     try:
         with open(log, "a", encoding="utf-8") as f:
             f.write(msg + "\n")
     except:
         pass
+
 
 write("=== UPDATER START ===")
 write(str(sys.argv))
