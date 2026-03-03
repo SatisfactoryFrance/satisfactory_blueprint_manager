@@ -1,4 +1,4 @@
-﻿from backend import Backend
+from backend import Backend
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Menu, Toplevel, Text, StringVar
 from customtkinter import CTkImage
