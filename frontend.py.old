@@ -28,7 +28,7 @@ class Sidebar(ctk.CTkFrame):
         self.blueprint_folders = self.backend.get_blueprint_folders()
         self.selected_blueprint_folder = StringVar(value=self.blueprint_folders[0] if self.blueprint_folders else "")
 
-        # Ajouter un menu dÃ©roulant pour sÃ©lectionner un dossier de blueprints
+        # Ajouter un menu déroulant pour sélectionner un dossier de blueprints
         self.dropdown_game_folder = ctk.CTkOptionMenu(
             self,
             values=self.blueprint_folders,
@@ -44,8 +44,8 @@ class Sidebar(ctk.CTkFrame):
         self.dropdown_game_folder.set(selected_folder)
 
     def update_game_folder(self, selected_folder):
-        """Met Ã  jour le dossier de blueprints sÃ©lectionnÃ©."""
-        chemin_base = from core.paths import get_blueprints_base
+        """Met à jour le dossier de blueprints sélectionné."""
+        chemin_base = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
         game_folder_path = os.path.join(chemin_base, selected_folder)
         self.winfo_toplevel().backend.set_config(title='game_folder', new_value=game_folder_path)
 
@@ -53,7 +53,7 @@ class Sidebar(ctk.CTkFrame):
         self.update_blueprints()
 
     def update_blueprints(self):
-        """Met Ã  jour la liste des blueprints dans la fenÃªtre principale."""
+        """Met à jour la liste des blueprints dans la fenêtre principale."""
         self.winfo_toplevel().load_blueprints()
 
         # On remonte en haut de la liste au changement de dossier
@@ -121,16 +121,16 @@ class App(ctk.CTk):
         if os.path.exists(icon_path):
             self.iconbitmap(icon_path)
         else:
-            print("IcÃ´ne introuvable")
+            print("Icône introuvable")
 
-        # Forcer l'icÃ´ne dans la barre des tÃ¢ches (uniquement sous Windows)
-        if os.name == "nt":  # VÃ©rifie que le systÃ¨me est Windows
+        # Forcer l'icône dans la barre des tâches (uniquement sous Windows)
+        if os.name == "nt":  # Vérifie que le système est Windows
             app_id = "Satisfactory blueprint Manager"  # Identifiant unique pour votre application
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
-            self.iconbitmap(icon_path)  # Appliquer l'icÃ´ne
+            self.iconbitmap(icon_path)  # Appliquer l'icône
 
         # Chemin attendu pour le dossier blueprints
-        chemin_blueprints = from core.paths import get_blueprints_base
+        chemin_blueprints = os.path.join(os.getenv("LOCALAPPDATA"), "FactoryGame", "Saved", "SaveGames", "blueprints")
 
         self.backend.check_config_file()
         self.backend.send_ping()
@@ -158,11 +158,11 @@ class App(ctk.CTk):
         self.i18n.set('filename_format', '{locale}.{format}')
         self.i18n.set('skip_locale_root_data', True)
 
-        # VÃ©rification de l'existence du dossier blueprints
+        # Vérification de l'existence du dossier blueprints
         if not os.path.exists(chemin_blueprints):
             messagebox.showerror(self.i18n.t('error'), self.i18n.t('no_bp_folder'))
             self.destroy()
-            return  # ArrÃªte l'initialisation
+            return  # Arrête l'initialisation
 
         self.display_update_status()
 
@@ -247,16 +247,16 @@ class App(ctk.CTk):
 
         self.main_window.bp_list.bind("<MouseWheel>", self.scroll_main_window)
 
-    # DÃ©finir la mÃ©thode avant l'utilisation
+    # Définir la méthode avant l'utilisation
     def scroll_scim_window(self, event):
-        """GÃ¨re le dÃ©filement dans la fenÃªtre SCIM."""
+        """Gère le défilement dans la fenêtre SCIM."""
         try:
             if event.delta < 0:
                 self.canvas.yview_scroll(1, "units")  # Scroll down
             else:
                 self.canvas.yview_scroll(-1, "units")  # Scroll up
         except Exception as e:
-            print(f"Erreur lors du dÃ©filement dans la fenÃªtre SCIM : {e}")
+            print(f"Erreur lors du défilement dans la fenêtre SCIM : {e}")
 
     def add_blueprint_button_callback(self):
         game_folder_data = self.backend.config['game_folder']
@@ -305,10 +305,10 @@ class App(ctk.CTk):
         self.canvas.grid(row=0, column=0, sticky="nsew")
         scrollbar.grid(row=0, column=1, sticky="ns")
 
-        # Lier la molette de la souris au canvas dans la fenÃªtre SCIM
+        # Lier la molette de la souris au canvas dans la fenêtre SCIM
         blueprint_window.bind("<MouseWheel>", self.scroll_scim_window)
 
-        # Cadre de navigation pour la pagination (inchangÃ©)
+        # Cadre de navigation pour la pagination (inchangé)
         nav_frame = ctk.CTkFrame(blueprint_window)
         nav_frame.grid(row=1, column=0, sticky="ew")
 
@@ -329,7 +329,7 @@ class App(ctk.CTk):
         blueprint_window.grid_rowconfigure(0, weight=1)
         blueprint_window.grid_columnconfigure(0, weight=1)
 
-        # Afficher un message "TÃ©lÃ©chargement en cours"
+        # Afficher un message "Téléchargement en cours"
         self.loading_label = ctk.CTkLabel(self.scrollable_frame, text=self.i18n.t('download_in_progress'))
         self.loading_label.pack(pady=20)
 
@@ -337,75 +337,75 @@ class App(ctk.CTk):
         threading.Thread(target=self.load_scim_blueprints, args=(self.current_site_page,), daemon=True).start()
 
     def bind_scim_mousewheel(self, blueprint_window):
-        """Lier la molette de la souris au dÃ©filement dans la fenÃªtre SCIM."""
+        """Lier la molette de la souris au défilement dans la fenêtre SCIM."""
         blueprint_window.bind_all("<MouseWheel>", self.scroll_scim_window)
 
     def scroll_main_window(self, event):
-        """GÃ¨re le dÃ©filement dans la fenÃªtre principale."""
+        """Gère le défilement dans la fenêtre principale."""
         try:
             if event.delta < 0:
                 self.main_window.bp_list._parent_canvas.yview_scroll(1, "units")  # Scroll down
             else:
                 self.main_window.bp_list._parent_canvas.yview_scroll(-1, "units")  # Scroll up
         except Exception as e:
-            print(f"Erreur lors du dÃ©filement de la fenÃªtre principale : {e}")
+            print(f"Erreur lors du défilement de la fenêtre principale : {e}")
 
     # ON PASSE SUR LE LOAD BP DE SCIM
 
     def load_scim_blueprints(self, site_page):
-        """Charge les blueprints depuis la page spÃ©cifiÃ©e du site"""
-        # Efface les Ã©lÃ©ments prÃ©cÃ©dents dans le cadre
+        """Charge les blueprints depuis la page spécifiée du site"""
+        # Efface les éléments précédents dans le cadre
         for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
 
-        # Mettre Ã  jour le label de numÃ©ro de page
+        # Mettre à jour le label de numéro de page
         self.page_label.configure(text=f"Page {site_page}")
 
-        # On remonte en haut de la fenetre pour afficher les BP aprÃ¨s un changement de page
+        # On remonte en haut de la fenetre pour afficher les BP après un changement de page
         self.canvas.after(100, lambda: self.canvas.yview_moveto(0))
 
         # Construire l'URL pour la page actuelle
         url = f"https://satisfactory-calculator.com/fr/blueprints/index/index/p/{site_page}"
 
-        # RÃ©cupÃ©ration des donnÃ©es des blueprints
+        # Récupération des données des blueprints
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
         blueprint_items = soup.find_all("div", class_="card-body")
 
         # Afficher les blueprints pour la page actuelle du site
         for item in blueprint_items:
-            # RÃ©cupÃ©ration du lien, de l'image, du titre et de l'ID du blueprint
+            # Récupération du lien, de l'image, du titre et de l'ID du blueprint
             link = item.find("a", href=True)
             if link is None:
                 continue
 
-            # RÃ©cupÃ©ration du titre dans <h6><strong>
+            # Récupération du titre dans <h6><strong>
             h6_tag = item.find("h6")
             title_tag = h6_tag.find("strong") if h6_tag else None
             title = title_tag.get_text(strip=True) if title_tag else "Sans Titre"
 
-            # RÃ©cupÃ©ration de l'ID dans le href
+            # Récupération de l'ID dans le href
             href = link.get("href", "")
             blueprint_id = href.split("/id/")[1].split("/")[0] if "/id/" in href else None
             if not blueprint_id:
                 continue
 
-            # RÃ©cupÃ©ration de l'URL de l'image dans <img>
+            # Récupération de l'URL de l'image dans <img>
             image_tag = link.find("img")
             image_url = image_tag["src"] if image_tag and "src" in image_tag.attrs else None
             if not image_url:
                 continue
 
-            # RÃ©cupÃ©rer la description courte du blueprint
+            # Récupérer la description courte du blueprint
             description = self.get_blueprint_description(blueprint_id)
 
-            # TÃ©lÃ©chargement de l'image
+            # Téléchargement de l'image
             try:
                 img_data = requests.get(image_url).content
                 img = Image.open(io.BytesIO(img_data))
                 ctk_img = CTkImage(img, size=(200, 83.3))
             except Exception as e:
-                print(f"Erreur lors du tÃ©lÃ©chargement de l'image : {e}")
+                print(f"Erreur lors du téléchargement de l'image : {e}")
                 continue
 
             # Affichage de l'image et du titre dans le cadre
@@ -430,12 +430,12 @@ class App(ctk.CTk):
             download_button.pack(side="right", padx=20, pady=5)
 
     def download_blueprint(self, blueprint_id, title):
-        """TÃ©lÃ©charge les fichiers .sbp et .sbpcfg pour un blueprint sÃ©lectionnÃ©"""
+        """Télécharge les fichiers .sbp et .sbpcfg pour un blueprint sélectionné"""
         base_url = "https://satisfactory-calculator.com/fr/blueprints/index/download"
         sbp_url = f"{base_url}/id/{blueprint_id}"
         sbpcfg_url = f"{base_url}-cfg/id/{blueprint_id}"
 
-        # On nettoie l'url SCIM si caractÃ¨res bizarre
+        # On nettoie l'url SCIM si caractères bizarre
         sanitized_title = self.winfo_toplevel().backend.sanitize_filename(title)
 
         try:
@@ -448,14 +448,14 @@ class App(ctk.CTk):
                     self.i18n.t('error'),
                     self.i18n.t('error_already_same_bp')
                 )
-                return  # Ne pas procÃ©der au tÃ©lÃ©chargement si le BP existe dÃ©jÃ 
+                return  # Ne pas procéder au téléchargement si le BP existe déjà
 
-            # TÃ©lÃ©chargement des fichiers si non existants
+            # Téléchargement des fichiers si non existants
             sbp_response = requests.get(sbp_url)
             sbpcfg_response = requests.get(sbpcfg_url)
 
             if sbp_response.status_code == 200 and sbpcfg_response.status_code == 200:
-                # Sauvegarder les fichiers tÃ©lÃ©chargÃ©s dans le repertoire windows
+                # Sauvegarder les fichiers téléchargés dans le repertoire windows
                 download_dir = game_folder_data
 
                 with open(os.path.join(download_dir, f"{sanitized_title}.sbp"), "wb") as f:
@@ -482,24 +482,24 @@ class App(ctk.CTk):
         self.update_page()
 
     def prev_site_page(self):
-        """Affiche la page prÃ©cÃ©dente de blueprints sur le site"""
+        """Affiche la page précédente de blueprints sur le site"""
         if self.current_site_page > 1:
             self.current_site_page -= 1
             self.update_page()
 
     def update_page(self):
-        """Met Ã  jour la page des blueprints en utilisant un thread"""
-        # Effacer le cadre et afficher un message "TÃ©lÃ©chargement en cours"
+        """Met à jour la page des blueprints en utilisant un thread"""
+        # Effacer le cadre et afficher un message "Téléchargement en cours"
         for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
-        self.loading_label = ctk.CTkLabel(self.scrollable_frame, text="TÃ©lÃ©chargement en cours...")
+        self.loading_label = ctk.CTkLabel(self.scrollable_frame, text="Téléchargement en cours...")
         self.loading_label.pack(pady=20)
 
         # Utiliser un thread pour charger les blueprints
         threading.Thread(target=self.load_scim_blueprints, args=(self.current_site_page,), daemon=True).start()
 
     def get_blueprint_description(self, blueprint_id):
-        """RÃ©cupÃ¨re et retourne une courte description (150 mots) du blueprint"""
+        """Récupère et retourne une courte description (150 mots) du blueprint"""
         url = f"https://satisfactory-calculator.com/fr/blueprints/index/details/id/{blueprint_id}"
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
@@ -507,7 +507,7 @@ class App(ctk.CTk):
         # Essayer plusieurs approches pour trouver la description
         description_tag = None
 
-        # 1. Rechercher dans des blockquotes indÃ©pendants
+        # 1. Rechercher dans des blockquotes indépendants
         blockquote_tags = soup.find_all("blockquote")
         for blockquote in blockquote_tags:
             if blockquote.get_text(strip=True):  # S'assurer qu'il y a du texte
@@ -522,19 +522,19 @@ class App(ctk.CTk):
                 if description_tag and description_tag.get_text(strip=True):
                     break
 
-        # Extraire et limiter la description si trouvÃ©e
+        # Extraire et limiter la description si trouvée
         if description_tag:
             description = description_tag.get_text(strip=True)
             short_description = " ".join(description.split()[:150]) + "..."
         else:
-            # Si rien n'est trouvÃ©, message pour aider Ã  l'inspection
-            print("Aucune description trouvÃ©e")  # Limite d'affichage Ã  1000 caractÃ¨res
+            # Si rien n'est trouvé, message pour aider à l'inspection
+            print("Aucune description trouvée")  # Limite d'affichage à 1000 caractères
             short_description = self.i18n.t('scim_no_description')
 
         return short_description
 
     def select_blueprint_folder(self, default_path):
-        """Affiche une boÃ®te de dialogue pour sÃ©lectionner un dossier."""
+        """Affiche une boîte de dialogue pour sélectionner un dossier."""
         return filedialog.askdirectory(initialdir=default_path, title=i18n.t('folder_not_set'))
 
     def load_blueprints(self):
@@ -599,12 +599,12 @@ class App(ctk.CTk):
         messagebox.showinfo("Information", self.i18n.t('switch_lang'))
 
     def show_about(self):
-        """Affiche une boÃ®te de dialogue Ã€ propos."""
+        """Affiche une boîte de dialogue À propos."""
         messagebox.showinfo(self.i18n.t('menu_about'), self.i18n.t('software_aboutsbm'))
 
     def show_help(self):
 
-        """Affiche une nouvelle fenÃªtre avec du texte formatÃ© pour expliquer le fonctionnement."""
+        """Affiche une nouvelle fenêtre avec du texte formaté pour expliquer le fonctionnement."""
         help_window = Toplevel(self)
         help_window.title(self.i18n.t('menu_howitisworking'))
         help_window.geometry("500x400")
@@ -613,7 +613,7 @@ class App(ctk.CTk):
         text_widget = Text(help_window, wrap="word", font=("Arial", 10))
         text_widget.pack(expand=True, fill="both", padx=10, pady=10)
 
-        # Ajouter du contenu formatÃ©
+        # Ajouter du contenu formaté
         text_widget.insert("1.0", self.i18n.t('software_specs') + "\n\n")
 
         text_widget.insert("end", self.i18n.t('software_before_anything') + "\n", "bold")
@@ -636,19 +636,19 @@ class App(ctk.CTk):
 
     def display_update_status(self):
 
-        """VÃ©rifie les mises Ã  jour disponibles et affiche des messages en consÃ©quence."""
+        """Vérifie les mises à jour disponibles et affiche des messages en conséquence."""
         is_up_to_date, remote_version, download_url, error_message = self.backend.check_for_update(BUILD_NUMBER)
 
         if error_message:
-            # En cas d'erreur rÃ©seau ou autre, afficher un message d'erreur
+            # En cas d'erreur réseau ou autre, afficher un message d'erreur
             messagebox.showerror(self.i18n.t("error"), error_message)
         elif not is_up_to_date:
-            # Mise Ã  jour disponible, afficher l'information
+            # Mise à jour disponible, afficher l'information
             messagebox.showinfo(
                 self.i18n.t("update_available"),
                 f"{self.i18n.t('new_version_available')} : {remote_version}\n"
                 f"{self.i18n.t('download_here')} : {download_url}"
             )
         else:
-            # Si aucune mise Ã  jour n'est nÃ©cessaire, continuer normalement
+            # Si aucune mise à jour n'est nécessaire, continuer normalement
             return True
